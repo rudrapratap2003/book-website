@@ -47,7 +47,7 @@ export const Home = () => {
             </p>
             <div className="text-left">
       <button
-        onClick={() => navigate("/signup")}
+        onClick={() => navigate("/login")}
         className="bg-orange-500 text-white text-sm font-medium px-3 py-2 rounded hover:bg-orange-600 transition"
       >
         Explore Now →

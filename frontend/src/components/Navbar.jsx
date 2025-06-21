@@ -84,7 +84,7 @@ export const Navbar = () => {
           ) : (
             <button
               className="flex items-center space-x-2 border-2 border-black text-black px-4 py-2 rounded-full font-bold hover:bg-gray-200 transition"
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/login")}
             >
               <span>Log In</span>
               <FaUser />

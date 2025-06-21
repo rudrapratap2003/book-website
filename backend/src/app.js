@@ -1,13 +1,12 @@
 import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
-import { verifyJWT } from "./middlewares/auth.middleware.js"
+import { errorHandler } from "./middlewares/eeorHandler.middleware.js"
 
 const app = express()
 
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
-    methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
     credentials: true,
 }))
 
@@ -23,5 +22,7 @@ import bookRouter from './routes/book.routes.js'
 //routes declaration
 app.use("/api/v1/users", userRouter) // http://localhost:8000/api/v1/users
 app.use("/api/v1/books", bookRouter) // http://localhost:8000/api/v1/books
+
+app.use(errorHandler)
 
 export { app }

@@ -3,11 +3,9 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
 const userSchema = new Schema({
-    username: {
+    fullName: {
         type: String,
         required: true,
-        unique: true,
-        lowercase: true,
         trim: true, 
         index: true
     },
@@ -18,15 +16,17 @@ const userSchema = new Schema({
         lowecase: true,
         trim: true, 
     },
-    fullName: {
-        type: String,
-        required: true,
-        trim: true, 
-        index: true
-    },
     phoneNo: {
         type: String,
         required: true, 
+    },
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true, 
+        index: true
     },
     password: {
         type: String,

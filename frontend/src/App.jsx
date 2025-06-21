@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import "tailwindcss/tailwind.css";
 import { Home } from "./components/Home";
 import { Navbar } from "./components/Navbar";
@@ -11,6 +11,8 @@ import Choose from "./components/Choose";
 import Sell from "./components/Sell";
 import Buy from "./components/Buy";
 import SignUp from "./components/SignUp";
+import Signin from "./components/Signin";
+import RefreshHandler from "./components/RefreshHandler";
 
 const books = [
   { 
@@ -65,11 +67,16 @@ const books = [
 
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const PrivateRoute = ({element}) => {
+    return isAuthenticated ? element : <Navigate to='/login' replace/>
+  }
   return (
     <Router>  
       <Navbar />
+      <RefreshHandler setIsAuthenticated={setIsAuthenticated}/>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<PrivateRoute element={<Home />}/>} />
         <Route path="/books" element={
           <div className="flex flex-wrap gap-4 p-4">
             {books.map((book) => (
@@ -82,6 +89,7 @@ function App() {
         <Route path="/sell" element={<Sell />} />
         <Route path="/buy" element={<Buy />} />
         <Route path="/exchange" element={<Exchange />} />
+        <Route path="/login" element={<Signin />} />
         <Route path="/signup" element={<SignUp />} />
       </Routes>
       <Footer />
