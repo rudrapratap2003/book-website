@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-const Signin = () => {
+const Signin = ({setIsAuthenticated}) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
     password: ''
   });
@@ -29,6 +28,7 @@ const Signin = () => {
       const response = await axios.post('/api/v1/users/login',payload, {withCredentials: true});
       setMessage(response.data.message);
       setError('');
+      setIsAuthenticated(true)
       navigate("/choose")
     } catch (error) {
         const errorMessage = error.response?.data?.message || "Something went wrong";

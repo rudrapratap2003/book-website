@@ -1,7 +1,9 @@
 import { asyncHandler } from "../utils/asynchandler.js";
 import {ApiError} from "../utils/ApiError.js"
 import {User} from "../models/user.model.js"
+import { Like } from "../models/like.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshTokens = async(userId) => {
     try {
@@ -86,6 +88,12 @@ const loginUser = asyncHandler(async (req,res) => {
     )
 })
 
+const getMe = (req, res) => {
+  // req.user was set by auth.middleware.js
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+  res.json(req.user);          // or pick the fields you need
+};
+
 const logoutUser = asyncHandler(async (req,res) => {
     await User.findByIdAndUpdate(
         req.user._id,
@@ -109,8 +117,98 @@ const logoutUser = asyncHandler(async (req,res) => {
     .clearCookie("refreshToken",options)
     .json(new ApiResponse(200, {},"User logged out"))
 })
+
+const refreshAccessToken = asyncHandler(async (req,res) => {
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+
+    if(!incomingRefreshToken) {
+        throw new ApiError(401,"unauthorized request")
+    }
+
+    try {
+        const decodedToken = jwt.verify(
+            incomingRefreshToken,
+            process.env.REFRESH_TOKEN_SECRET
+        )
+    
+        const user = await User.findById(decodedToken?._id)
+        if(!user) {
+            throw new ApiError(401,"Invalid refresh token")
+        }
+    
+        if(incomingRefreshToken != user?.refreshToken) {
+            throw new ApiError(401,"refresh token is expired or used")
+        }
+    
+        const options = {
+            httpOnly: true, 
+            secure: true
+        }
+    
+        const {accessToken,newrefreshToken} = await generateAccessAndRefreshTokens(user._id)
+    
+        return res
+        .status(200)
+        .cookie("accessToken",accessToken,options)
+        .cookie("refreshToken",newrefreshToken,options)
+        .json(
+            new ApiResponse(
+                200,
+                {accessToken,newrefreshToken},
+                "Access token refreshed"
+            )
+        )
+    } catch(error) {
+        throw new ApiError(401,error?.message || "Invalid refresh token")
+    }
+})
+
+const getLikedBooks = asyncHandler(async (req,res) => {
+    const booksLiked = await Like.aggregate([
+        {
+            $match: {
+                likedBy: new mongoose.Types.ObjectId(req.user._id)
+            }
+        },
+        {
+            $lookup: {
+                from: "books",
+                localField: "book",
+                foreignField: "_id",
+                as: 'likedBooks',
+                pipeline: [
+                    {
+                        $project: {
+                            bookName: 1,
+                            author: 1,
+                            price: 1
+                        }
+                    },
+                ]
+            }
+        },
+        {
+            $addFields: {
+                totalLikes: {
+                    $size: "$llikedBooks"
+                }
+            }
+        }
+    ])
+
+    if(!booksLiked?.length) {
+        throw new ApiError(400,"No books liked by the user")
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200,booksLiked[0].likedBooks,"Liked books fetched successfully")
+    )
+})
 export {
     registerUser,
     loginUser,
-    logoutUser
+    getLikedBooks,
+    logoutUser,
+    refreshAccessToken,
+    getMe
 }

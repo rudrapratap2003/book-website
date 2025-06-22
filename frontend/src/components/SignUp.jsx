@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-const SignUp = () => {
+const SignUp = ({setIsAuthenticated}) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
@@ -31,6 +31,7 @@ const SignUp = () => {
       const response = await axios.post('/api/v1/users/register',payload, {withCredentials: true});
       setMessage(response.data.message);
       setError('');
+      setIsAuthenticated(true);
     } catch (error) {
         const errorMessage = error.response?.data?.message || "Something went wrong";
         setError(errorMessage);

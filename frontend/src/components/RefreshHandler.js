@@ -1,20 +1,38 @@
-import React, { useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import Cookies from "js-cookie"
+import { useEffect } from "react";
+import axios from "axios";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const RefreshHandler = ({setIsAuthenticated}) => {
-    const location = useLocation();
-    const navigate = useNavigate();
+const RefreshHandler = ({ setIsAuthenticated }) => {
+  const navigate  = useNavigate();
+  const location  = useLocation();
 
-    useEffect(() => {
-        const hasToken = Boolean(Cookies.get("token"))
-        setIsAuthenticated(hasToken)
-        if(hasToken && (location.pathname === '/login' || location.pathname==='/signup')) {
-            navigate('/',{replace: true})
+  useEffect(() => {
+    axios
+      .get("/api/v1/me", { withCredentials: true })
+      .then(() => {
+        // --- user IS logged-in ---
+        setIsAuthenticated(true);
+
+        // already authenticated; redirect away from auth pages
+        if (location.pathname === "/login" || location.pathname === "/signup") {
+          navigate("/choose", { replace: true });
         }
-    },[location,navigate,setIsAuthenticated])
+      })
+      .catch(() => {
+        // --- user is NOT logged-in ---
+        setIsAuthenticated(false);
 
-    return null;
-}
+        // stay on "/" (public home) or "/login" or "/signup"; otherwise bounce to "/"
+        if (
+          location.pathname !== "/login" &&
+          location.pathname !== "/signup"
+        ) {
+          navigate("/", { replace: true });   // show Home with the Log-In button
+        }
+      });
+  }, [location.pathname, navigate, setIsAuthenticated]);
 
-export default RefreshHandler
+  return null; // nothing to render
+};
+
+export default RefreshHandler;

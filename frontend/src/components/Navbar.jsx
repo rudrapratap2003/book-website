@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
+import Cookies from "js-cookie"
+import axios from "axios";
 
-export const Navbar = () => {
+export const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const navigate = useNavigate();
 
   const bookCategories = [
@@ -15,6 +15,17 @@ export const Navbar = () => {
     "Society & Social Sciences", "Business & Economics", "Law", "Medicine",
     "Science & Mathematics", "Environment & Geography", "Technology & Engineering",
   ];
+
+    const handleLogout = async () => {
+    try {
+      await axios.post("/api/v1/users/logout", {}, { withCredentials: true });
+      Cookies.remove("token");          // keeps state & cookies in sync
+      setIsAuthenticated(false);
+      navigate("/");                    // go back to landing page
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
 
   return (
     <div className="font-sans">
@@ -72,21 +83,32 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          {isLoggedIn ? (
-            <div className="flex items-center space-x-2">
-              <img
-                src="/profile.png"
-                alt="Profile"
-                className="h-10 w-10 rounded-full border-2 border-black"
-              />
-              <span className="font-semibold hidden sm:inline">My Profile</span>
-            </div>
+          {isAuthenticated ? (
+            <>
+              {/* profile chip (optional) */}
+              <div className="hidden sm:flex items-center space-x-2">
+                <img
+                  src="/profile.png"
+                  alt="Profile"
+                  className="h-10 w-10 rounded-full border-2 border-black"
+                />
+                <span className="font-semibold">My Profile</span>
+              </div>
+
+              {/* LOG-OUT replaces the old Log-In */}
+              <button
+                onClick={handleLogout}
+                className="border-2 border-black text-black px-4 py-2 rounded-full font-bold hover:bg-gray-200 transition text-sm"
+              >
+                Log&nbsp;Out
+              </button>
+            </>
           ) : (
             <button
-              className="flex items-center space-x-2 border-2 border-black text-black px-4 py-2 rounded-full font-bold hover:bg-gray-200 transition"
               onClick={() => navigate("/login")}
+              className="flex items-center space-x-2 border-2 border-black text-black px-4 py-2 rounded-full font-bold hover:bg-gray-200 transition text-sm"
             >
-              <span>Log In</span>
+              <span>Log&nbsp;In</span>
               <FaUser />
             </button>
           )}
