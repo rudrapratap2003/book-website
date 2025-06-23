@@ -13,7 +13,6 @@ import Buy from "./components/Buy";
 import SignUp from "./components/SignUp";
 import Signin from "./components/Signin";
 import RefreshHandler from "./components/RefreshHandler";
-
 const books = [
   { 
     id: 1, 
@@ -67,30 +66,34 @@ const books = [
 
 
 function App() {
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // const PrivateRoute = ({element}) => {
-  //   return isAuthenticated ? element : <Navigate to='/login' replace/>
-  // }
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const PrivateRoute = ({element}) => {
+    if(isAuthenticated == null) return null;
+    return isAuthenticated ? element : <Navigate to="/"/>;
+  }
   return (
     <Router>  
-      <Navbar />
-      {/* <RefreshHandler setIsAuthenticated={setIsAuthenticated}/> */}
+      <RefreshHandler setIsAuthenticated={setIsAuthenticated} />
+      <Navbar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated}/>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/books" element={
-          <div className="flex flex-wrap gap-4 p-4">
-            {books.map((book) => (
-              <Card key={book.id} book={book} />
-            ))}
-          </div>
-        } />
-        <Route path="/category/:categoryName" element={<CategoryPage />} />
-        <Route path="/choose" element={<Choose />} />
-        <Route path="/sell" element={<Sell />} />
-        <Route path="/buy" element={<Buy />} />
-        <Route path="/exchange" element={<Exchange />} />
-        <Route path="/login" element={<Signin />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/" element={<Home/>}/>
+        <Route path="/login"
+          element={
+            !isAuthenticated ? <Signin setIsAuthenticated={setIsAuthenticated}/> : <Navigate to="/" replace />
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            !isAuthenticated ? <SignUp setIsAuthenticated={setIsAuthenticated}/> : <Navigate to="/" replace />
+          }
+        />
+        <Route path="/books" element={<PrivateRoute element={<Home/>}/>}/>
+        <Route path="/category/:categoryName" element={<PrivateRoute element={<CategoryPage />}/>}/>
+        <Route path="/choose" element={<PrivateRoute element={<Choose />}/>}/>
+        <Route path="/sell" element={<PrivateRoute element={<Sell />}/>}/>
+        <Route path="/buy" element={<PrivateRoute element={<Buy />}/>}/>
+        <Route path="/exchange" element={<PrivateRoute element={<Exchange />}/>}/>
       </Routes>
       <Footer />
     </Router>

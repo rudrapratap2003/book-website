@@ -96,7 +96,6 @@ export const CategoryPage = () => {
                     {discount}% OFF
                   </div>
                 )}
-
                 <div className="relative">
                   <img
                     src={book.image}
@@ -113,7 +112,6 @@ export const CategoryPage = () => {
                     QUICK VIEW
                   </button>
                 </div>
-
                 <div className="text-lg font-semibold mt-2 text-gray-800">
                   {book.title}
                 </div>
@@ -142,7 +140,6 @@ export const CategoryPage = () => {
           })}
         </div>
       )}
-
       {/* Quick View Modal */}
       {selectedBook && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -153,7 +150,6 @@ export const CategoryPage = () => {
             >
               <IoClose />
             </button>
-
             <div className="w-1/3">
               <img
                 src={selectedBook.image}
@@ -161,11 +157,9 @@ export const CategoryPage = () => {
                 className="w-full h-auto object-cover rounded-lg"
               />
             </div>
-
             <div className="w-2/3 space-y-2">
               <h2 className="text-xl font-bold">{selectedBook.title}</h2>
               <p className="text-gray-600">By: {selectedBook.author}</p>
-
               <div className="flex">
                 {Array.from({ length: 5 }, (_, index) =>
                   index < selectedBook.rating ? (
@@ -190,7 +184,6 @@ export const CategoryPage = () => {
               <p className="text-gray-700 text-sm">
                 {selectedBook.description}
               </p>
-
               <div className="flex gap-2 mt-4">
                 <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
                   Add To Cart

@@ -18,10 +18,12 @@ app.use(cookieParser())
 // routes import
 import userRouter from './routes/user.routes.js'
 import bookRouter from './routes/book.routes.js'
+import authRoutes from './routes/auth.routes.js'
 
 //routes declaration
 app.use("/api/v1/users", userRouter) // http://localhost:8000/api/v1/users
 app.use("/api/v1/books", bookRouter) // http://localhost:8000/api/v1/books
+app.use("/api/v1", authRoutes)
 
 app.use(errorHandler)
 

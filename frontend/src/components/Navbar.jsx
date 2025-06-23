@@ -1,34 +1,35 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
+import Cookies from "js-cookie"
+import axios from "axios";
 
-export const Navbar = () => {
+export const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const bookCategories = [
-    "Art & Photography",
-    "Biographies & Memoirs",
-    "Dictionaries & Language",
-    "Literature & Literary Studies",
-    "English Language Teaching",
-    "Fiction",
-    "References & Encyclopedias",
-    "History & Humanities",
-    "Society & Social Sciences",
-    "Business & Economics",
-    "Law",
-    "Medicine",
-    "Science & Mathematics",
-    "Environment & Geography",
-    "Technology & Engineering",
+    "Art & Photography", "Biographies & Memoirs", "Dictionaries & Language", "Literature & Literary Studies",
+    "English Language Teaching", "Fiction", "References & Encyclopedias", "History & Humanities",
+    "Society & Social Sciences", "Business & Economics", "Law", "Medicine",
+    "Science & Mathematics", "Environment & Geography", "Technology & Engineering",
   ];
+
+    const handleLogout = async () => {
+    try {
+      await axios.post("/api/v1/users/logout", {}, { withCredentials: true });
+      Cookies.remove("token");          // keeps state & cookies in sync
+      setIsAuthenticated(false);
+      navigate("/");                    // go back to landing page
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
 
   return (
     <div className="font-sans">
       <nav className="bg-white/30 backdrop-blur-md text-black p-4 flex justify-between items-center relative">
-        {/* Left: Logo and Menu */}
         <div className="flex items-center">
           <button
             className="text-2xl md:hidden mr-4"
@@ -39,8 +40,6 @@ export const Navbar = () => {
           <img src="/src/images/bookcart.png" alt="Logo" className="h-10" />
           <h1 className="ml-3 text-xl font-bold">BOOK CART</h1>
         </div>
-
-        {/* Middle: Navigation */}
         <div
           className={`md:flex gap-6 items-center ${
             isMobileMenuOpen
@@ -63,12 +62,9 @@ export const Navbar = () => {
               <div className="absolute left-0 mt-2 w-64 bg-white shadow-lg border border-gray-200 rounded-md z-20">
                 <ul className="p-2">
                   {bookCategories.map((category, index) => (
-                    <li key={index} className="px-4 py-2 hover:bg-gray-100 rounded">
+                    <li key={index} className="px-4 py-2">
                       <Link
-                        to={`/category/${category
-                          .toLowerCase()
-                          .replace(/ & /g, "-")
-                          .replace(/ /g, "-")}`}
+                        to={`/category/${category.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`}
                         onClick={() => setIsBooksDropdownOpen(false)}
                       >
                         {category}
@@ -79,21 +75,34 @@ export const Navbar = () => {
               </div>
             )}
           </div>
-
+          <Link to="/exchange" className="block px-4 py-2 font-semibold">
+            EXCHANGE
+          </Link>
           <Link to="/sell" className="block px-4 py-2 font-semibold">
             SELL
           </Link>
         </div>
 
-        {/* Right: Login only */}
         <div className="flex items-center space-x-4">
-          <button
-            className="flex items-center space-x-2 border-2 border-black text-black px-4 py-2 rounded-full font-bold hover:bg-gray-200 transition"
-            onClick={() => navigate("/login")}
-          >
-            <span>Log In</span>
-            <FaUser />
-          </button>
+          {isAuthenticated ? (
+            <>
+              {/* LOG-OUT replaces the old Log-In */}
+              <button
+                onClick={handleLogout}
+                className="border-2 border-black text-black px-4 py-2 rounded-full font-bold hover:bg-gray-200 transition text-sm"
+              >
+                Log&nbsp;Out
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => navigate("/login")}
+              className="flex items-center space-x-2 border-2 border-black text-black px-4 py-2 rounded-full font-bold hover:bg-gray-200 transition text-sm"
+            >
+              <span>Log&nbsp;In</span>
+              <FaUser />
+            </button>
+          )}
         </div>
       </nav>
     </div>

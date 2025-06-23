@@ -174,20 +174,6 @@ const Sell = () => {
                 <option value="Children">Children</option>
               </select>
             </div>
-
-            {/* <div>
-              <label className="block text-[#1c3b2f] mb-1 font-medium">
-                Give an image of your book
-              </label>
-              <input
-                type="file"
-                name="image"
-                accept="image/*"
-                onChange={handleChange}
-                required
-                className="w-full border-b-2 border-[#1c3b2f] py-2 bg-transparent text-gray-700 focus:outline-none"
-              />
-            </div> */}
             <button
               type="submit"
               className="bg-[#1c3b2f] text-white px-6 py-2 rounded-full hover:bg-[#163025] transition w-full"
@@ -197,7 +183,6 @@ const Sell = () => {
           </form>
         </div>
       </div>
-
       <div className="w-full lg:w-1/2 bg-[#7b66b4] flex items-center justify-center p-6 sm:p-12">
         <img
           src="/src/images/flower.png"

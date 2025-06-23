@@ -63,7 +63,20 @@ const buyBook = asyncHandler(async (req,res) => {
     }
 })
 
+const fetchBookByCategory = asyncHandler(async (req, res) => {
+  try {
+    console.log("Fetching books for category:", req.params.category); // Debug log
+    const books = await Book.find({
+      category: req.params.category.toLowerCase(),
+    });
+    res.status(200).json(books);
+  } catch (error) {
+    console.error("Error fetching category books:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+})
 export {
     sellBook,
-    buyBook
+    buyBook,
+    fetchBookByCategory
 }

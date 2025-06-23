@@ -1,23 +1,31 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const Home = () => {
+  const categories = [
+    {
+      id: 1,
+      name: "Young and Teen",
+      image: "/src/images/yt.png",
+    },
+    {
+      id: 2,
+      name: "Fiction",
+      image: "/src/images/fiction.png",
+    },
+    {
+      id: 3,
+      name: "Romantic",
+      image: "/src/images/romm.png",
+    },
+    {
+      id: 4,
+      name: "Cooking",
+      image: "/src/images/cook.png",
+    },
+  ];
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Check login state from localStorage on component mount
-  useEffect(() => {
-    const loginStatus = localStorage.getItem("isLoggedIn") === "true";
-    setIsLoggedIn(loginStatus);
-  }, []);
-
-  const categories = [
-    { id: 1, name: "Young and Teen", image: "/src/images/yt.png" },
-    { id: 2, name: "Fiction", image: "/src/images/fiction.png" },
-    { id: 3, name: "Romantic", image: "/src/images/romm.png" },
-    { id: 4, name: "Cooking", image: "/src/images/cook.png" },
-  ];
-
   const handleExploreClick = () => {
     if (isLoggedIn) {
       navigate("/buy");
@@ -25,10 +33,9 @@ export const Home = () => {
       navigate("/login");
     }
   };
-
   return (
     <>
-      {/* HERO SECTION (Always visible) */}
+
       <div
         id="home"
         className="bg-orange-50 min-h-screen flex items-center justify-center px-2 sm:px-4"
@@ -50,6 +57,7 @@ export const Home = () => {
               </button>
             </div>
           </div>
+
           <div className="md:w-1/2 flex justify-center">
             <img
               src="/src/images/bookpage.png"

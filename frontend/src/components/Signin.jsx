@@ -1,14 +1,10 @@
 import { useState } from 'react';
-import { useNavigate, Navigate  } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-
-const Signin = () => {
+const Signin = ({setIsAuthenticated}) => {
   const navigate = useNavigate();
-  if (localStorage.getItem("isLoggedIn") === "true") {
-}
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
     password: ''
   });
@@ -32,8 +28,8 @@ const Signin = () => {
       const response = await axios.post('/api/v1/users/login',payload, {withCredentials: true});
       setMessage(response.data.message);
       setError('');
-      localStorage.setItem("isLoggedIn", "true");
-      navigate("/");
+      setIsAuthenticated(true)
+      navigate("/")
     } catch (error) {
         const errorMessage = error.response?.data?.message || "Something went wrong";
         setError(errorMessage);
