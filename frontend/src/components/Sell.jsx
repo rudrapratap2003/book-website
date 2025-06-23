@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {FaCheckCircle} from "react-icons/fa"
+import { IoClose } from "react-icons/io5";
 
 const Sell = () => {
   const navigate = useNavigate();
@@ -12,6 +14,8 @@ const Sell = () => {
     count: "",
     category: "",
   });
+
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -43,10 +47,15 @@ const Sell = () => {
         withCredentials: true, // needed if using cookies/session
       }
     );
-    alert(response.data.message || "Book submitted successfully!");
+    
+    setShowSuccess(true)
+    setTimeout(()=>{
+      setShowSuccess(false)
+      const category = response.data.data.category;
+      navigate(`/category/${category}`)
+    },9000);
 
-    const category = response.data.data.category;
-    navigate(`/category/${category}`)
+    
 
     setFormData({
       bookname: "",
@@ -67,6 +76,22 @@ const Sell = () => {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
+
+    {showSuccess && (
+
+     <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
+      <div className="bg-white border-2 border-green-500 rounded-xl shadow-lg p-6 relative w-80 text-center">
+        <button onClick={() => setShowSuccess(false)} className="absolute top-2 right-2 text-gray-600 text-xl">
+          <IoClose />
+        </button>
+    
+        <FaCheckCircle className="text-green-600 text-3xl mx-auto mb-2"/>
+        <p className="text-black font-semibold text-lg mb-4">Book Submitted Successfully !</p>
+        <img src="/src/images/book-sell.png" alt="Book-sell" className="w-20 h-20 mx-auto"/>
+      </div>
+      </div>
+    )}
+
       <div className="w-full lg:w-1/2 bg-[#fdf1e5] p-6 sm:p-8 md:p-10 relative flex items-start justify-center">
         <img
           src="/src/images/leaves-clipart.png"
