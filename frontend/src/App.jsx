@@ -13,8 +13,6 @@ import Buy from "./components/Buy";
 import SignUp from "./components/SignUp";
 import Signin from "./components/Signin";
 import RefreshHandler from "./components/RefreshHandler";
-
-
 const books = [
   { 
     id: 1, 
@@ -81,13 +79,13 @@ function App() {
         <Route path="/" element={<Home/>}/>
         <Route path="/login"
           element={
-            !isAuthenticated ? <Signin setIsAuthenticated={setIsAuthenticated}/> : <Navigate to="/choose" replace />
+            !isAuthenticated ? <Signin setIsAuthenticated={setIsAuthenticated}/> : <Navigate to="/" replace />
           }
         />
         <Route
           path="/signup"
           element={
-            !isAuthenticated ? <SignUp setIsAuthenticated={setIsAuthenticated}/> : <Navigate to="/choose" replace />
+            !isAuthenticated ? <SignUp setIsAuthenticated={setIsAuthenticated}/> : <Navigate to="/" replace />
           }
         />
         <Route path="/books" element={<PrivateRoute element={<Home/>}/>}/>

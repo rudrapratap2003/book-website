@@ -24,6 +24,7 @@ import authRoutes from './routes/auth.routes.js'
 app.use("/api/v1/users", userRouter) // http://localhost:8000/api/v1/users
 app.use("/api/v1/books", bookRouter) // http://localhost:8000/api/v1/books
 app.use("/api/v1", authRoutes)
+
 app.use(errorHandler)
 
 export { app }

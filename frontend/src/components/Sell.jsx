@@ -1,13 +1,16 @@
 import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Sell = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    bookName: "",
+    bookname: "",
     author: "",
     description: "",
     price: "",
-    quantity: "",
-    image: null,
+    count: "",
+    category: "",
   });
 
   const handleChange = (e) => {
@@ -20,42 +23,51 @@ const Sell = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formDataToSend = new FormData();
-    for (let key in formData) {
-      formDataToSend.append(key, formData[key]);
-    }
-
-    try {
-      const response = await fetch("http://localhost:5000/api/books", {
-        method: "POST",
-        body: formDataToSend,
-      });
-
-      if (response.ok) {
-        alert("Book posted successfully!");
-        setFormData({
-          bookName: "",
-          author: "",
-          description: "",
-          price: "",
-          quantity: "",
-          image: null,
-        });
-      } else {
-        alert("Something went wrong!");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Server error");
-    }
+  e.preventDefault();
+    
+  const payload = {
+    bookname: formData.bookname,
+    author: formData.author,
+    description: formData.description,
+    price: formData.price,
+    count: formData.count,
+    category: formData.category,
+    // image is excluded since backend does not handle it
   };
+
+  try {
+    const response = await axios.post(
+      "/api/v1/books/sell-book",
+      payload,
+      {
+        withCredentials: true, // needed if using cookies/session
+      }
+    );
+    alert(response.data.message || "Book submitted successfully!");
+
+    const category = response.data.data.category;
+    navigate(`/category/${category}`)
+
+    setFormData({
+      bookname: "",
+      author: "",
+      description: "",
+      price: "",
+      count: "",
+      category: "",
+      image: null,
+    });
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message || "Something went wrong";
+    alert(errorMessage);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Left Side: Form */}
       <div className="w-full lg:w-1/2 bg-[#fdf1e5] p-6 sm:p-8 md:p-10 relative flex items-start justify-center">
-        {/* Clipart Image in top-left corner */}
         <img
           src="/src/images/leaves-clipart.png"
           alt="Decorative Clipart"
@@ -70,12 +82,12 @@ const Sell = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <input
               type="text"
-              name="bookName"
+              name="bookname"
               placeholder="Book Name"
-              value={formData.bookName}
+              value={formData.bookname}
               onChange={handleChange}
-              className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none placeholder-gray-600"
               required
+              className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none placeholder-gray-600"
             />
             <input
               type="text"
@@ -83,8 +95,8 @@ const Sell = () => {
               placeholder="Author"
               value={formData.author}
               onChange={handleChange}
-              className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none placeholder-gray-600"
               required
+              className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none placeholder-gray-600"
             />
             <textarea
               name="description"
@@ -92,8 +104,8 @@ const Sell = () => {
               value={formData.description}
               onChange={handleChange}
               rows="3"
-              className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none placeholder-gray-600 resize-none"
               required
+              className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none placeholder-gray-600 resize-none"
             />
             <input
               type="number"
@@ -101,30 +113,41 @@ const Sell = () => {
               placeholder="Price"
               value={formData.price}
               onChange={handleChange}
-              className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none placeholder-gray-600"
               required
+              className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none placeholder-gray-600"
             />
             <input
               type="number"
-              name="quantity"
+              name="count"
               placeholder="Number of Books"
-              value={formData.quantity}
+              value={formData.count}
               onChange={handleChange}
-              className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none placeholder-gray-600"
               required
+              className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none placeholder-gray-600"
             />
+
             <div>
               <label className="block text-[#1c3b2f] mb-1 font-medium">
-                Give an image of your book
+                Category
               </label>
-              <input
-                type="file"
-                name="image"
-                accept="image/*"
+              <select
+                name="category"
+                value={formData.category}
                 onChange={handleChange}
-                className="w-full border-b-2 border-[#1c3b2f] py-2 bg-transparent text-gray-700 focus:outline-none"
                 required
-              />
+                className="w-full border-b-2 border-[#1c3b2f] bg-transparent py-2 focus:outline-none text-gray-700"
+              >
+                <option value="" disabled>
+                  Select category
+                </option>
+                <option value="Young & Teen Fiction">Young & Teen Fiction</option>
+                <option value="Romantic">Romantic</option>
+                <option value="Cooking">Cooking</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Fiction">Fiction</option>
+                <option value="Biography">Biography</option>
+                <option value="Children">Children</option>
+              </select>
             </div>
             <button
               type="submit"
@@ -135,12 +158,10 @@ const Sell = () => {
           </form>
         </div>
       </div>
-
-      {/* Right Side: Illustration */}
       <div className="w-full lg:w-1/2 bg-[#7b66b4] flex items-center justify-center p-6 sm:p-12">
         <img
           src="/src/images/flower.png"
-          alt="Paper Plane"
+          alt="Illustration"
           className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg object-contain"
         />
       </div>

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export const Home = () => {
   const categories = [
@@ -23,16 +24,18 @@ export const Home = () => {
       image: "/src/images/cook.png",
     },
   ];
-
-  const handleExploreClick = () => {
-    // logic to open login modal or navigate to login
-    alert("Please login to continue.");
-  };
-
   const navigate = useNavigate();
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const handleExploreClick = () => {
+    if (isLoggedIn) {
+      navigate("/buy");
+    } else {
+      navigate("/login");
+    }
+  };
   return (
     <>
+
       <div
         id="home"
         className="bg-orange-50 min-h-screen flex items-center justify-center px-2 sm:px-4"
@@ -46,15 +49,13 @@ export const Home = () => {
               Your one-stop shop for books of every genre! Where you can browse, buy, and sell books in minutes!
             </p>
             <div className="text-left">
-      <button
-        onClick={() => navigate("/login")}
-        className="bg-orange-500 text-white text-sm font-medium px-3 py-2 rounded hover:bg-orange-600 transition"
-      >
-        Explore Now →
-      </button>
-    </div>
-
-
+              <button
+                onClick={handleExploreClick}
+                className="bg-orange-500 text-white text-sm font-medium px-3 py-2 rounded hover:bg-orange-600 transition"
+              >
+                Explore Now →
+              </button>
+            </div>
           </div>
 
           <div className="md:w-1/2 flex justify-center">
@@ -67,15 +68,15 @@ export const Home = () => {
         </div>
       </div>
 
-      <div
-        id="best-sales"
-        className="p-6 sm:p-8 bg-orange-50"
-      >
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-          Books Trending Now
-        </h2>
-
-        <div className="bg-white p-4 rounded-3xl shadow-md">
+      {/* REST OF PAGE: Only show when logged in */}
+      {isLoggedIn && (
+        <>
+          {/* TRENDING BOOKS */}
+          <div id="best-sales" className="p-6 sm:p-8 bg-orange-50">
+            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+              Books Trending Now
+            </h2>
+           <div className="bg-white p-4 rounded-3xl shadow-md">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
               {
@@ -140,7 +141,7 @@ export const Home = () => {
                       Buy Now
                     </button>
                     <p className="text-gray-700 font-semibold group-hover:text-white">
-                      \u20B9 {book.price}
+                      \ {book.price}
                     </p>
                   </div>
                   <p className="text-gray-700 text-sm mt-2 text-center group-hover:text-white">
@@ -151,48 +152,68 @@ export const Home = () => {
             ))}
           </div>
         </div>
-      </div>
+          </div>
 
-      <div id="categories" className="p-8 bg-orange-50">
-        <h2 className="text-3xl font-bold mb-6 text-center">Shop By Category</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {categories.map((category, index) => (
-            <div
-              key={category.id}
-              className={`flex items-center p-4 rounded-lg shadow-md transition-transform transform hover:scale-105`}
-              style={{
-                background: `linear-gradient(to left, ${index === 0 ? '#ff9a9e' : index === 1 ? '#a1c4fd' : index === 2 ? '#fbc2eb' : '#d4fc79'}, ${index === 0 ? '#ff6a88' : index === 1 ? '#c2e9fb' : index === 2 ? '#a6c1ee' : '#96e6a1'})`
-              }}
-            >
-              <img
-                src={category.image}
-                alt={category.name}
-                className="w-16 h-16 object-cover rounded-full mr-4"
-              />
-              <h3 className="text-xl font-semibold text-gray-800">{category.name}</h3>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div id="exchange" className="p-8 bg-orange-50 flex flex-col items-center">
-        <div className="bg-white bg-opacity-90 p-8 rounded-3xl shadow-lg w-full">
-          <div className="w-full flex flex-col md:flex-row justify-between items-center">
-            <div className="md:w-1/2 pr-6">
-              <h3 className="text-3xl sm:text-4xl font-bold mb-4">Buy or Sell any book of your choice</h3>
-              <p className="text-xl sm:text-2xl font-semibold mb-2">Give your books countless lives by selling !!</p>
-              <p className="text-lg italic">Buy all trendy books. </p>
-            </div>
-            <div className="md:w-1/2 flex justify-center items-center mt-6 md:mt-0">
-              <img
-                src="/src/images/exch1.png"
-                alt="Books Exchange"
-                className="object-cover"
-              />
+          {/* SHOP BY CATEGORY */}
+          <div id="categories" className="p-8 bg-orange-50">
+            <h2 className="text-3xl font-bold mb-6 text-center">Shop By Category</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {categories.map((category, index) => (
+                <div
+                  key={category.id}
+                  className={`flex items-center p-4 rounded-lg shadow-md transition-transform transform hover:scale-105`}
+                  style={{
+                    background: `linear-gradient(to left, ${
+                      index === 0
+                        ? "#ff9a9e"
+                        : index === 1
+                        ? "#a1c4fd"
+                        : index === 2
+                        ? "#fbc2eb"
+                        : "#d4fc79"
+                    }, ${
+                      index === 0
+                        ? "#ff6a88"
+                        : index === 1
+                        ? "#c2e9fb"
+                        : index === 2
+                        ? "#a6c1ee"
+                        : "#96e6a1"
+                    })`,
+                  }}
+                >
+                  <img
+                    src={category.image}
+                    alt={category.name}
+                    className="w-16 h-16 object-cover rounded-full mr-4"
+                  />
+                  <h3 className="text-xl font-semibold text-gray-800">{category.name}</h3>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
+
+          {/* EXCHANGE SECTION */}
+          <div id="exchange" className="p-8 bg-orange-50 flex flex-col items-center">
+            <div className="bg-white bg-opacity-90 p-8 rounded-3xl shadow-lg w-full">
+              <div className="w-full flex flex-col md:flex-row justify-between items-center">
+                <div className="md:w-1/2 pr-6">
+                  <h3 className="text-3xl sm:text-4xl font-bold mb-4">Buy or Sell any book of your choice</h3>
+                  <p className="text-xl sm:text-2xl font-semibold mb-2">Give your books countless lives by selling !!</p>
+                  <p className="text-lg italic">Buy all trendy books.</p>
+                </div>
+                <div className="md:w-1/2 flex justify-center items-center mt-6 md:mt-0">
+                  <img
+                    src="/src/images/exch1.png"
+                    alt="Books Exchange"
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };

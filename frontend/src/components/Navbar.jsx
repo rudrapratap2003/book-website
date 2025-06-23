@@ -40,7 +40,6 @@ export const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
           <img src="/src/images/bookcart.png" alt="Logo" className="h-10" />
           <h1 className="ml-3 text-xl font-bold">BOOK CART</h1>
         </div>
-
         <div
           className={`md:flex gap-6 items-center ${
             isMobileMenuOpen
@@ -76,25 +75,17 @@ export const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
               </div>
             )}
           </div>
-
           <Link to="/exchange" className="block px-4 py-2 font-semibold">
             EXCHANGE
+          </Link>
+          <Link to="/sell" className="block px-4 py-2 font-semibold">
+            SELL
           </Link>
         </div>
 
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
-              {/* profile chip (optional) */}
-              <div className="hidden sm:flex items-center space-x-2">
-                <img
-                  src="/profile.png"
-                  alt="Profile"
-                  className="h-10 w-10 rounded-full border-2 border-black"
-                />
-                <span className="font-semibold">My Profile</span>
-              </div>
-
               {/* LOG-OUT replaces the old Log-In */}
               <button
                 onClick={handleLogout}

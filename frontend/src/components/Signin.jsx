@@ -29,7 +29,7 @@ const Signin = ({setIsAuthenticated}) => {
       setMessage(response.data.message);
       setError('');
       setIsAuthenticated(true)
-      navigate("/choose")
+      navigate("/")
     } catch (error) {
         const errorMessage = error.response?.data?.message || "Something went wrong";
         setError(errorMessage);
