@@ -15,7 +15,7 @@ const RefreshHandler = ({ setIsAuthenticated }) => {
 
         // already authenticated; redirect away from auth pages
         if (location.pathname === "/login" || location.pathname === "/signup") {
-          navigate("/choose", { replace: true });
+          navigate("/", { replace: true });
         }
       })
       .catch(() => {

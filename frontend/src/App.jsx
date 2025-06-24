@@ -7,7 +7,6 @@ import { Card } from "./components/Card";
 import { Footer } from "./components/Footer";
 import { CategoryPage } from "./components/CategoryPage";
 import Exchange from "./components/Exchange";
-import Choose from "./components/Choose";
 import Sell from "./components/Sell";
 import Buy from "./components/Buy";
 import SignUp from "./components/SignUp";
@@ -90,7 +89,6 @@ function App() {
         />
         <Route path="/books" element={<PrivateRoute element={<Home/>}/>}/>
         <Route path="/category/:categoryName" element={<PrivateRoute element={<CategoryPage />}/>}/>
-        <Route path="/choose" element={<PrivateRoute element={<Choose />}/>}/>
         <Route path="/sell" element={<PrivateRoute element={<Sell />}/>}/>
         <Route path="/buy" element={<PrivateRoute element={<Buy />}/>}/>
         <Route path="/exchange" element={<PrivateRoute element={<Exchange />}/>}/>
