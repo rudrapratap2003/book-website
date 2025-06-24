@@ -90,7 +90,7 @@ const MyProfile = () => {
           <button onClick={() => navigate("/sold-items")} className="bg-white border rounded-xl p-4 flex flex-col items-center hover:shadow">
             <FaCheckCircle className="text-green-500 text-xl" /><span>SOLD ITEMS</span>
           </button>
-          <button onClick={() => navigate("/wishlist")} className="bg-white border rounded-xl p-4 flex flex-col items-center hover:shadow">
+          <button onClick={() => navigate("/myprofile/wishlist")} className="bg-white border rounded-xl p-4 flex flex-col items-center hover:shadow">
             <FaHeart className="text-green-500 text-xl" /><span>WISHLIST</span>
           </button>
           <button onClick={() => navigate("/cart")} className="bg-white border rounded-xl p-4 flex flex-col items-center hover:shadow">

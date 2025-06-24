@@ -25,10 +25,10 @@ export const CategoryPage = () => {
 
     const fetchWishlist = async () => {
       try {
-        const res = await axios.get("/api/v1/wishlist", {
+        const res = await axios.get("/api/v1/users/wishlist", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setWishlist(res.data.map((book) => book._id));
+        setWishlist(res.data.data.map((book) => book._id));
       } catch (err) {
         console.error("Failed to fetch wishlist:", err);
       }
@@ -39,24 +39,21 @@ export const CategoryPage = () => {
   }, [categoryName, token]);
 
   const handleWishlistToggle = async (bookId) => {
-    try {
-      if (wishlist.includes(bookId)) {
-        await axios.delete(`/api/v1/wishlist/remove/${bookId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setWishlist((prev) => prev.filter((id) => id !== bookId));
-      } else {
-        await axios.post(
-          `/api/v1/wishlist/add/${bookId}`,
-          {},
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setWishlist((prev) => [...prev, bookId]);
-      }
-    } catch (err) {
-      console.error("Error toggling wishlist:", err);
-    }
-  };
+  try {
+    const res = await axios.post(
+      "/api/v1/users/toggle-wishlist",
+      { bookId },
+      { withCredentials: true }
+    );
+
+    const updatedWishlist = res.data.data;
+
+    // Update local state
+    setWishlist(updatedWishlist.map((book) => book._id));
+  } catch (err) {
+    console.error("Error toggling wishlist:", err);
+  }
+};
 
   const books = fetchedBooks.map((b, index) => ({
     ...b,

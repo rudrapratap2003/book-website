@@ -6,34 +6,44 @@ import axios from "axios";
 const WishlistPage = () => {
   const [wishlistBooks, setWishlistBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchWishlistBooks = async () => {
       try {
-        const res = await axios.get("/api/v1/wishlist", {
-          headers: { Authorization: `Bearer ${token}` },
+        const res = await axios.get("/api/v1/users/wishlist", {
+          withCredentials: true,
         });
-        setWishlistBooks(res.data);
+        setWishlistBooks(res.data.data); // Assuming ApiResponse sends .data
       } catch (err) {
         console.error("Error fetching wishlist:", err);
       }
     };
 
     fetchWishlistBooks();
-  }, [token]);
+  }, []);
 
-  const handleRemoveFromWishlist = async (bookId) => {
+  const handleToggleWishlist = async (bookId) => {
     try {
-      await axios.delete(`/api/v1/wishlist/remove/${bookId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setWishlistBooks((prev) => prev.filter((book) => book._id !== bookId));
-      if (selectedBook?._id === bookId) {
-        setSelectedBook(null); // close popup if open
+      const res = await axios.post(
+        "/api/v1/users/toggle-wishlist",
+        { bookId },
+        { withCredentials: true }
+      );
+
+      const updatedWishlist = res.data.data;
+
+      // Update local state based on new backend data
+      setWishlistBooks((prev) =>
+        updatedWishlist.some((b) => b._id === bookId)
+          ? prev // book was added back, keep as is
+          : prev.filter((book) => book._id !== bookId) // book was removed
+      );
+
+      if (selectedBook?._id === bookId && !updatedWishlist.some((b) => b._id === bookId)) {
+        setSelectedBook(null); // Close modal if removed
       }
     } catch (err) {
-      console.error("Failed to remove from wishlist:", err);
+      console.error("Failed to toggle wishlist:", err);
     }
   };
 
@@ -63,7 +73,7 @@ const WishlistPage = () => {
 
                 <button
                   className="absolute top-2 right-2 text-xl"
-                  onClick={() => handleRemoveFromWishlist(book._id)}
+                  onClick={() => handleToggleWishlist(book._id)}
                 >
                   <FaHeart className="text-red-700" />
                 </button>
@@ -131,7 +141,7 @@ const WishlistPage = () => {
             <div className="w-2/3 space-y-2">
               <div className="flex justify-between items-start">
                 <h2 className="text-xl font-bold">{selectedBook.bookname}</h2>
-                <button onClick={() => handleRemoveFromWishlist(selectedBook._id)}>
+                <button onClick={() => handleToggleWishlist(selectedBook._id)}>
                   <FaHeart className="text-red-500 text-xl" />
                 </button>
               </div>
@@ -165,7 +175,7 @@ const WishlistPage = () => {
                 </button>
                 <button
                   className="border border-red-500 text-red-500 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition"
-                  onClick={() => handleRemoveFromWishlist(selectedBook._id)}
+                  onClick={() => handleToggleWishlist(selectedBook._id)}
                 >
                   Remove from Wishlist
                 </button>
