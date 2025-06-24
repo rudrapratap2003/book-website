@@ -19,10 +19,13 @@ export const Footer = () => {
               <Link to="/" className="hover:text-orange-500">Home</Link>
             </li>
             <li>
-              <Link to="/books" className="hover:text-orange-500">Books</Link>
+              <Link to="/myprofile/wishlist" className="hover:text-orange-500">Wishlist</Link>
             </li>
             <li>
-              <Link to="/exchange" className="hover:text-orange-500">Exchange</Link>
+              <Link to="/cart" className="hover:text-orange-500">Cart</Link>
+            </li>
+            <li>
+              <Link to="/sold-items" className="hover:text-orange-500">Sold Items</Link>
             </li>
           </ul>
         </div>
@@ -32,13 +35,10 @@ export const Footer = () => {
           <h3 className="font-semibold text-lg">Customer Area</h3>
           <ul className="space-y-1">
             <li>
-              <Link to="/account" className="hover:text-orange-500">My Account</Link>
+              <Link to="/myprofile" className="hover:text-orange-500">My Account</Link>
             </li>
             <li>
               <Link to="/orders" className="hover:text-orange-500">Orders</Link>
-            </li>
-            <li>
-              <Link to="/tracking" className="hover:text-orange-500">Tracking List</Link>
             </li>
             <li>
               <Link to="/terms" className="hover:text-orange-500">Terms</Link>
@@ -56,9 +56,7 @@ export const Footer = () => {
         <div className="space-y-2">
           <h3 className="font-semibold text-lg">Don't Miss the Newest Books</h3>
           <p>Register now for the newest book updates!</p>
-          <button className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-            Register Now
-          </button>
+          
         </div>
 
       </div>

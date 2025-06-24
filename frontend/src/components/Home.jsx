@@ -24,15 +24,6 @@ export const Home = () => {
       image: "/src/images/cook.png",
     },
   ];
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const handleExploreClick = () => {
-    if (isLoggedIn) {
-      navigate("/buy");
-    } else {
-      navigate("/login");
-    }
-  };
   return (
     <>
 
@@ -49,8 +40,7 @@ export const Home = () => {
               Your one-stop shop for books of every genre! Where you can browse, buy, and sell books in minutes!
             </p>
             <div className="text-left">
-              <button
-                onClick={handleExploreClick}
+              <button 
                 className="bg-orange-500 text-white text-sm font-medium px-3 py-2 rounded hover:bg-orange-600 transition"
               >
                 Explore Now →
@@ -69,8 +59,7 @@ export const Home = () => {
       </div>
 
       {/* REST OF PAGE: Only show when logged in */}
-      {isLoggedIn && (
-        <>
+      
           {/* TRENDING BOOKS */}
           <div id="best-sales" className="p-6 sm:p-8 bg-orange-50">
             <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
@@ -213,7 +202,6 @@ export const Home = () => {
             </div>
           </div>
         </>
-      )}
-    </>
+      
   );
 };
