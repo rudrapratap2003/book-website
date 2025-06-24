@@ -16,6 +16,8 @@ import RefreshHandler from "./components/RefreshHandler";
 import MyProfile from "./components/MyProfile";
 import WishlistPage from "./components/WishlistPage";
 import SoldItems from "./components/SoldItems";
+import Cart from "./components/Cart";
+import MyOrders from "./components/MyOrders";
 const books = [
   { 
     id: 1, 
@@ -100,6 +102,8 @@ function App() {
         <Route path="/myprofile" element={<PrivateRoute element={<MyProfile />}/>}/>
         <Route path="/wishlist" element={<PrivateRoute element={<WishlistPage />}/>}/>
         <Route path="/sold-items" element={<PrivateRoute element={<SoldItems />}/>}/>
+        <Route path="/cart" element={<PrivateRoute element={<Cart />}/>}/>
+        <Route path="/orders" element={<PrivateRoute element={<MyOrders />}/>}/>
       </Routes>
       <Footer />
     </Router>
