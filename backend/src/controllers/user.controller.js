@@ -3,7 +3,7 @@ import {ApiError} from "../utils/ApiError.js"
 import {User} from "../models/user.model.js"
 import { Like } from "../models/like.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import mongoose from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 
 const generateAccessAndRefreshTokens = async(userId) => {
     try {
@@ -163,52 +163,50 @@ const refreshAccessToken = asyncHandler(async (req,res) => {
     }
 })
 
-const getLikedBooks = asyncHandler(async (req,res) => {
-    const booksLiked = await Like.aggregate([
-        {
-            $match: {
-                likedBy: new mongoose.Types.ObjectId(req.user._id)
-            }
-        },
-        {
-            $lookup: {
-                from: "books",
-                localField: "book",
-                foreignField: "_id",
-                as: 'likedBooks',
-                pipeline: [
-                    {
-                        $project: {
-                            bookName: 1,
-                            author: 1,
-                            price: 1
-                        }
-                    },
-                ]
-            }
-        },
-        {
-            $addFields: {
-                totalLikes: {
-                    $size: "$llikedBooks"
-                }
-            }
+const toggleWishlist = asyncHandler(async (req,res) => {
+    try {
+        const {bookId} = req.body
+        if(!bookId) {
+            throw new ApiError(400, "Invalid book id")
         }
-    ])
+        const user = await User.findById(req.user._id)
+        if(!user) {
+            throw new ApiError(404,"User not found");
+        }
+        const alreadyInWishlist = user.wishlist.includes(bookId)
 
-    if(!booksLiked?.length) {
-        throw new ApiError(400,"No books liked by the user")
+        if(alreadyInWishlist) {
+            user.wishlist.pull(bookId)
+        } else {
+            user.wishlist.push(bookId)
+        }
+        await user.save()
+        await user.populate("wishlist");
+
+        res.status(200).json(
+            new ApiResponse(200,user.wishlist, alreadyInWishlist ? "Removed From wishlist" : "Added to wishlist")
+        )
+    } catch(error) {
+        throw new ApiError(500,"Something went wrong")
     }
+})
 
-    return res.status(200).json(
-        new ApiResponse(200,booksLiked[0].likedBooks,"Liked books fetched successfully")
-    )
+const wishlistofUser = asyncHandler(async (req,res) => {
+    const user = await User.findById(req.user._id).populate("wishlist");
+    if(!user) throw new ApiError(404,"User not found")
+    const wishlist = user.wishlist
+    if(wishlist.length == 0) {
+        res.status(200).json(new ApiResponse(200,[],"wishlist is empty"))
+    } else {
+        res.status(200).json(new ApiResponse(200,wishlist,"wishlist fetched successfully"))
+    }
 })
 export {
     registerUser,
     loginUser,
-    getLikedBooks,
     logoutUser,
     refreshAccessToken,
+    toggleWishlist,
+    wishlistofUser,
     getMe
 }

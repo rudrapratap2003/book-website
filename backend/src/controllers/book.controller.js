@@ -65,7 +65,6 @@ const buyBook = asyncHandler(async (req,res) => {
 
 const fetchBookByCategory = asyncHandler(async (req, res) => {
   try {
-    console.log("Fetching books for category:", req.params.category); // Debug log
     const books = await Book.find({
       category: req.params.category.toLowerCase(),
     });

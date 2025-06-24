@@ -13,7 +13,7 @@ const userSchema = new Schema({
         type: String,
         required: true,
         unique: true,
-        lowecase: true,
+        lowercase: true,
         trim: true, 
     },
     phoneNo: {
@@ -34,7 +34,13 @@ const userSchema = new Schema({
     },
     refreshToken: {
         type: String
-    }
+    },
+    wishlist: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Book"
+        }
+    ]
 },{timestamps: true})
 
 userSchema.pre("save", async function (next) {

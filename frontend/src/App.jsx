@@ -12,6 +12,8 @@ import Buy from "./components/Buy";
 import SignUp from "./components/SignUp";
 import Signin from "./components/Signin";
 import RefreshHandler from "./components/RefreshHandler";
+import MyProfile from "./components/MyProfile";
+import WishlistPage from "./components/WishlistPage";
 const books = [
   { 
     id: 1, 
@@ -92,6 +94,8 @@ function App() {
         <Route path="/sell" element={<PrivateRoute element={<Sell />}/>}/>
         <Route path="/buy" element={<PrivateRoute element={<Buy />}/>}/>
         <Route path="/exchange" element={<PrivateRoute element={<Exchange />}/>}/>
+        <Route path="/myprofile" element={<PrivateRoute element={<MyProfile />}/>}/>
+        <Route path="/myprofile/wishlist" element={<PrivateRoute element={<WishlistPage />}/>}/>
       </Routes>
       <Footer />
     </Router>

@@ -6,11 +6,11 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 export function Menubar({ onLogout, initial = "U" }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -18,6 +18,8 @@ export function Menubar({ onLogout, initial = "U" }) {
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -71,10 +73,16 @@ export function Menubar({ onLogout, initial = "U" }) {
           },
         }}
       >
-        <MenuItem>
+        <MenuItem onClick={() => {
+          handleClose();
+          navigate("/myprofile")
+        }}>
           <Avatar /> Profile
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={() => {
+          handleClose();
+          navigate("/")
+        }}>
           <Avatar /> My account
         </MenuItem>
         <Divider />
