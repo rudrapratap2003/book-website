@@ -75,8 +75,21 @@ const fetchBookByCategory = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 })
+
+ const getBooksSoldByMe = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  // Find all books posted by this user
+  const soldBooks = await Book.find({ seller: userId }).sort({ updatedAt: -1 });
+
+  return res.status(200).json(
+    new ApiResponse(200, soldBooks, "Books sold by user fetched.")
+  );
+});
+
 export {
     sellBook,
     buyBook,
-    fetchBookByCategory
+    fetchBookByCategory,
+    getBooksSoldByMe
 }

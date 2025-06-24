@@ -15,6 +15,7 @@ import Signin from "./components/Signin";
 import RefreshHandler from "./components/RefreshHandler";
 import MyProfile from "./components/MyProfile";
 import WishlistPage from "./components/WishlistPage";
+import SoldItems from "./components/SoldItems";
 const books = [
   { 
     id: 1, 
@@ -98,6 +99,7 @@ function App() {
         <Route path="/exchange" element={<PrivateRoute element={<Exchange />}/>}/>
         <Route path="/myprofile" element={<PrivateRoute element={<MyProfile />}/>}/>
         <Route path="/wishlist" element={<PrivateRoute element={<WishlistPage />}/>}/>
+        <Route path="/sold-items" element={<PrivateRoute element={<SoldItems />}/>}/>
       </Routes>
       <Footer />
     </Router>
