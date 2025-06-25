@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const Home = () => {
   const categories = [
@@ -24,6 +24,25 @@ export const Home = () => {
       image: "/src/images/cook.png",
     },
   ];
+
+const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 3000); // 3 seconds
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSplash) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-white">
+        <img src="/src/images/logo.jpg" alt="Logo" className="w-32 h-32 animate-pulse" />
+      </div>
+    );
+  }
+
+
   return (
     <>
 

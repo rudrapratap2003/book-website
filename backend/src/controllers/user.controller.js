@@ -88,11 +88,20 @@ const loginUser = asyncHandler(async (req,res) => {
     )
 })
 
-const getMe = (req, res) => {
-  // req.user was set by auth.middleware.js
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-  res.json(req.user);          // or pick the fields you need
-};
+const getMe = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const user = await User.findById(req.user._id).select("-password -refreshToken");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  res.status(200).json(new ApiResponse(200, user, "User profile fetched successfully"));
+});
+
 
 const logoutUser = asyncHandler(async (req,res) => {
     await User.findByIdAndUpdate(
