@@ -86,9 +86,31 @@ const fetchBookByCategory = asyncHandler(async (req, res) => {
   );
 });
 
+const searchBooks = asyncHandler(async (req, res) => {
+  const { query } = req.query;
+
+  if (!query || query.trim() === "") {
+    return res.status(400).json({ message: "Search query is required" });
+  }
+
+  const regex = new RegExp(query.trim(), "i"); // case-insensitive search
+
+  const books = await Book.find({
+    $or: [
+      { bookname: { $regex: regex } },
+      { author: { $regex: regex } },
+      { category: { $regex: regex } },
+    ],
+  });
+
+  res.status(200).json(books);
+});
+
+
 export {
     sellBook,
     buyBook,
     fetchBookByCategory,
-    getBooksSoldByMe
+    getBooksSoldByMe,
+    searchBooks
 }

@@ -6,7 +6,6 @@ import { Navbar } from "./components/Navbar";
 import { Card } from "./components/Card";
 import { Footer } from "./components/Footer";
 import { CategoryPage } from "./components/CategoryPage";
-import Exchange from "./components/Exchange";
 import Sell from "./components/Sell";
 import Buy from "./components/Buy";
 import SignUp from "./components/SignUp";
@@ -17,6 +16,7 @@ import WishlistPage from "./components/WishlistPage";
 import SoldItems from "./components/SoldItems";
 import Cart from "./components/Cart";
 import MyOrders from "./components/MyOrders";
+import Search from "./components/Search";
 const books = [
   { 
     id: 1, 
@@ -96,13 +96,13 @@ function App() {
         <Route path="/category/:categoryName" element={<PrivateRoute element={<CategoryPage />}/>}/>
         <Route path="/sell" element={<PrivateRoute element={<Sell />}/>}/>
         <Route path="/buy" element={<PrivateRoute element={<Buy />}/>}/>
-        <Route path="/exchange" element={<PrivateRoute element={<Exchange />}/>}/>
         <Route path="/myprofile" element={<PrivateRoute element={<MyProfile />}/>}/>
 
         <Route path="/sold-items" element={<PrivateRoute element={<SoldItems />}/>}/>
         <Route path="/cart" element={<PrivateRoute element={<Cart />}/>}/>
         <Route path="/orders" element={<PrivateRoute element={<MyOrders />}/>}/>
         <Route path="/myprofile/wishlist" element={<PrivateRoute element={<WishlistPage />}/>}/>
+        <Route path="/search/:query" element={<PrivateRoute element={<Search />}/>}/>
       </Routes>
       <Footer />
     </Router>
