@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const res = await axios.get("/api/v1/cart", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await axios.get("/api/v1/users/cart", {
+          withCredentials: true,
         });
-        setCartItems(res.data.cartItems);
+        const itemsWithSelection = res.data.data.cartItems.map((item) => ({
+          ...item,
+          selected: false,
+        }));
+        setCartItems(itemsWithSelection);
+        console.log("Fetched cart items →", res.data.data.cartItems);
       } catch (error) {
         console.error("Error fetching cart items:", error);
       } finally {
@@ -23,7 +25,7 @@ const CartPage = () => {
     };
 
     fetchCart();
-  }, [token]);
+  }, []);
 
   const handleSelect = (id) => {
     setCartItems((prev) =>
@@ -33,20 +35,19 @@ const CartPage = () => {
     );
   };
 
-  const handleQuantityChange = async (id, quantity) => {
+  const handleAddToCart = async (bookId, quantity) => {
     try {
-      await axios.put(
-        `/api/v1/cart/update/${id}`,
-        { quantity },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      await axios.post(
+        "/api/v1/users/cart/add",
+        { bookId, quantity: parseInt(quantity) },
+        { withCredentials: true }
       );
+
       setCartItems((prev) =>
         prev.map((item) =>
-          item._id === id ? { ...item, quantity: parseInt(quantity) } : item
+          item.book._id === bookId
+            ? { ...item, quantity: parseInt(quantity) }
+            : item
         )
       );
     } catch (error) {
@@ -55,16 +56,14 @@ const CartPage = () => {
   };
 
   const handleRemoveSelected = async () => {
-    const selectedIds = cartItems.filter(item => item.selected).map(item => item._id);
+    const selectedIds = cartItems
+      .filter((item) => item.selected)
+      .map((item) => item._id);
     try {
       await axios.post(
-        "/api/v1/cart/remove",
+        "/api/v1/users/cart/remove",
         { ids: selectedIds },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { withCredentials: true }
       );
       setCartItems((prev) => prev.filter((item) => !item.selected));
     } catch (error) {
@@ -85,19 +84,25 @@ const CartPage = () => {
         <h2 className="text-4xl font-bold mb-4">My Cart</h2>
 
         {loading ? (
-          <p className=" text-gray-600">Loading your cart...</p>
+          <p className="text-gray-600">Loading your cart...</p>
         ) : cartItems.length === 0 ? (
-          <p className=" text-gray-600">Your cart is empty now.</p>
+          <p className="text-gray-600">Your cart is empty now.</p>
         ) : (
           <>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={selectedItems.length === cartItems.length}
+                  checked={
+                    selectedItems.length > 0 &&
+                    selectedItems.length === cartItems.length
+                  }
                   onChange={(e) =>
                     setCartItems((prev) =>
-                      prev.map((item) => ({ ...item, selected: e.target.checked }))
+                      prev.map((item) => ({
+                        ...item,
+                        selected: e.target.checked,
+                      }))
                     )
                   }
                 />
@@ -128,21 +133,25 @@ const CartPage = () => {
                 {item.book.image && (
                   <img
                     src={item.book.image}
-                    alt={item.book.title}
+                    alt={item.book.bookname}
                     className="w-24 h-32 object-cover rounded"
                   />
                 )}
 
                 <div className="flex-1">
-                  <p className="font-semibold">{item.book.title}</p>
-                  <p className="text-sm text-gray-500">By: {item.book.author}</p>
+                  <p className="font-semibold">{item.book.bookname}</p>
+                  <p className="text-sm text-gray-500">
+                    By: {item.book.author}
+                  </p>
 
                   <div className="flex gap-4 items-center mt-2">
                     <label>
                       Qty:
                       <select
                         value={item.quantity}
-                        onChange={(e) => handleQuantityChange(item._id, e.target.value)}
+                        onChange={(e) =>
+                          handleAddToCart(item.book._id, e.target.value)
+                        }
                         className="ml-2 border px-2 py-1 rounded"
                       >
                         {[1, 2, 3, 4, 5].map((num) => (
@@ -155,7 +164,7 @@ const CartPage = () => {
                   </div>
 
                   <p className="mt-2 font-semibold">
-                    ₹{item.book.price} x {item.quantity}
+                    ₹{item.book.price} × {item.quantity}
                   </p>
                 </div>
               </div>
@@ -175,7 +184,8 @@ const CartPage = () => {
             {selectedItems.map((item) => (
               <div key={item._id} className="flex justify-between">
                 <span>
-                  {item.book.title} {item.quantity > 1 && `× ${item.quantity}`}
+                  {item.book.bookname}{" "}
+                  {item.quantity > 1 && `× ${item.quantity}`}
                 </span>
                 <span>₹{item.book.price * item.quantity}</span>
               </div>

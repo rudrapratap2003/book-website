@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { FaStar, FaRegStar, FaHeart, FaRegHeart } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import axios from "axios";
+import book2 from "../images/book2.jpg"
 
 export const CategoryPage = () => {
   const { categoryName } = useParams();
@@ -13,6 +14,25 @@ export const CategoryPage = () => {
   const formattedCategory = categoryName.toLowerCase().replace(/\s+/g, "-");
   const token = localStorage.getItem("token");
 
+      const handleAddToCart = async (bookId) => {
+  try {
+    
+    await axios.post(
+      "/api/v1/users/cart/add",
+      {
+        bookId,
+        quantity: 1,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    setSelectedBook(null);
+  } catch (err) {
+    console.error("Error:", err);
+  }
+};
+
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -22,6 +42,8 @@ export const CategoryPage = () => {
         console.error("Failed to fetch books:", err);
       }
     };
+
+
 
     const fetchWishlist = async () => {
       try {
@@ -110,13 +132,15 @@ export const CategoryPage = () => {
 
                 <div className="relative">
                   <img
-                    src={book.image}
+                    src={book.image || book2}
                     alt={book.title}
                     className="w-full h-60 object-cover rounded-lg"
                     onError={(e) => {
-                      e.target.src = "/images/placeholder.jpg";
+                      e.target.onerror = null; // prevents infinite loop in case book2 also fails
+                      e.target.src = book2;
                     }}
                   />
+
                   <button
                     className="absolute bottom-0 left-0 w-full bg-white text-orange-500 border border-orange-500 font-semibold py-1 opacity-90 hover:opacity-100 transition-all"
                     onClick={() => setSelectedBook(book)}
@@ -208,7 +232,7 @@ export const CategoryPage = () => {
               </p>
 
               <div className="flex gap-2 mt-4">
-                <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
+                <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition" onClick={() => handleAddToCart(selectedBook.id)}>
                   Add To Cart
                 </button>
                 <button

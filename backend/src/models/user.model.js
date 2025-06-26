@@ -40,7 +40,14 @@ const userSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "Book"
         }
+    ],
+    cart: [
+        {
+            book: { type: Schema.Types.ObjectId, ref: "Book" },
+            quantity: { type: Number, default: 1 }
+        }
     ]
+
 },{timestamps: true})
 
 userSchema.pre("save", async function (next) {
