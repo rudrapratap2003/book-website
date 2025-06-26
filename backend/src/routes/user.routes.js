@@ -1,11 +1,14 @@
 import { Router } from "express";
 import { 
+    addToCart,
+    getCart,
     loginUser,
     logoutUser, 
     registerUser,
+    removeCartItems,
     toggleWishlist,
     wishlistofUser,
-    getMe
+    getMyProfile
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router()
@@ -15,5 +18,9 @@ router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT, logoutUser)
 router.route("/toggle-wishlist").post(verifyJWT, toggleWishlist)
 router.route("/wishlist").get(verifyJWT, wishlistofUser)
-router.get("/me", verifyJWT, getMe);
-export default router
+router.route("/myprofile").get(verifyJWT, getMyProfile);
+router.route("/cart").get(verifyJWT, getCart)
+router.route("/cart/add").post(verifyJWT, addToCart)
+router.route("/cart/remove").post(verifyJWT, removeCartItems)
+
+export default router;
