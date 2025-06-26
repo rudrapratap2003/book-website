@@ -49,10 +49,10 @@ const Signin = ({setIsAuthenticated}) => {
 
       <div className="md:w-1/2 w-full bg-white flex items-center justify-center p-6">
         <div className="w-full max-w-md">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Signin Here</h2>
+          <h2 className="font-gothic text-2xl font-bold text-gray-800 mb-4">LogIn Here</h2>
           <form className="space-y-4" onSubmit={handleLogin}>
             <div>
-              <label className="block text-gray-700 mb-1 text-sm" htmlFor="identifier">
+              <label className="font-parastoo block text-gray-700 mb-1 text-lg" htmlFor="identifier">
                 Email
               </label>
               <input
@@ -62,12 +62,12 @@ const Signin = ({setIsAuthenticated}) => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4CAF50]"
+                className="font-parastoo w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4CAF50]"
                 placeholder="Enter your email"
               />
             </div>
             <div>
-              <label className="block text-gray-700 mb-1 text-sm" htmlFor="password">
+              <label className="font-parastoo block text-gray-700 mb-1 text-lg" htmlFor="password">
                 Password
               </label>
               <input
@@ -77,20 +77,20 @@ const Signin = ({setIsAuthenticated}) => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4CAF50]"
+                className="font-parastoo w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4CAF50]"
                 placeholder="Enter your password"
               />
             </div>
 
-            <button type="submit" className="w-full bg-[#4CAF50] text-white py-2 px-4 rounded-md hover:bg-[#388E3C] transition duration-200 text-sm font-medium">Login</button>
+            <button type="submit" className="font-gothic w-full bg-[#4CAF50] text-white py-2 px-4 rounded-md hover:bg-[#388E3C] transition duration-200 text-sm font-medium">Login</button>
             {message && <p style={{ color: "green" }}>{message}</p>}
             {error && <p style={{ color: "red" }}>{error}</p>}
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600 text-sm">
+            <p className="font-parastoo text-gray-600 text-lg">
               Don't have an account?{' '}
-              <button onClick={() => navigate("/signup")} className="text-[#4CAF50] hover:text-[#388E3C] font-medium">
+              <button onClick={() => navigate("/signup")} className="font-gothic text-[#4CAF50] hover:text-[#388E3C] text-sm">
                 Register here
               </button>
             </p>

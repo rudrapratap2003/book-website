@@ -16,7 +16,7 @@ const [showSplash, setShowSplash] = useState(true);
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 3000); // 3 seconds
+    }, 1000); 
     return () => clearTimeout(timer);
   }, []);
 
@@ -34,10 +34,10 @@ const [showSplash, setShowSplash] = useState(true);
       <div className="bg-orange-50 min-h-screen flex items-center justify-center px-2 sm:px-4">
         <div className="bg-white rounded-3xl shadow-2xl flex flex-col md:flex-row items-start justify-between w-full max-w-[90%] h-auto p-6 md:p-16">
           <div className="md:w-1/2 flex flex-col justify-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">
+            <h2 className="font-gothic text-3xl md:text-4xl font-bold mb-6 text-black">
               The Store that Feeds Your Mind. Visit Us Today!!
             </h2>
-            <p className="text-base md:text-lg text-gray-700 mb-8">
+            <p className="font-parastoo text-lg md:text-xl text-gray-800 mb-8">
               Your one-stop shop for books of every genre! Where you can browse, buy, and sell books in minutes!
             </p>
            {isAuthenticated ? (
@@ -45,7 +45,7 @@ const [showSplash, setShowSplash] = useState(true);
     {/* Wishlist Button */}
     <button
       onClick={() => navigate("/myprofile/wishlist")}
-      className="text-pink-600 border border-pink-500 px-4 py-1 rounded-full font-medium hover:bg-pink-100"
+      className="font-gothic text-pink-600 border border-pink-500 px-4 py-1 rounded-full font-semibold hover:bg-pink-100"
     >
       ❤️ Wishlist
     </button>
@@ -53,7 +53,7 @@ const [showSplash, setShowSplash] = useState(true);
     {/* Cart Button */}
     <button
       onClick={() => navigate("/myprofile/cart")}
-      className="text-blue-600 border border-blue-500 px-4 py-1 rounded-full font-medium hover:bg-blue-100"
+      className="font-gothic text-blue-600 border border-blue-500 px-4 py-1 rounded-full font-semibold hover:bg-blue-100"
     >
       🛒 Cart
     </button>
@@ -62,7 +62,7 @@ const [showSplash, setShowSplash] = useState(true);
   <div className="text-left">
     <button
       onClick={() => navigate("/login")}
-      className="bg-orange-500 text-white text-sm font-medium px-3 py-2 rounded hover:bg-orange-600 transition"
+      className="font-gothic bg-orange-500 text-white text-sm font-medium px-3 py-2 rounded hover:bg-orange-600 transition"
     >
       Explore Now →
     </button>
@@ -82,11 +82,11 @@ const [showSplash, setShowSplash] = useState(true);
       {isAuthenticated && (
         <>
         <div id="best-sales" className="p-6 sm:p-8 bg-orange-50">
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        <h2 className="font-gothic text-3xl font-bold mb-6 text-center text-gray-800">
           Books Trending Now
         </h2>
         <div className="bg-white p-4 rounded-3xl shadow-md">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="font-parastoo text-lg grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
               {
                 image: "/src/images/book1.jpg",
@@ -104,7 +104,7 @@ const [showSplash, setShowSplash] = useState(true);
               },
               {
                 image: "/src/images/boook3.jpg",
-                title: "Ruthless Vows",
+                title: "RUTHLESS VOWS",
                 author: "Rebecca Ross",
                 price: "999",
                 stock: "5 stocks left",
@@ -146,7 +146,7 @@ const [showSplash, setShowSplash] = useState(true);
         </div>
       </div>
       <div id="categories" className="p-8 bg-orange-50">
-        <h2 className="text-3xl font-bold mb-6 text-center">Shop By Category</h2>
+        <h2 className="font-gothic text-3xl font-bold mb-6 text-center">Shop By Category</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {categories.map((category, index) => (
             <div
@@ -165,7 +165,7 @@ const [showSplash, setShowSplash] = useState(true);
                 alt={category.name}
                 className="w-16 h-16 object-cover rounded-full mr-4"
               />
-              <h3 className="text-xl font-semibold text-gray-800">{category.name}</h3>
+              <h3 className="font-parastoo text-2xl font-semibold text-gray-800">{category.name}</h3>
             </div>
           ))}
         </div>
@@ -174,9 +174,9 @@ const [showSplash, setShowSplash] = useState(true);
         <div className="bg-white bg-opacity-90 p-8 rounded-3xl shadow-lg w-full">
           <div className="w-full flex flex-col md:flex-row justify-between items-center">
             <div className="md:w-1/2 pr-6">
-              <h3 className="text-3xl sm:text-4xl font-bold mb-4">Buy or Sell any book of your choice</h3>
-              <p className="text-xl sm:text-2xl font-semibold mb-2">Give your books countless lives by selling !!</p>
-              <p className="text-lg italic">Buy all trendy books.</p>
+              <h3 className="font-gothic text-3xl sm:text-4xl font-bold mb-4">Buy or Sell any book of your choice</h3>
+              <p className="font-gothic text-xl sm:text-2xl font-semibold mb-2">Give your books countless lives by selling !!</p>
+              <p className="font-edu font-medium text-base italic">Buy all trendy books.</p>
             </div>
             <div className="md:w-1/2 flex justify-center items-center mt-6 md:mt-0">
               <img src="/src/images/exch1.png" alt="Books Exchange" className="object-cover" />

@@ -8,12 +8,12 @@ export const Footer = () => {
         {/* Logo and Book Cart */}
         <div className="flex flex-col items-center space-y-2 mb-6">
           <img src="/src/images/bookcart.png" alt="Logo" className="w-16 h-16" />
-          <span className="font-bold text-4xl">Book Cart</span>
+          <span className="font-adobe font-bold text-5xl">Book Cart</span>
         </div>
 
         {/* Quick Links */}
         <div className="space-y-2">
-          <h3 className="font-semibold text-lg">Quick Links</h3>
+          <h3 className="font-gothic font-semibold text-lg">Quick Links</h3>
           <ul className="space-y-1">
             <li>
               <Link to="/" className="hover:text-orange-500">Home</Link>
@@ -32,7 +32,7 @@ export const Footer = () => {
 
         {/* Customer Area */}
         <div className="space-y-2">
-          <h3 className="font-semibold text-lg">Customer Area</h3>
+          <h3 className="font-gothic font-semibold text-lg">Customer Area</h3>
           <ul className="space-y-1">
             <li>
               <Link to="/myprofile" className="hover:text-orange-500">My Account</Link>
@@ -54,7 +54,7 @@ export const Footer = () => {
 
         {/* Register Section */}
         <div className="space-y-2">
-          <h3 className="font-semibold text-lg">Don't Miss the Newest Books</h3>
+          <h3 className="font-gothic font-semibold text-lg">Don't Miss the Newest Books</h3>
           <p>Register now for the newest book updates!</p>
           
         </div>

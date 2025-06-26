@@ -27,12 +27,12 @@ const SoldItems = () => {
 
   return (
     <div className="p-4 sm:p-8">
-        <h1 className="text-4xl font-bold mb-6">Books Sold By Me !</h1>
+        <h1 className="font-gothic text-4xl font-bold mb-6">Books Sold By Me !</h1>
 
         {loading ? (
-            <p className="text-gray-600">Loading...</p>
+            <p className="font-parastoo text-lg text-gray-600">Loading...</p>
         ) : soldBooks.length === 0 ? (
-            <p className="text-gray-600">No books sold yet.</p>
+            <p className="font-parastoo text-lg text-gray-600">No books sold yet.</p>
         ): (
             <div className="space-y-4">
                 {soldBooks.map((book) => (
@@ -43,14 +43,14 @@ const SoldItems = () => {
                         <div className="flex items-start sm:items-center gap-4 w-full sm:w-2/3">
                         <img src={book.image} alt={book.bookname} className="w-20 h-28 object-cover rounded-md border" />
                         <div>
-                            <h2 className="font-medium text-lg">{book.bookname}</h2>
-                            <p className="text-sm text-gray-600">By: {book.author}</p>
-                            <p className="text-base mt-2 font-semibold">₹{book.price}</p>
+                            <h2 className="font-parastoo font-medium text-xl">{book.bookname}</h2>
+                            <p className="font-parastoo text-base text-gray-600">By: {book.author}</p>
+                            <p className="font-parastoo text-lg mt-2 font-semibold">₹{book.price}</p>
                         </div>
                         </div>
 
                         <div className="mt-4 sm:mt-0 text-sm text-right">
-                            <p className="text-green-600 font-medium">
+                            <p className="font-gothic text-green-600 font-medium">
                                 ● Sold on{" "}
                   {new Date(book.soldDate).toLocaleDateString("en-IN", {
                     day: "2-digit",
@@ -58,7 +58,7 @@ const SoldItems = () => {
                     year: "numeric",
                   })}
                             </p>
-                        <p className="text-gray-600 mt-1">Your book has been sold.</p>
+                        <p className="font-parastoo text-base text-gray-600 mt-1">Your book has been sold.</p>
                         </div>
                     </div>
                 ))}

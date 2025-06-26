@@ -78,7 +78,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
             &#9776;
           </button>
           <img src="/src/images/bookcart.png" alt="Logo" className="h-10" />
-          <h1 className="ml-3 text-xl font-bold">BOOK CART</h1>
+          <h1 className="font-adobe ml-3 text-4xl font-bold">BOOK CART</h1>
         </div>
 
         {/* centre links */}
@@ -89,14 +89,14 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
               : "hidden"
           } md:flex-row`}
         >
-          <Link to="/" className="block px-4 py-2 font-semibold">
+          <Link to="/" className="font-gothic block px-4 py-2 font-semibold">
             HOME
           </Link>
 
           {/* BOOKS dropdown */}
           <div className="relative">
             <button
-              className="block px-4 py-2 font-semibold"
+              className="font-gothic block px-4 py-2 font-semibold"
               onClick={() => setIsBooksDropdownOpen(!isBooksDropdownOpen)}
             >
               BOOKS ▼
@@ -121,7 +121,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
               </div>
             )}
           </div>
-          <Link to="/sell" className="block px-4 py-2 font-semibold">
+          <Link to="/sell" className="font-gothic block px-4 py-2 font-semibold">
             SELL
           </Link>
         </div>
@@ -154,7 +154,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
                     value={query}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
-                    className="bg-gray-100 ml-2 outline-none"
+                    className="font-parastoo text-lg bg-gray-100 ml-2 outline-none"
                   />
                 </div>
                 {suggestions.length > 0 && (
@@ -217,7 +217,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
   ) : (
     <button
       onClick={() => navigate("/login")}
-      className="flex items-center space-x-2 border-2 border-black text-black px-4 py-2 rounded-full font-bold hover:bg-gray-200 transition text-sm"
+      className="font-gothic flex items-center space-x-2 border-2 border-black text-black px-4 py-2 rounded-full font-bold hover:bg-gray-200 transition text-sm"
     >
       <span>Log&nbsp;In</span>
       <FaUser />

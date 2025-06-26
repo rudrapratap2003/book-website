@@ -49,10 +49,10 @@ const WishlistPage = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Your Wishlist</h1>
+      <h1 className="font-gothic text-3xl font-bold mb-6">Your Wishlist</h1>
 
       {wishlistBooks.length === 0 ? (
-        <p className="text-gray-500">Your wishlist is empty.</p>
+        <p className="font-parastoo text-lg text-gray-500">Your wishlist is empty.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {wishlistBooks.map((book) => {
@@ -65,12 +65,6 @@ const WishlistPage = () => {
                 key={book._id}
                 className="relative p-4 rounded-lg border border-gray-200 shadow-md bg-white w-60"
               >
-                {discount > 0 && (
-                  <div className="absolute top-0 left-0 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
-                    {discount}% OFF
-                  </div>
-                )}
-
                 <button
                   className="absolute top-2 right-2 text-xl"
                   onClick={() => handleToggleWishlist(book._id)}
@@ -88,17 +82,17 @@ const WishlistPage = () => {
                     }}
                   />
                   <button
-                    className="absolute bottom-0 left-0 w-full bg-white text-orange-500 border border-orange-500 font-semibold py-1 opacity-90 hover:opacity-100 transition-all"
+                    className="font-gothic absolute bottom-0 left-0 w-full bg-white text-orange-500 border border-orange-500 font-medium py-1 opacity-90 hover:opacity-100 transition-all"
                     onClick={() => setSelectedBook(book)}
                   >
                     QUICK VIEW
                   </button>
                 </div>
 
-                <div className="text-lg font-semibold mt-2 text-gray-800">
+                <div className="font-parastoo text-xl font-semibold mt-2 text-gray-800">
                   {book.bookname}
                 </div>
-                <div className="text-sm text-gray-600">{book.author}</div>
+                <div className="font-parastoo text-base text-gray-600">{book.author}</div>
 
                 <div className="flex justify-center my-1">
                   {Array.from({ length: 5 }, (_, index) =>
@@ -110,7 +104,7 @@ const WishlistPage = () => {
                   )}
                 </div>
 
-                <div className="text-red-600 font-bold text-lg">₹{book.price}</div>
+                <div className="font-parastoo text-red-600 font-bold text-xl">₹{book.price}</div>
                 {book.originalPrice && (
                   <div className="text-gray-400 line-through text-sm">
                     ₹{book.originalPrice}
@@ -140,12 +134,12 @@ const WishlistPage = () => {
             </div>
             <div className="w-2/3 space-y-2">
               <div className="flex justify-between items-start">
-                <h2 className="text-xl font-bold">{selectedBook.bookname}</h2>
+                <h2 className="font-parastoo text-2xl font-bold">{selectedBook.bookname}</h2>
                 <button onClick={() => handleToggleWishlist(selectedBook._id)}>
                   <FaHeart className="text-red-500 text-xl" />
                 </button>
               </div>
-              <p className="text-gray-600">By: {selectedBook.author}</p>
+              <p className="font-parastoo text-lg text-gray-600">By: {selectedBook.author}</p>
               <div className="flex">
                 {Array.from({ length: 5 }, (_, index) =>
                   index < selectedBook.rating ? (
@@ -157,7 +151,7 @@ const WishlistPage = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-red-600 font-bold text-lg">
+                <span className="font-parastoo text-xl text-red-600 font-bold">
                   ₹{selectedBook.price}
                 </span>
                 {selectedBook.originalPrice && (
@@ -167,14 +161,14 @@ const WishlistPage = () => {
                 )}
               </div>
 
-              <p className="text-gray-700 text-sm">{selectedBook.description}</p>
+              <p className="font-parastoo text-gray-700 text-base">{selectedBook.description}</p>
 
               <div className="flex gap-2 mt-4">
-                <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
+                <button className="font-gothic bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
                   Add To Cart
                 </button>
                 <button
-                  className="border border-red-500 text-red-500 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition"
+                  className="font-gothic border border-red-500 text-red-500 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition"
                   onClick={() => handleToggleWishlist(selectedBook._id)}
                 >
                   Remove from Wishlist
