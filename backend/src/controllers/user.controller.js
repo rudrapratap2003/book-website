@@ -93,6 +93,21 @@ const getMe = (req, res) => {
   res.json(req.user);          // or pick the fields you need
 };
 
+const getMyProfile = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const user = await User.findById(req.user._id).select("-password -refreshToken");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  res.status(200).json(new ApiResponse(200, user, "User profile fetched successfully"));
+});
+
+
 const logoutUser = asyncHandler(async (req,res) => {
     await User.findByIdAndUpdate(
         req.user._id,
@@ -294,5 +309,6 @@ export {
     getMe,
     getCart,
     addToCart,
-    removeCartItems
+    removeCartItems,
+    getMyProfile
 }

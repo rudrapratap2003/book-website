@@ -15,6 +15,7 @@ import WishlistPage from "./components/WishlistPage";
 import SoldItems from "./components/SoldItems";
 import Cart from "./components/Cart";
 import MyOrders from "./components/MyOrders";
+import Search from "./components/Search";
 const books = [
   { 
     id: 1, 
@@ -100,6 +101,7 @@ function App() {
         <Route path="/myprofile/cart" element={<PrivateRoute element={<Cart />}/>}/>
         <Route path="/orders" element={<PrivateRoute element={<MyOrders />}/>}/>
         <Route path="/myprofile/wishlist" element={<PrivateRoute element={<WishlistPage />}/>}/>
+        <Route path="/search/:query" element={<PrivateRoute element={<Search />}/>}/>
       </Routes>
       <Footer />
     </Router>

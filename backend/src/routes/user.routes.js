@@ -8,6 +8,7 @@ import {
     removeCartItems,
     toggleWishlist,
     wishlistofUser,
+    getMyProfile
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router()
@@ -20,4 +21,5 @@ router.route("/wishlist").get(verifyJWT, wishlistofUser)
 router.route("/cart").get(verifyJWT, getCart)
 router.route("/cart/add").post(verifyJWT, addToCart)
 router.route("/cart/remove").post(verifyJWT, removeCartItems)
+router.route("/myprofile").get(verifyJWT, getMyProfile)
 export default router

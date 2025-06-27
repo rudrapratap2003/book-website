@@ -9,6 +9,9 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBooksDropdownOpen, setIsBooksDropdownOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+
   const navigate = useNavigate();
 
   const bookCategories = [
@@ -40,6 +43,29 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
     }
   };
 
+  const handleInputChange = async (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    if (value.trim() !== "") {
+      try {
+        const res = await axios.get(`/api/v1/books/search?query=${value}`);
+        setSuggestions(res.data);
+      } catch (err) {
+        console.error("Error fetching suggestions:", err);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      navigate(`/search/${query}`);
+      setSuggestions([]);
+    }
+  };
+
+ 
   return (
     <div className="font-sans">
       <nav className="bg-white/30 backdrop-blur-md text-black p-4 flex justify-between items-center relative">
@@ -104,29 +130,46 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
 <div className="flex items-center space-x-4 relative">
   {isAuthenticated && (
     <>
-      {/* Search (Desktop) */}
-      <div className="hidden md:flex items-center bg-gray-100 px-3 py-1 rounded-full">
-        <svg
-          className="w-5 h-5 text-gray-500"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 101.5 9a7.5 7.5 0 0015 0z"
-          ></path>
-        </svg>
-        <input
-          type="text"
-          placeholder="Search for books..."
-          className="bg-gray-100 ml-2 outline-none"
-        />
-      </div>
-
+       {/* Desktop Search */}
+              <div className="hidden md:flex flex-col relative">
+                <div className="flex items-center bg-gray-100 px-3 py-1 rounded-full">
+                  {/* Search icon */}
+                  <svg
+                    className="w-5 h-5 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 101.5 9a7.5 7.5 0 0015 0z"
+                    ></path>
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search for books..."
+                    value={query}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    className="bg-gray-100 ml-2 outline-none"
+                  />
+                </div>
+                {suggestions.length > 0 && (
+                  <ul className="absolute top-12 left-0 w-full bg-white border border-gray-200 shadow-md z-50 rounded">
+                    {suggestions.map((book) => (
+                      <li
+                        key={book._id}
+                        className="px-4 py-2 text-gray-600"
+                      >
+                        {book.title}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
       {/* Search (Mobile) */}
       <div className="md:hidden">
         <button onClick={() => setShowMobileSearch(true)}>
