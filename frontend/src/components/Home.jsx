@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Loader from "../components/Loader"; // ✅ Adjust path if needed
+import Loader from "../components/Loader";
 
 export const Home = ({ isAuthenticated }) => {
   const navigate = useNavigate();
@@ -18,19 +18,17 @@ export const Home = ({ isAuthenticated }) => {
     { id: 3, name: "Romantic", image: "/src/images/romm.png" },
     { id: 4, name: "Cooking", image: "/src/images/cook.png" },
   ];
-
   if (loading) return <Loader />; // 👈 show loader while loading
-
   return (
     <>
       {/* HERO SECTION */}
       <div className="bg-orange-50 min-h-screen flex items-center justify-center px-2 sm:px-4">
         <div className="bg-white rounded-3xl shadow-2xl flex flex-col md:flex-row items-start justify-between w-full max-w-[90%] h-auto p-6 md:p-16">
           <div className="md:w-1/2 flex flex-col justify-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">
+            <h2 className="font-gothic text-3xl md:text-4xl font-bold mb-6 text-black">
               The Store that Feeds Your Mind. Visit Us Today!!
             </h2>
-            <p className="text-base md:text-lg text-gray-700 mb-8">
+            <p className="font-parastoo text-lg md:text-xl text-gray-800 mb-8">
               Your one-stop shop for books of every genre! Where you can browse, buy, and sell books in minutes!
             </p>
             {isAuthenticated ? (

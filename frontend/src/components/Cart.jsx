@@ -8,7 +8,7 @@ const CartPage = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const res = await axios.get("/api/v1/users/cart", {
+        const res = await axios.get("/api/v1/cart", {
           withCredentials: true,
         });
         const itemsWithSelection = res.data.data.cartItems.map((item) => ({
@@ -38,7 +38,7 @@ const CartPage = () => {
   const handleAddToCart = async (bookId, quantity) => {
     try {
       await axios.post(
-        "/api/v1/users/cart/add",
+        "/api/v1/cart/add",
         { bookId, quantity: parseInt(quantity) },
         { withCredentials: true }
       );
@@ -61,7 +61,7 @@ const CartPage = () => {
       .map((item) => item._id);
     try {
       await axios.post(
-        "/api/v1/users/cart/remove",
+        "/api/v1/cart/remove",
         { ids: selectedIds },
         { withCredentials: true }
       );
@@ -81,12 +81,12 @@ const CartPage = () => {
     <div className="p-4 md:flex gap-6 flex-col md:flex-row">
       {/* Left Section */}
       <div className="md:w-2/3 w-full">
-        <h2 className="text-4xl font-bold mb-4">My Cart</h2>
+        <h2 className="font-gothic text-4xl font-bold mb-4">My Cart</h2>
 
         {loading ? (
-          <p className="text-gray-600">Loading your cart...</p>
+          <p className="font-parastoo text-lg text-gray-600">Loading your cart...</p>
         ) : cartItems.length === 0 ? (
-          <p className="text-gray-600">Your cart is empty now.</p>
+          <p className="font-parastoo text-lg text-gray-600">Your cart is empty now.</p>
         ) : (
           <>
             <div className="flex items-center justify-between mb-4">
@@ -106,13 +106,13 @@ const CartPage = () => {
                     )
                   }
                 />
-                <span className="font-medium">
+                <span className="font-gothic text-base font-semibold">
                   {selectedItems.length}/{cartItems.length} ITEMS SELECTED
                 </span>
               </div>
               <button
                 onClick={handleRemoveSelected}
-                className="text-red-500 hover:underline"
+                className="font-gothic font-medium text-red-500 "
               >
                 REMOVE
               </button>
@@ -139,12 +139,12 @@ const CartPage = () => {
                 )}
 
                 <div className="flex-1">
-                  <p className="font-semibold">{item.book.bookname}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="font-parastoo text-xl font-semibold">{item.book.bookname}</p>
+                  <p className="font-parastoo text-lg text-gray-500">
                     By: {item.book.author}
                   </p>
 
-                  <div className="flex gap-4 items-center mt-2">
+                  <div className="font-parastoo flex gap-4 items-center mt-2 text-base">
                     <label>
                       Qty:
                       <select
@@ -163,7 +163,7 @@ const CartPage = () => {
                     </label>
                   </div>
 
-                  <p className="mt-2 font-semibold">
+                  <p className="font-parastoo text-lg mt-2 font-semibold">
                     ₹{item.book.price} × {item.quantity}
                   </p>
                 </div>
@@ -176,13 +176,13 @@ const CartPage = () => {
       {/* Right Section */}
       {!loading && cartItems.length > 0 && (
         <div className="md:w-1/3 w-full border p-4 rounded-lg mt-6 md:mt-0">
-          <h3 className="font-semibold mb-4">
+          <h3 className="font-gothic font-semibold mb-4">
             PRICE DETAILS ({selectedItems.length} items)
           </h3>
 
           <div className="space-y-2">
             {selectedItems.map((item) => (
-              <div key={item._id} className="flex justify-between">
+              <div key={item._id} className="font-parastoo text-lg flex justify-between">
                 <span>
                   {item.book.bookname}{" "}
                   {item.quantity > 1 && `× ${item.quantity}`}
@@ -194,12 +194,12 @@ const CartPage = () => {
 
           <hr className="my-4" />
 
-          <div className="flex justify-between font-semibold text-lg">
+          <div className="font-parastoo flex justify-between font-semibold text-xl">
             <span>Total Amount</span>
             <span>₹{totalAmount}</span>
           </div>
 
-          <button className="w-full bg-red-500 text-white py-2 rounded mt-4 hover:bg-red-600">
+          <button className="font-gothic w-full bg-red-500 text-white py-2 rounded mt-4 hover:bg-red-600">
             PLACE ORDER
           </button>
         </div>

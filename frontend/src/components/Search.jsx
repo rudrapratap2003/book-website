@@ -53,10 +53,10 @@ const SearchResults = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Search Results for "{query}"</h1>
+      <h1 className="font-gothic text-3xl font-bold mb-6">Search Results for "{query}"</h1>
 
       {books.length === 0 ? (
-        <p className="text-gray-500">No books found.</p>
+        <p className="text-gray-500 font-parastoo text-lg">No books found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {books.map((book) => {
@@ -92,17 +92,17 @@ const SearchResults = () => {
                     }}
                   />
                   <button
-                    className="absolute bottom-0 left-0 w-full bg-white text-orange-500 border border-orange-500 font-semibold py-1 opacity-90 hover:opacity-100 transition-all"
+                    className="font-gothic absolute bottom-0 left-0 w-full bg-white text-orange-500 border border-orange-500 font-medium py-1 opacity-90 hover:opacity-100 transition-all"
                     onClick={() => setSelectedBook(book)}
                   >
                     QUICK VIEW
                   </button>
                 </div>
 
-                <div className="text-lg font-semibold mt-2 text-gray-800">
+                <div className="font-parastoo text-xl font-semibold mt-2 text-gray-800">
                   {book.bookname}
                 </div>
-                <div className="text-sm text-gray-600">{book.author}</div>
+                <div className="text-base font-parastoo text-gray-600">{book.author}</div>
 
                 <div className="flex justify-center my-1">
                   {Array.from({ length: 5 }, (_, index) =>
@@ -114,12 +114,7 @@ const SearchResults = () => {
                   )}
                 </div>
 
-                <div className="text-red-600 font-bold text-lg">₹{book.price}</div>
-                {book.originalPrice && (
-                  <div className="text-gray-400 line-through text-sm">
-                    ₹{book.originalPrice}
-                  </div>
-                )}
+                <div className="font-parastoo text-red-600 font-bold text-xl">₹{book.price}</div>
               </div>
             );
           })}
@@ -144,14 +139,14 @@ const SearchResults = () => {
             </div>
             <div className="w-2/3 space-y-2">
               <div className="flex justify-between items-start">
-                <h2 className="text-xl font-bold">{selectedBook.bookname}</h2>
+                <h2 className="font-parastoo text-2xl font-bold">{selectedBook.bookname}</h2>
                 <button onClick={() => handleWishlistToggle(selectedBook._id)}>
                   <FaHeart
                     className={wishlist.includes(selectedBook._id) ? "text-red-700 text-xl" : "text-gray-400 text-xl"}
                   />
                 </button>
               </div>
-              <p className="text-gray-600">By: {selectedBook.author}</p>
+              <p className="font-parastoo text-lg text-gray-600">By: {selectedBook.author}</p>
               <div className="flex">
                 {Array.from({ length: 5 }, (_, index) =>
                   index < selectedBook.rating ? (
@@ -163,24 +158,19 @@ const SearchResults = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-red-600 font-bold text-lg">
+                <span className="text-red-600 font-bold text-xl font-parastoo">
                   ₹{selectedBook.price}
                 </span>
-                {selectedBook.originalPrice && (
-                  <span className="text-gray-400 line-through text-sm">
-                    ₹{selectedBook.originalPrice}
-                  </span>
-                )}
               </div>
 
-              <p className="text-gray-700 text-sm">{selectedBook.description}</p>
+              <p className="font-parastoo text-gray-700 text-base">{selectedBook.description}</p>
 
               <div className="flex gap-2 mt-4">
-                <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
+                <button className="font-gothic bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
                   Add To Cart
                 </button>
                 <button
-                  className="border border-red-500 text-red-500 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition"
+                  className="border border-red-500 font-gothic text-red-500 px-4 py-2 rounded hover:bg-red-500 hover:text-white transition"
                   onClick={() => handleWishlistToggle(selectedBook._id)}
                 >
                   {wishlist.includes(selectedBook._id) ? "Remove from Wishlist" : "Add to Wishlist"}

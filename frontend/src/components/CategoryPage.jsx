@@ -15,7 +15,7 @@ export const CategoryPage = () => {
   const handleAddToCart = async (bookId) => {
     try {
       await axios.post(
-        "/api/v1/users/cart/add",
+        "/api/v1/cart/add",
         {
           bookId,
           quantity: 1,
@@ -82,12 +82,12 @@ export const CategoryPage = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 capitalize">
+      <h1 className="font-gothic text-3xl font-bold mb-6 capitalize">
         {formattedCategory.replace(/-/g, " ")}
       </h1>
 
       {books.length === 0 ? (
-        <p className="text-gray-500">No books found in this category.</p>
+        <p className="font-parastoo text-lg text-gray-500">No books found in this category.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {books.map((book) => (

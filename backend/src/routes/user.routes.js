@@ -1,11 +1,8 @@
 import { Router } from "express";
-import { 
-    addToCart,
-    getCart,
+import {
     loginUser,
     logoutUser, 
     registerUser,
-    removeCartItems,
     toggleWishlist,
     wishlistofUser,
     getMyProfile
@@ -18,8 +15,7 @@ router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT, logoutUser)
 router.route("/toggle-wishlist").post(verifyJWT, toggleWishlist)
 router.route("/wishlist").get(verifyJWT, wishlistofUser)
-router.route("/cart").get(verifyJWT, getCart)
-router.route("/cart/add").post(verifyJWT, addToCart)
-router.route("/cart/remove").post(verifyJWT, removeCartItems)
+
 router.route("/myprofile").get(verifyJWT, getMyProfile)
 export default router
+

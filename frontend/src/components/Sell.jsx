@@ -111,7 +111,6 @@ const Sell = () => {
           <h2 className="text-2xl sm:text-3xl font-bold text-left text-blue-950 mb-6">
             Give your book details
           </h2>
-
           <form onSubmit={handleSubmit} className="space-y-5">
             <input
               type="text"
@@ -120,7 +119,7 @@ const Sell = () => {
               value={formData.bookname}
               onChange={handleChange}
               required
-              className="w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none placeholder-gray-600"
+              className="font-parastoo w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none placeholder-gray-600"
             />
             <input
               type="text"
@@ -129,7 +128,7 @@ const Sell = () => {
               value={formData.author}
               onChange={handleChange}
               required
-              className="w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none placeholder-gray-600"
+              className="font-parastoo w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none placeholder-gray-600"
             />
             <textarea
               name="description"
@@ -138,7 +137,7 @@ const Sell = () => {
               onChange={handleChange}
               rows="3"
               required
-              className="w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none placeholder-gray-600 resize-none"
+              className="font-parastoo w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none placeholder-gray-600 resize-none"
             />
             <input
               type="number"
@@ -147,7 +146,7 @@ const Sell = () => {
               value={formData.price}
               onChange={handleChange}
               required
-              className="w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none placeholder-gray-600"
+              className="font-parastoo w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none placeholder-gray-600"
             />
             <input
               type="number"
@@ -156,23 +155,18 @@ const Sell = () => {
               value={formData.count}
               onChange={handleChange}
               required
-              className="w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none placeholder-gray-600"
+              className="font-parastoo w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none placeholder-gray-600"
             />
-
             <div>
-              <label className="block text-blue-950 mb-1 font-medium">
-                Category
-              </label>
+              <label className="font-gothic block text-blue-950 mb-1 font-medium">Category</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
                 required
-                className="w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none text-gray-700"
+                className="font-parastoo w-full border-b-2 border-blue-950 bg-transparent py-2 focus:outline-none text-gray-700"
               >
-                <option value="" disabled>
-                  Select category
-                </option>
+                <option value="" disabled>Select category</option>
                 <option value="Young & Teen Fiction">Young & Teen Fiction</option>
                 <option value="Romantic">Romantic</option>
                 <option value="Cooking">Cooking</option>
@@ -199,7 +193,7 @@ const Sell = () => {
 
             <button
               type="submit"
-              className="bg-blue-950 text-white px-6 py-2 rounded-full hover:bg-blue-900 transition w-full"
+              className="font-gothic bg-blue-950 text-white px-6 py-2 rounded-full hover:bg-blue-900 transition w-full"
             >
               Submit
             </button>

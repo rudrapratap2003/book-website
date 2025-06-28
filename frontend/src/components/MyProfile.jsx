@@ -70,51 +70,41 @@ const MyProfile = () => {
     <div className="flex flex-col md:flex-row min-h-screen">
       {/* Sidebar */}
       <div className="w-full md:w-1/4 p-6 bg-gray-50 border-r space-y-6">
-        <h2 className="text-lg font-semibold text-center">Hello, {user.fullName.split(" ")[0]}!</h2>
+        <h2 className="font-gothic text-lg font-semibold text-center">Hello, {user.fullName.split(" ")[0]}!</h2>
         <div>
-          <h3 className="font-bold text-gray-600 flex items-center">
-            <FaUser className="text-green-500 mr-2" /> Account Settings
+          <h3 className="font-gothic font-bold text-gray-600 flex items-center">
+            <FaUser className=" text-green-500 mr-2" /> Account Settings
           </h3>
-          <button onClick={() => setShowPersonalPopup(true)} className="ml-6 text-sm">Personal Info</button><br />
-          <button onClick={() => setShowAddressPopup(true)} className="ml-6 text-sm">Manage Address</button>
+          <button onClick={() => setShowPersonalPopup(true)} className="font-parastoo ml-6 text-lg">Personal Info</button><br />
+          <button onClick={() => setShowAddressPopup(true)} className="ml-6 text-lg font-parastoo">Manage Address</button>
         </div>
-        <div>
-          <h3 className="font-bold text-gray-600 flex items-center">
-            <FaCreditCard className="text-green-500 mr-2" /> Payments
-          </h3>
-          <p className="ml-6 text-sm">UPI Payment</p>
-          <p className="ml-6 text-sm">Cash On Delivery</p>
-        </div>
-        <button className="flex items-center">
-          <FaSignOutAlt className="text-green-500 mr-2" /> Logout
-        </button>
       </div>
 
       {/* Profile Display */}
       <div className="w-full md:w-3/4 p-6">
         <div className="flex items-center space-x-4 mb-4">
-          <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center text-4xl text-green-600">
+          <div className="font-gothic w-20 h-20 rounded-full bg-green-100 flex items-center justify-center text-4xl text-green-600">
             {user.fullName?.charAt(0)}
           </div>
-          <h2 className="text-xl font-semibold">{user.fullName}</h2>
+          <h2 className="font-gothic text-2xl font-semibold">{user.fullName}</h2>
         </div>
         <div className="mb-6 space-y-1">
-          <p className="text-sm flex items-center"><FaUser className="text-black mr-2" />{user.username}</p>
-          <p className="text-sm flex items-center"><FaEnvelope className="text-black mr-2" />{user.email}</p>
-          <p className="text-sm flex items-center"><FaPhone className="text-black mr-2" />{user.phoneNo}</p>
+          <p className="font-parastoo text-lg flex items-center"><FaUser className="text-black mr-2" />{user.username}</p>
+          <p className="font-parastoo text-lg flex items-center"><FaEnvelope className="text-black mr-2" />{user.email}</p>
+          <p className="font-parastoo text-lg flex items-center"><FaPhone className="text-black mr-2" />{user.phoneNo}</p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+        <div className="font-gothic font-semibold grid grid-cols-2 md:grid-cols-2 gap-4">
           <button onClick={() => navigate("/orders")} className="bg-white border rounded-xl p-4 flex flex-col items-center hover:shadow">
-            <FaBoxOpen className="text-green-500 text-xl" /><span>ORDERS</span>
+            <FaBoxOpen className=" text-green-500 text-xl" /><span>ORDERS</span>
           </button>
           <button onClick={() => navigate("/sold-items")} className="bg-white border rounded-xl p-4 flex flex-col items-center hover:shadow">
-            <FaCheckCircle className="text-green-500 text-xl" /><span>SOLD ITEMS</span>
+            <FaCheckCircle className=" text-green-500 text-xl" /><span>SOLD ITEMS</span>
           </button>
           <button onClick={() => navigate("/myprofile/wishlist")} className="bg-white border rounded-xl p-4 flex flex-col items-center hover:shadow">
-            <FaHeart className="text-green-500 text-xl" /><span>WISHLIST</span>
+            <FaHeart className=" text-green-500 text-xl" /><span>WISHLIST</span>
           </button>
           <button onClick={() => navigate("/myprofile/cart")} className="bg-white border rounded-xl p-4 flex flex-col items-center hover:shadow">
-            <FaShoppingCart className="text-green-500 text-xl" /><span>CART</span>
+            <FaShoppingCart className=" text-green-500 text-xl" /><span>CART</span>
           </button>
         </div>
       </div>
