@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asynchandler.js";
 import {ApiError} from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
+import {uploadOnCloudinary} from "../utils/cloudinary.js"
 
 const sellBook = asyncHandler(async (req,res) => {
     let {bookname, category, author, description, price, count} = req.body;
@@ -20,6 +21,16 @@ const sellBook = asyncHandler(async (req,res) => {
       )
     }
 
+    console.log(req.files?.bookImage?.[0]?.path);
+    
+    const bookImageLocalPath = req.files?.bookImage?.[0]?.path;
+    if(!bookImageLocalPath) {
+      throw new ApiError(400,"Book Image is Required")
+    }
+    const image = await uploadOnCloudinary(bookImageLocalPath)
+    if(!image) {
+      throw new ApiError(400,"Book Image is Required")
+    }
     const newBook = await Book.create({
         bookname,
         category,
@@ -27,6 +38,7 @@ const sellBook = asyncHandler(async (req,res) => {
         author,
         price,
         count,
+        bookImage: image.url,
         seller: user.id,
     })
 

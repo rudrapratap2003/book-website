@@ -25,6 +25,10 @@ const bookSchema = new Schema({
         type: Number,
         default: 1
     },
+    bookImage: {
+        type: String, // cloudinary url
+        required: true,
+    },
     seller: {
         type: Schema.Types.ObjectId,
         ref: "User" 

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import Loader from "../components/Loader"; // 🔁 Update path if needed
 
 const Sell = () => {
   const navigate = useNavigate();
@@ -13,14 +14,16 @@ const Sell = () => {
     price: "",
     count: "",
     category: "",
+    bookImage: null,
   });
 
+  const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === "image") {
-      setFormData({ ...formData, image: files[0] });
+    if (name === "bookImage") {
+      setFormData({ ...formData, bookImage: files[0] });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -28,21 +31,29 @@ const Sell = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    const payload = {
-      bookname: formData.bookname,
-      author: formData.author,
-      description: formData.description,
-      price: formData.price,
-      count: formData.count,
-      category: formData.category,
-    };
+    const form = new FormData();
+    form.append("bookname", formData.bookname);
+    form.append("author", formData.author);
+    form.append("description", formData.description);
+    form.append("price", formData.price);
+    form.append("count", formData.count);
+    form.append("category", formData.category);
+    form.append("bookImage", formData.bookImage);
 
     try {
       const response = await axios.post(
         "/api/v1/books/sell-book",
-        payload,
-        { withCredentials: true }
+
+        form,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+
       );
 
       setShowSuccess(true);
@@ -50,7 +61,7 @@ const Sell = () => {
         setShowSuccess(false);
         const category = response.data.data.category;
         navigate(`/category/${category}`);
-      }, 9000);
+      }, 3000);
 
       setFormData({
         bookname: "",
@@ -59,17 +70,20 @@ const Sell = () => {
         price: "",
         count: "",
         category: "",
-        image: null,
+        bookImage: null,
       });
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Something went wrong";
-      alert(errorMessage);
+      console.log(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-[#fdf1e5] flex items-center justify-center px-4 py-8">
+      {loading && <Loader />}
       {showSuccess && (
         <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
           <div className="bg-white border-2 border-green-500 rounded-xl shadow-lg p-6 relative w-80 text-center">
@@ -154,6 +168,21 @@ const Sell = () => {
                 <option value="Children">Children</option>
               </select>
             </div>
+
+            <div>
+              <label className="font-gothic block text-blue-950 mb-1 font-medium">
+                Upload Book Image
+              </label>
+              <input
+                type="file"
+                name="bookImage"
+                accept="image/*"
+                onChange={handleChange}
+                required
+                className="font-parastoo w-full py-2 text-gray-700"
+              />
+            </div>
+
             <button
               type="submit"
               className="font-gothic bg-blue-950 text-white px-6 py-2 rounded-full hover:bg-blue-900 transition w-full"
@@ -162,7 +191,6 @@ const Sell = () => {
             </button>
           </form>
         </div>
-
         {/* Right Image */}
         <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-8">
           <img

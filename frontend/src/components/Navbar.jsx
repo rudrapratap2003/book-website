@@ -171,7 +171,6 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
                 )}
               </div>
 
-
       {/* Search (Mobile) */}
       <div className="md:hidden">
         <button onClick={() => setShowMobileSearch(true)}>
