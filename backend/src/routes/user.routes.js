@@ -11,7 +11,8 @@ import {
     getMyProfile,
     updateAccountDetails,
     addAddress,
-    getAddresses
+    getAddresses,
+    changeCurrentPassword
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router()
@@ -29,6 +30,7 @@ router.route("/cart/remove").post(verifyJWT, removeCartItems)
 router.route("/update").put(verifyJWT, updateAccountDetails)
 router.route("/add-address").post(verifyJWT, addAddress)
 router.route("/get-addresses").get(verifyJWT, getAddresses)
+router.route("/changepassword").post(verifyJWT, changeCurrentPassword)
 
 export default router;
 
