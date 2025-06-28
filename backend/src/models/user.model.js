@@ -32,6 +32,10 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'Password is required']
     },
+    avatar : {
+        type: String,
+        default: "default.jpg"
+    },
     refreshToken: {
         type: String
     },

@@ -17,12 +17,12 @@ const SignUp = ({ setIsAuthenticated }) => {
   const [showAvatarModal, setShowAvatarModal] = useState(false);
 
   const avatars = [
-    "/src/images/avatar1.jpg",
-    "/src/images/avatar2.jpg",
-    "/src/images/avatar3.jpg",
-    "/src/images/avatar4.jpg",
-    "/src/images/avatar5.jpg",
-    "/src/images/avatar6.jpg",
+    "/images/avatar1.jpg",
+    "/images/avatar2.jpg",
+    "/images/avatar3.jpg",
+    "/images/avatar4.jpg",
+    "/images/avatar5.jpg",
+    "/images/avatar6.jpg",
   ];
 
   const handleChange = (e) => {
@@ -53,7 +53,7 @@ const SignUp = ({ setIsAuthenticated }) => {
       {/* Left Image Section */}
       <div className="md:w-1/2 w-full bg-[#e0e0e0] flex items-center justify-center p-4">
         <img
-          src="/src/images/lady.png"
+          src="/images/lady.png"
           alt="Signup Visual"
           className="max-w-full h-auto"
         />

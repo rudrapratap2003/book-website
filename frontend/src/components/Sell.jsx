@@ -92,7 +92,7 @@ const Sell = () => {
             </button>
             <FaCheckCircle className="text-green-600 text-3xl mx-auto mb-2" />
             <p className="font-gothic text-black font-semibold text-lg mb-4">Book Submitted Successfully!</p>
-            <img src="/src/images/book-sell.png" alt="Book-sell" className="w-20 h-20 mx-auto" />
+            <img src="/images/book-sell.png" alt="Book-sell" className="w-20 h-20 mx-auto" />
           </div>
         </div>
       )}
@@ -194,7 +194,7 @@ const Sell = () => {
         {/* Right Image */}
         <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-8">
           <img
-            src="/src/images/finalsale.png"
+            src="/images/finalsale.png"
             alt="Illustration"
             className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg object-contain"
           />

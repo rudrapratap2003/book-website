@@ -77,7 +77,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
           >
             &#9776;
           </button>
-          <img src="/src/images/bookcart.png" alt="Logo" className="h-10" />
+          <img src="/images/bookcart.png" alt="Logo" className="h-10" />
           <h1 className="font-adobe ml-3 text-4xl font-bold">BOOK CART</h1>
         </div>
 

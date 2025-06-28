@@ -17,6 +17,7 @@ import Cart from "./components/Cart";
 import MyOrders from "./components/MyOrders";
 import Search from "./components/Search";
 import SettingsPage from "./components/SettingsPage";
+import AddressSettings from "./components/AddressSettings";
 const books = [
   { 
     id: 1, 
@@ -104,6 +105,7 @@ function App() {
         <Route path="/myprofile/wishlist" element={<PrivateRoute element={<WishlistPage />}/>}/>
         <Route path="/search/:query" element={<PrivateRoute element={<Search />}/>}/>
         <Route path="/settings" element={<PrivateRoute element={<SettingsPage />}/>}/>
+        <Route path="/address" element={<PrivateRoute element={<AddressSettings />}/>}/>
       </Routes>
       <Footer />
     </Router>
