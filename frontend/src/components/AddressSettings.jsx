@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { FaUser, FaCreditCard, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const AddressSettings = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [addresses, setAddresses] = useState([]);
   const [formData, setFormData] = useState({
@@ -18,26 +19,46 @@ const AddressSettings = () => {
     altPhone: '',
   });
 
-  const user = { fullName: "Mona Sas" }; // Replace this with real user data if needed
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
+
+  const fetchAddresses = async () => {
+    try {
+      const res = await axios.get('/api/v1/users/get-addresses', {
+        withCredentials: true
+      });
+      setAddresses(res.data.data);
+    } catch (err) {
+      console.error("Error fetching addresses:", err);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    setAddresses([...addresses, formData]);
-    setFormData({
-      name: '',
-      phone: '',
-      pincode: '',
-      locality: '',
-      address: '',
-      city: '',
-      state: '',
-      landmark: '',
-      altPhone: '',
-    });
-    setShowForm(false);
+  const handleSave = async () => {
+    try {
+      await axios.post("/api/v1/users/add-address", formData, {
+        withCredentials: true
+      });
+      await fetchAddresses(); // refresh the list
+      setFormData({
+        name: '',
+        phone: '',
+        pincode: '',
+        locality: '',
+        address: '',
+        city: '',
+        state: '',
+        landmark: '',
+        altPhone: '',
+      });
+      setShowForm(false);
+    } catch (err) {
+      console.error("Failed to save address:", err);
+    }
   };
 
   const handleCancel = () => {
@@ -59,15 +80,13 @@ const AddressSettings = () => {
     <div className="flex flex-col md:flex-row min-h-screen">
       {/* Sidebar */}
       <div className="w-full md:w-1/4 p-6 bg-gray-50 border-r space-y-6">
-        <h2 className="font-gothic text-lg font-semibold text-center">
-          Hello, {user.fullName.split(" ")[0]}!
-        </h2>
+        <h2 className="font-gothic text-lg font-semibold text-center">Hello!</h2>
         <div>
           <h3 className="font-gothic font-bold text-gray-600 flex items-center">
             <FaUser className="text-green-500 mr-2" /> Account Settings
           </h3>
-          <button onClick={() => {navigate("/settings")}} className="font-parastoo ml-6 text-lg">Personal Info</button><br />
-          <button onClick={() => {navigate("/address")}} className="ml-6 text-lg font-parastoo font-bold">Manage Address</button>
+          <button onClick={() => navigate("/settings")} className="font-parastoo ml-6 text-lg">Personal Info</button><br />
+          <button onClick={() => navigate("/address")} className="ml-6 text-lg font-parastoo font-bold">Manage Address</button>
         </div>
         <div>
           <h3 className="font-gothic font-bold text-gray-600 flex items-center">
@@ -81,7 +100,7 @@ const AddressSettings = () => {
         </button>
       </div>
 
-      {/* Address Content */}
+      {/* Right Content */}
       <div className="flex-1 p-6">
         <h1 className="font-gothic text-2xl font-semibold mb-4">Account Settings</h1>
         <h2 className="font-gothic text-xl font-medium mb-2 text-green-600">Manage Addresses</h2>

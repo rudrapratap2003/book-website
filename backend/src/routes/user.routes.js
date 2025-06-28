@@ -8,7 +8,10 @@ import {
     removeCartItems,
     toggleWishlist,
     wishlistofUser,
-    getMyProfile
+    getMyProfile,
+    updateAccountDetails,
+    addAddress,
+    getAddresses
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router()
@@ -19,10 +22,13 @@ router.route("/logout").post(verifyJWT, logoutUser)
 router.route("/toggle-wishlist").post(verifyJWT, toggleWishlist)
 router.route("/wishlist").get(verifyJWT, wishlistofUser)
 
-router.route("/myprofile").get(verifyJWT, getMyProfile);
+router.route("/myprofile").get(verifyJWT, getMyProfile)
 router.route("/cart").get(verifyJWT, getCart)
 router.route("/cart/add").post(verifyJWT, addToCart)
 router.route("/cart/remove").post(verifyJWT, removeCartItems)
+router.route("/update").put(verifyJWT, updateAccountDetails)
+router.route("/add-address").post(verifyJWT, addAddress)
+router.route("/get-addresses").get(verifyJWT, getAddresses)
 
 export default router;
 

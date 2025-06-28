@@ -88,6 +88,58 @@ const loginUser = asyncHandler(async (req,res) => {
     )
 })
 
+const updateAccountDetails = asyncHandler(async (req, res) => {
+  const { fullName, email, phoneNo } = req.body;
+
+  if (!fullName || !email || !phoneNo) {
+    throw new ApiError(400, "All fields are required.");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        fullName,
+        email,
+        phoneNo
+      }
+    },
+    { new: true }
+  ).select("-password");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Account details updated successfully."));
+});
+
+
+// controllers/user.controller.js
+
+const addAddress = asyncHandler(async (req, res) => {
+  const { name, phone, pincode, locality, address, city, state, landmark, altPhone } = req.body;
+
+  if (!name || !phone || !pincode || !locality || !address || !city || !state) {
+    throw new ApiError(400, "Please fill all required fields.");
+  }
+
+  const user = await User.findById(req.user._id);
+  if (!user) throw new ApiError(404, "User not found");
+
+  const newAddress = { name, phone, pincode, locality, address, city, state, landmark, altPhone };
+  user.addresses.push(newAddress);
+  await user.save();
+
+  res.status(200).json(new ApiResponse(200, user.addresses, "Address added successfully"));
+});
+
+const getAddresses = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select("addresses");
+  if (!user) throw new ApiError(404, "User not found");
+
+  res.status(200).json(new ApiResponse(200, user.addresses));
+});
+
+
 const getMe = (req, res) => {
   // req.user was set by auth.middleware.js
   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
@@ -311,5 +363,8 @@ export {
     getCart,
     addToCart,
     removeCartItems,
-    getMyProfile
+    getMyProfile,
+    updateAccountDetails,
+    addAddress,
+    getAddresses
 }

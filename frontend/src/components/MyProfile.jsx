@@ -16,6 +16,7 @@ const MyProfile = () => {
   });
   const [user, setUser] = useState(null);
   const [editUser, setEditUser] = useState(null);
+  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -37,6 +38,8 @@ const MyProfile = () => {
 
 
   if (!user) return <div className="p-6">Loading profile...</div>;
+  const avatarName = user.avatar?.split("/").pop().replace(".jpg", "");
+  console.log("Avatar filename:", user.avatar);
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
@@ -65,7 +68,14 @@ const MyProfile = () => {
       {/* Profile Display */}
       <div className="w-full md:w-3/4 p-6">
         <div className="flex items-center space-x-4 mb-4">
-          <img src={`/images/${user.avatar}.jpg`} alt="Avatar" className="w-10 h-10 rounded-full" />
+          
+
+<img
+  src={`/images/${avatarName}.jpg`}
+  alt="Avatar"
+  className="w-10 h-10 rounded-full"
+/>
+
           <h2 className="font-gothic text-2xl font-semibold">{user.fullName}</h2>
         </div>
         <div className="mb-6 space-y-1">

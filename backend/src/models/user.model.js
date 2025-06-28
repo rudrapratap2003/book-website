@@ -36,6 +36,19 @@ const userSchema = new Schema({
         type: String,
         default: "default.jpg"
     },
+    addresses: [
+    {
+      name: String,
+      phone: String,
+      pincode: String,
+      locality: String,
+      address: String,
+      city: String,
+      state: String,
+      landmark: String,
+      altPhone: String,
+    }
+  ],
     refreshToken: {
         type: String
     },

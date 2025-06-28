@@ -1,36 +1,71 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FaUser, FaCreditCard, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const SettingsPage = () => {
   const navigate = useNavigate();
-  const [firstName, setFirstName] = useState('Mona');
-  const [lastName, setLastName] = useState('Sas');
-  const [email, setEmail] = useState('mona@example.com');
-  const [phone, setPhone] = useState('+918328819363');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
 
   const [editStates, setEditStates] = useState({
-    firstName: false,
-    lastName: false,
+    fullName: false,
     email: false,
     phone: false,
   });
 
+  const fetchUserDetails = async () => {
+    try {
+      const res = await axios.get('/api/v1/users/myprofile', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const { fullName, email, phoneNo } = res.data.data;
+      setFullName(fullName);
+      setEmail(email);
+      setPhone(phoneNo);
+    } catch (error) {
+      console.error("Error fetching user profile", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+
+  const updateField = async (field) => {
+  try {
+    await axios.put(
+      '/api/v1/users/update',
+      { fullName, email, phoneNo: phone },
+      { withCredentials: true }
+    );
+    setEditStates((prev) => ({ ...prev, [field]: false }));
+
+    // Redirect to MyProfile and trigger refetch
+    navigate("/myprofile", { replace: true }); // force remount
+  } catch (err) {
+    console.error("Failed to update", err);
+  }
+};
+
+
   const handleEdit = (field) => setEditStates({ ...editStates, [field]: true });
   const handleCancel = (field) => setEditStates({ ...editStates, [field]: false });
-  const handleSave = (field) => setEditStates({ ...editStates, [field]: false });
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
-      {/* Left Sidebar */}
+      {/* Sidebar */}
       <div className="w-full md:w-1/4 p-6 bg-gray-50 border-r space-y-6">
         <h2 className="font-gothic text-lg font-semibold text-center">Hello!</h2>
         <div>
           <h3 className="font-gothic font-bold text-gray-600 flex items-center">
             <FaUser className="text-green-500 mr-2" /> Account Settings
           </h3>
-          <button onClick={() => {navigate("/settings")}} className="font-parastoo font-bold ml-6 text-lg">Personal Info</button><br />
-          <button onClick={() => {navigate("/address")}} className="ml-6 text-lg font-parastoo">Manage Address</button>
+          <button onClick={() => navigate("/settings")} className="font-parastoo font-bold ml-6 text-lg">Personal Info</button><br />
+          <button onClick={() => navigate("/address")} className="ml-6 text-lg font-parastoo">Manage Address</button>
         </div>
         <div>
           <h3 className="font-gothic font-bold text-gray-600 flex items-center">
@@ -49,47 +84,25 @@ const SettingsPage = () => {
         <h1 className="font-gothic text-2xl font-bold mb-4">Account Settings</h1>
         <h2 className="font-gothic text-xl font-semibold mb-6 text-green-600">Profile Information</h2>
 
-        {/* First Name */}
+        {/* Full Name */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
-            <h3 className="font-parastoo text-xl font-semibold">First Name</h3>
-            {!editStates.firstName ? (
-              <button onClick={() => handleEdit('firstName')} className="font-parastoo text-green-600 font-medium hover:underline">Edit</button>
+            <h3 className="font-parastoo text-xl font-semibold">Full Name</h3>
+            {!editStates.fullName ? (
+              <button onClick={() => handleEdit('fullName')} className="font-parastoo text-green-600 font-medium hover:underline">Edit</button>
             ) : (
               <div className="space-x-2">
-                <button onClick={() => handleCancel('firstName')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
-                <button onClick={() => handleSave('firstName')} className="font-gothic bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
+                <button onClick={() => handleCancel('fullName')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
+                <button onClick={() => updateField('fullName')} className="font-gothic bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
               </div>
             )}
           </div>
           <input
             type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            disabled={!editStates.firstName}
-            className={`font-parastoo w-full mt-2 p-3 border rounded ${editStates.firstName ? 'border-green-500 bg-white' : 'bg-gray-100 text-gray-500'}`}
-          />
-        </div>
-
-        {/* Last Name */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <h3 className="font-parastoo text-xl font-semibold">Last Name</h3>
-            {!editStates.lastName ? (
-              <button onClick={() => handleEdit('lastName')} className="font-parastoo text-green-600 font-medium hover:underline">Edit</button>
-            ) : (
-              <div className="space-x-2">
-                <button onClick={() => handleCancel('lastName')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
-                <button onClick={() => handleSave('lastName')} className="font-gothic bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
-              </div>
-            )}
-          </div>
-          <input
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            disabled={!editStates.lastName}
-            className={`font-parastoo w-full mt-2 p-3 border rounded ${editStates.lastName ? 'border-green-500 bg-white' : 'bg-gray-100 text-gray-500'}`}
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            disabled={!editStates.fullName}
+            className={`font-parastoo w-full mt-2 p-3 border rounded ${editStates.fullName ? 'border-green-500 bg-white' : 'bg-gray-100 text-gray-500'}`}
           />
         </div>
 
@@ -102,7 +115,7 @@ const SettingsPage = () => {
             ) : (
               <div className="space-x-2">
                 <button onClick={() => handleCancel('email')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
-                <button onClick={() => handleSave('email')} className="bg-green-600 font-gothic text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
+                <button onClick={() => updateField('email')} className="bg-green-600 font-gothic text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
               </div>
             )}
           </div>
@@ -124,7 +137,7 @@ const SettingsPage = () => {
             ) : (
               <div className="space-x-2">
                 <button onClick={() => handleCancel('phone')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
-                <button onClick={() => handleSave('phone')} className="font-gothic bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
+                <button onClick={() => updateField('phone')} className="font-gothic bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
               </div>
             )}
           </div>
