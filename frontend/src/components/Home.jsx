@@ -4,10 +4,9 @@ import Loader from "../components/Loader";
 
 export const Home = ({ isAuthenticated }) => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true); // 👈 add loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading for 1 second
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
@@ -18,7 +17,7 @@ export const Home = ({ isAuthenticated }) => {
     { id: 3, name: "Romantic", image: "/src/images/romm.png" },
     { id: 4, name: "Cooking", image: "/src/images/cook.png" },
   ];
-  if (loading) return <Loader />; // 👈 show loader while loading
+  if (loading) return <Loader />;
   return (
     <>
       {/* HERO SECTION */}
@@ -35,13 +34,13 @@ export const Home = ({ isAuthenticated }) => {
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                 <button
                   onClick={() => navigate("/myprofile/wishlist")}
-                  className="text-pink-600 border border-pink-500 px-4 py-1 rounded-full font-medium hover:bg-pink-100"
+                  className="font-gothic text-pink-600 border border-pink-500 px-4 py-1 rounded-full font-semibold hover:bg-pink-100"
                 >
                   ❤️ Wishlist
                 </button>
                 <button
                   onClick={() => navigate("/myprofile/cart")}
-                  className="text-blue-600 border border-blue-500 px-4 py-1 rounded-full font-medium hover:bg-blue-100"
+                  className="font-gothic text-blue-600 border border-blue-500 px-4 py-1 rounded-full font-semibold hover:bg-blue-100"
                 >
                   🛒 Cart
                 </button>
@@ -50,14 +49,13 @@ export const Home = ({ isAuthenticated }) => {
               <div className="text-left">
                 <button
                   onClick={() => navigate("/login")}
-                  className="bg-orange-500 text-white text-sm font-medium px-3 py-2 rounded hover:bg-orange-600 transition"
+                  className="font-gothic bg-orange-500 text-white text-sm font-medium px-3 py-2 rounded hover:bg-orange-600 transition"
                 >
                   Explore Now →
                 </button>
               </div>
             )}
           </div>
-
           <div className="md:w-1/2 flex justify-center mt-6 md:mt-0">
             <img
               src="/src/images/bookpage.png"
@@ -70,11 +68,12 @@ export const Home = ({ isAuthenticated }) => {
 
       {isAuthenticated && (
         <>
-          {/* Trending Books */}
           <div id="best-sales" className="p-6 sm:p-8 bg-orange-50">
-            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Books Trending Now</h2>
+            <h2 className="font-gothic text-3xl font-bold mb-6 text-center text-gray-800">
+              Books Trending Now
+            </h2>
             <div className="bg-white p-4 rounded-3xl shadow-md">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="font-parastoo text-lg grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {[
                   {
                     image: "/src/images/book1.jpg",
@@ -92,7 +91,7 @@ export const Home = ({ isAuthenticated }) => {
                   },
                   {
                     image: "/src/images/boook3.jpg",
-                    title: "Ruthless Vows",
+                    title: "RUTHLESS VOWS",
                     author: "Rebecca Ross",
                     price: "999",
                     stock: "5 stocks left",
@@ -116,10 +115,14 @@ export const Home = ({ isAuthenticated }) => {
                     key={index}
                     className="group relative transform transition-transform duration-300 hover:scale-105"
                   >
-                    <div className="absolute inset-0 bg-orange-300 opacity-0 group-hover:opacity-100 transition-all duration-300 z-0" />
+                    <div className="absolute inset-0 bg-orange-300 opacity-0 group-hover:opacity-100 transition-all duration-300 z-0"></div>
                     <div className="relative z-10 p-4">
                       <div className="w-full h-64 border-[10px] border-gray-300 rounded-md overflow-hidden">
-                        <img src={book.image} alt={book.title} className="w-full h-full object-cover" />
+                        <img
+                          src={book.image}
+                          alt={book.title}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <p className="font-bold text-center mt-2 group-hover:text-white">{book.title}</p>
                       <p className="text-center text-gray-700 mb-2 group-hover:text-white">{book.author}</p>
@@ -137,9 +140,9 @@ export const Home = ({ isAuthenticated }) => {
             </div>
           </div>
 
-          {/* Categories */}
+          {/* SHOP BY CATEGORY */}
           <div id="categories" className="p-8 bg-orange-50">
-            <h2 className="text-3xl font-bold mb-6 text-center">Shop By Category</h2>
+            <h2 className="font-gothic text-3xl font-bold mb-6 text-center">Shop By Category</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {categories.map((category, index) => (
                 <div
@@ -147,9 +150,21 @@ export const Home = ({ isAuthenticated }) => {
                   className="flex items-center p-4 rounded-lg shadow-md transition-transform transform hover:scale-105"
                   style={{
                     background: `linear-gradient(to left, ${
-                      index === 0 ? "#ff9a9e" : index === 1 ? "#a1c4fd" : index === 2 ? "#fbc2eb" : "#d4fc79"
+                      index === 0
+                        ? "#ff9a9e"
+                        : index === 1
+                        ? "#a1c4fd"
+                        : index === 2
+                        ? "#fbc2eb"
+                        : "#d4fc79"
                     }, ${
-                      index === 0 ? "#ff6a88" : index === 1 ? "#c2e9fb" : index === 2 ? "#a6c1ee" : "#96e6a1"
+                      index === 0
+                        ? "#ff6a88"
+                        : index === 1
+                        ? "#c2e9fb"
+                        : index === 2
+                        ? "#a6c1ee"
+                        : "#96e6a1"
                     })`,
                   }}
                 >
@@ -158,20 +173,20 @@ export const Home = ({ isAuthenticated }) => {
                     alt={category.name}
                     className="w-16 h-16 object-cover rounded-full mr-4"
                   />
-                  <h3 className="text-xl font-semibold text-gray-800">{category.name}</h3>
+                  <h3 className="font-parastoo text-2xl font-semibold text-gray-800">{category.name}</h3>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Exchange Section */}
+          {/* EXCHANGE SECTION */}
           <div id="exchange" className="p-8 bg-orange-50 flex flex-col items-center">
             <div className="bg-white bg-opacity-90 p-8 rounded-3xl shadow-lg w-full">
               <div className="w-full flex flex-col md:flex-row justify-between items-center">
                 <div className="md:w-1/2 pr-6">
-                  <h3 className="text-3xl sm:text-4xl font-bold mb-4">Buy or Sell any book of your choice</h3>
-                  <p className="text-xl sm:text-2xl font-semibold mb-2">Give your books countless lives by selling !!</p>
-                  <p className="text-lg italic">Buy all trendy books.</p>
+                  <h3 className="font-gothic text-3xl sm:text-4xl font-bold mb-4">Buy or Sell any book of your choice</h3>
+                  <p className="font-gothic text-xl sm:text-2xl font-semibold mb-2">Give your books countless lives by selling !!</p>
+                  <p className="font-edu font-medium text-base italic">Buy all trendy books.</p>
                 </div>
                 <div className="md:w-1/2 flex justify-center items-center mt-6 md:mt-0">
                   <img src="/src/images/exch1.png" alt="Books Exchange" className="object-cover" />

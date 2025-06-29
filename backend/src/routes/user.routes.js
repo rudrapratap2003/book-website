@@ -15,7 +15,6 @@ router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT, logoutUser)
 router.route("/toggle-wishlist").post(verifyJWT, toggleWishlist)
 router.route("/wishlist").get(verifyJWT, wishlistofUser)
-
 router.route("/myprofile").get(verifyJWT, getMyProfile)
 export default router
 

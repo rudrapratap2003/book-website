@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState /* + useContext if you use AuthContext */ } from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -9,31 +9,40 @@ import IconButton from "@mui/material/IconButton";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
-export function Menubar({ onLogout, initial = "U" }) {
+/*  UNCOMMENT these two lines if you keep the user in context
+import { AuthContext } from "../context/AuthContext";
+*/
+
+export function Menubar({ onLogout, initial, role }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+
+  /*  UNCOMMENT if you keep user in context instead of prop
+  const { user } = useContext(AuthContext);
+  const role = user?.role; // "admin" | "user"
+  */
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
-  const navigate = useNavigate();
-
   return (
     <>
       <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton
-            onClick={handleClick}
-            size="small"
-            sx={{ ml: 2 }}
-            aria-controls={open ? "account-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-          >
-            <Avatar sx={{ width: 40, height: 40 }}>{initial}</Avatar>
-          </IconButton>
+        <IconButton
+          onClick={handleClick}
+          size="small"
+          sx={{ ml: 2 }}
+          aria-controls={open ? "account-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+        >
+          <Avatar sx={{ width: 40, height: 40 }}>{initial}</Avatar>
+        </IconButton>
       </Box>
 
       <Menu
@@ -73,19 +82,32 @@ export function Menubar({ onLogout, initial = "U" }) {
           },
         }}
       >
-        <MenuItem onClick={() => {
-          handleClose();
-          navigate("/myprofile")
-        }}>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate("/myprofile");
+          }}
+        >
           <Avatar /> Profile
         </MenuItem>
-        <MenuItem onClick={() => {
-          handleClose();
-          navigate("/")
-        }}>
-          <Avatar /> My account
-        </MenuItem>
+
+        {/* ADMIN DASHBOARD ENTRY — render only for admins */}
+        {role === "admin" && (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              navigate("/admin/dashboard");
+            }}
+          >
+            <ListItemIcon>
+              <AdminPanelSettingsIcon fontSize="small" />
+            </ListItemIcon>
+            Admin Dashboard
+          </MenuItem>
+        )}
+
         <Divider />
+
         <MenuItem>
           <ListItemIcon>
             <PersonAdd fontSize="small" />
@@ -117,4 +139,5 @@ export function Menubar({ onLogout, initial = "U" }) {
 Menubar.propTypes = {
   onLogout: PropTypes.func.isRequired,
   initial: PropTypes.string,
+  role: PropTypes.string, // "admin" | "user"
 };

@@ -15,12 +15,6 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
   return (
     <>
       <div className="relative p-4 rounded-lg border border-gray-200 shadow-md bg-white w-60">
-        {discount > 0 && (
-          <div className="absolute top-0 left-0 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
-            {discount}% OFF
-          </div>
-        )}
-
         <button
           className="absolute top-2 right-2 text-xl"
           onClick={() => onWishlistToggle(book.id)}
@@ -44,17 +38,17 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
           />
 
           <button
-            className="absolute bottom-0 left-0 w-full bg-white text-orange-500 border border-orange-500 font-semibold py-1 opacity-90 hover:opacity-100 transition-all"
+            className="font-gothic absolute bottom-0 left-0 w-full bg-white text-orange-500 border border-orange-500 font-medium py-1 opacity-90 hover:opacity-100 transition-all"
             onClick={() => setShowModal(true)}
           >
             QUICK VIEW
           </button>
         </div>
 
-        <div className="text-lg font-semibold mt-2 text-gray-800">
+        <div className="font-parastoo text-xl font-semibold mt-2 text-gray-800">
           {book.title}
         </div>
-        <div className="text-sm text-gray-600">{book.author}</div>
+        <div className="font-parastoo text-base text-gray-600">{book.author}</div>
 
         <div className="flex justify-center my-1">
           {Array.from({ length: 5 }, (_, index) =>
@@ -66,12 +60,7 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
           )}
         </div>
 
-        <div className="text-red-600 font-bold text-lg">₹{book.price}</div>
-        {book.originalPrice && (
-          <div className="text-gray-400 line-through text-sm">
-            ₹{book.originalPrice}
-          </div>
-        )}
+        <div className="font-parastoo text-red-600 font-bold text-xl">₹{book.price}</div>
       </div>
 
       {showModal && (
@@ -92,7 +81,7 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
             </div>
             <div className="w-2/3 space-y-2">
               <div className="flex justify-between items-start">
-                <h2 className="text-xl font-bold">{book.title}</h2>
+                <h2 className="font-parastoo text-2xl font-bold">{book.title}</h2>
                 <button onClick={() => onWishlistToggle(book.id)}>
                   {isWishlisted ? (
                     <FaHeart className="text-red-700 text-xl" />
@@ -101,7 +90,7 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
                   )}
                 </button>
               </div>
-              <p className="text-gray-600">By: {book.author}</p>
+              <p className="font-parastoo text-lg text-gray-600">By: {book.author}</p>
               <div className="flex">
                 {Array.from({ length: 5 }, (_, index) =>
                   index < book.rating ? (
@@ -113,21 +102,16 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-red-600 font-bold text-lg">
+                <span className="font-parastoo text-red-600 font-bold text-xl">
                   ₹{book.price}
                 </span>
-                {book.originalPrice && (
-                  <span className="text-gray-400 line-through text-sm">
-                    ₹{book.originalPrice}
-                  </span>
-                )}
               </div>
 
-              <p className="text-gray-700 text-sm">{book.description}</p>
+              <p className="font-parastoo text-gray-700 text-base">{book.description}</p>
 
               <div className="flex gap-2 mt-4">
                 <button
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+                  className="font-gothic bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
                   onClick={() => {
                     onAddToCart(book.id);
                     setShowModal(false);
@@ -136,7 +120,7 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
                   Add To Cart
                 </button>
                 <button
-                  className={`border px-4 py-2 rounded transition ${
+                  className={`font-gothic border px-4 py-2 rounded transition ${
                     isWishlisted
                       ? "bg-red-500 text-white border-red-500"
                       : "border-red-500 text-red-500 hover:bg-red-500 hover:text-white"

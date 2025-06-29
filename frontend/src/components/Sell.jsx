@@ -58,7 +58,7 @@ const Sell = () => {
       setTimeout(() => {
         setShowSuccess(false);
         const category = response.data.data.category;
-        navigate(`/category/${category}`);
+        navigate("/sold-items");
       }, 3000);
 
       setFormData({
@@ -104,7 +104,6 @@ const Sell = () => {
           </div>
         </div>
       )}
-
       {/* Form Section */}
       <div className="w-full lg:w-1/2 bg-[#fdf1e5] p-6 sm:p-8 md:p-10 relative flex items-start justify-center">
         <div className="w-full max-w-md mt-16 sm:mt-20">
@@ -178,7 +177,7 @@ const Sell = () => {
             </div>
 
             <div>
-              <label className="block text-blue-950 mb-1 font-medium">
+              <label className="font-gothic block text-blue-950 mb-1 font-medium">
                 Upload Book Image
               </label>
               <input
@@ -187,7 +186,7 @@ const Sell = () => {
                 accept="image/*"
                 onChange={handleChange}
                 required
-                className="w-full py-2 text-gray-700"
+                className="font-parastoo w-full py-2 text-gray-700"
               />
             </div>
 

@@ -7,21 +7,10 @@ import {uploadOnCloudinary} from "../utils/cloudinary.js"
 
 const sellBook = asyncHandler(async (req,res) => {
     let {bookname, category, author, description, price, count} = req.body;
-    const user = await User.findById(req.user?._id)
     if([bookname, category, author, description, price].some((field) => field ?.trim() ==="")) {
         throw new ApiError(400, "All fields are required")
     }
     category = category.toLowerCase()
-    const existingBook = await Book.findOne({bookname})
-    if(existingBook) {
-      existingBook.count += 1;
-      await existingBook.save();
-      return res.status(200).json(
-        new ApiResponse(200, existingBook,"Book Count Updated")
-      )
-    }
-
-    console.log(req.files?.bookImage?.[0]?.path);
     
     const bookImageLocalPath = req.files?.bookImage?.[0]?.path;
     if(!bookImageLocalPath) {
@@ -31,7 +20,7 @@ const sellBook = asyncHandler(async (req,res) => {
     if(!image) {
       throw new ApiError(400,"Book Image is Required")
     }
-    const newBook = await Book.create({
+    const pendingBook = await Book.create({
         bookname,
         category,
         description,
@@ -39,14 +28,15 @@ const sellBook = asyncHandler(async (req,res) => {
         price,
         count,
         bookImage: image.url,
-        seller: user.id,
+        seller: req.user._id,
+        status: "pending"
     })
 
-    if(!newBook) {
+    if(!pendingBook) {
         throw new ApiError(500,"Something went wrong while adding the book")
     }
     return res.status(200).json(
-        new ApiResponse(200, newBook,"Book sold successfully")
+        new ApiResponse(200, pendingBook,"Book sold successfully")
     )
 })
 
@@ -77,15 +67,20 @@ const buyBook = asyncHandler(async (req,res) => {
 
 const fetchBookByCategory = asyncHandler(async (req, res) => {
   try {
+    const category = req.params.category.toLowerCase();
+
     const books = await Book.find({
-      category: req.params.category.toLowerCase(),
+      category,
+      status: "approved", // Only show books that are approved
     });
+
     res.status(200).json(books);
   } catch (error) {
     console.error("Error fetching category books:", error);
     res.status(500).json({ message: "Server error" });
   }
-})
+});
+
 
  const getBooksSoldByMe = asyncHandler(async (req, res) => {
   const userId = req.user?._id;

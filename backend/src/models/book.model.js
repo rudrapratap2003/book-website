@@ -38,7 +38,17 @@ const bookSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "User"
         }
-    ]
+    ],
+    status: {
+        type: String,
+        enum: ["pending", "approved", "rejected"],
+        default: "pending",
+        index: true,
+    },
+    rejectionReason: { 
+        type: String, 
+        default: "" 
+    },
 },{timestamps: true})
 
 export const Book = mongoose.model("Book", bookSchema)

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import Cookies from "js-cookie";
@@ -11,6 +11,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [user, setUser] = useState(null)
 
   const navigate = useNavigate();
 
@@ -31,7 +32,22 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
     "Environment & Geography",
     "Technology & Engineering",
   ];
-
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setUser(null);
+      return;
+    }
+    const getMe = async () => {
+      try {
+        const res = await axios.get("/api/v1/users/myprofile", { withCredentials: true });
+        setUser(res.data.data);           // assumes { user: { name, role, … } }
+      } catch (err) {
+        console.error("Failed to fetch user details", err);
+      }
+    };
+    getMe()
+  },[isAuthenticated])
+  
   const handleLogout = async () => {
     try {
       await axios.post("/api/v1/users/logout", {}, { withCredentials: true });
@@ -211,7 +227,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
   )}
 
   {isAuthenticated ? (
-    <Menubar onLogout={handleLogout} initial="M" />
+    <Menubar onLogout={handleLogout} initial={user?.fullName?.[0]?.toUpperCase()} role={user?.role} />
   ) : (
     <button
       onClick={() => navigate("/login")}
