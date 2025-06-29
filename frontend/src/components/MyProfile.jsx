@@ -53,16 +53,6 @@ const MyProfile = () => {
           <button onClick={() => {navigate("/settings")}} className="font-parastoo ml-6 text-lg">Personal Info</button><br />
           <button onClick={() => {navigate("/address")}} className="ml-6 text-lg font-parastoo">Manage Address</button>
         </div>
-        <div>
-          <h3 className="font-gothic font-bold text-gray-600 flex items-center">
-            <FaCreditCard className="text-green-500 mr-2" /> Payments
-          </h3>
-          <p className="ml-6 text-lg font-parastoo">UPI Payment</p>
-          <p className="ml-6 text-lg font-parastoo">Cash On Delivery</p>
-        </div>
-        <button className="font-gothic font-bold text-gray-600 flex items-center">
-          <FaSignOutAlt className="text-green-500 mr-2" /> Logout
-        </button>
       </div>
 
       {/* Profile Display */}

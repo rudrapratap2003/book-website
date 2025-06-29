@@ -8,7 +8,7 @@ const CartPage = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const res = await axios.get("/api/v1/users/cart", {
+        const res = await axios.get("/api/v1/cart", {
           withCredentials: true,
         });
         const itemsWithSelection = res.data.data.cartItems.map((item) => ({
@@ -38,7 +38,7 @@ const CartPage = () => {
   const handleAddToCart = async (bookId, quantity) => {
     try {
       await axios.post(
-        "/api/v1/users/cart/add",
+        "/api/v1/cart/add",
         { bookId, quantity: parseInt(quantity) },
         { withCredentials: true }
       );
@@ -61,7 +61,7 @@ const CartPage = () => {
       .map((item) => item._id);
     try {
       await axios.post(
-        "/api/v1/users/cart/remove",
+        "/api/v1/cart/remove",
         { ids: selectedIds },
         { withCredentials: true }
       );

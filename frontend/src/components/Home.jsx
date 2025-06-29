@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Loader from "../components/Loader"; // ✅ Adjust path if needed
+import Loader from "../components/Loader";
 
 export const Home = ({ isAuthenticated }) => {
   const navigate = useNavigate();
@@ -17,9 +17,7 @@ export const Home = ({ isAuthenticated }) => {
     { id: 3, name: "Romantic", image: "/images/romm.png" },
     { id: 4, name: "Cooking", image: "/images/cook.png" },
   ];
-
   if (loading) return <Loader />;
-
   return (
     <>
       {/* HERO SECTION */}
@@ -70,7 +68,6 @@ export const Home = ({ isAuthenticated }) => {
 
       {isAuthenticated && (
         <>
-          {/* TRENDING BOOKS */}
           <div id="best-sales" className="p-6 sm:p-8 bg-orange-50">
             <h2 className="font-gothic text-3xl font-bold mb-6 text-center text-gray-800">
               Books Trending Now

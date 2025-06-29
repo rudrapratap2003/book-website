@@ -18,6 +18,9 @@ import MyOrders from "./components/MyOrders";
 import Search from "./components/Search";
 import SettingsPage from "./components/SettingsPage";
 import AddressSettings from "./components/AddressSettings";
+import AdminDashboard from "./components/AdminDashboard";
+import RouteTitle from "./components/RouteTitle";
+
 const books = [
   { 
     id: 1, 
@@ -79,6 +82,7 @@ function App() {
   return (
     <Router>  
       <RefreshHandler setIsAuthenticated={setIsAuthenticated} />
+      <RouteTitle />
       <Navbar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated}/>
       <Routes>
         <Route path="/" element={<Home isAuthenticated={isAuthenticated}/>}/>
@@ -106,6 +110,8 @@ function App() {
         <Route path="/search/:query" element={<PrivateRoute element={<Search />}/>}/>
         <Route path="/settings" element={<PrivateRoute element={<SettingsPage />}/>}/>
         <Route path="/address" element={<PrivateRoute element={<AddressSettings />}/>}/>
+        <Route path="/admin/dashboard" element={<PrivateRoute element={<AdminDashboard />}/>}/>
+        
       </Routes>
       <Footer />
     </Router>

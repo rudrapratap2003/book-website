@@ -14,7 +14,7 @@ export const CategoryPage = () => {
   const handleAddToCart = async (bookId) => {
     try {
       await axios.post(
-        "/api/v1/users/cart/add",
+        "/api/v1/cart/add",
         {
           bookId,
           quantity: 1,
