@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Loader from "./Loader";
 import axios from "axios";
 
 const AdminDashboard = () => {
@@ -50,7 +51,7 @@ const AdminDashboard = () => {
     fetchPendingBooks();
   }, []);
 
-  if (loading) return <div className="text-center mt-10">Loading pending books...</div>;
+  if (loading) return <Loader />;
 
   return (
     <div className="p-6">

@@ -12,10 +12,10 @@ export const Home = ({ isAuthenticated }) => {
   }, []);
 
   const categories = [
-    { id: 1, name: "Young and Teen", image: "/src/images/yt.png" },
-    { id: 2, name: "Fiction", image: "/src/images/fiction.png" },
-    { id: 3, name: "Romantic", image: "/src/images/romm.png" },
-    { id: 4, name: "Cooking", image: "/src/images/cook.png" },
+    { id: 1, name: "Young and Teen", image: "/images/yt.png" },
+    { id: 2, name: "Fiction", image: "/images/fiction.png" },
+    { id: 3, name: "Romantic", image: "/images/romm.png" },
+    { id: 4, name: "Cooking", image: "/images/cook.png" },
   ];
   if (loading) return <Loader />;
   return (
@@ -58,7 +58,7 @@ export const Home = ({ isAuthenticated }) => {
           </div>
           <div className="md:w-1/2 flex justify-center mt-6 md:mt-0">
             <img
-              src="/src/images/bookpage.png"
+              src="/images/bookpage.png"
               alt="Books"
               className="max-w-full h-auto rounded-lg shadow-lg"
             />
@@ -76,35 +76,35 @@ export const Home = ({ isAuthenticated }) => {
               <div className="font-parastoo text-lg grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {[
                   {
-                    image: "/src/images/book1.jpg",
+                    image: "/images/book1.jpg",
                     title: "IT STARTS WITH US",
                     author: "Colleen Hoover",
                     price: "849",
                     stock: "4 stocks left",
                   },
                   {
-                    image: "/src/images/book2.jpg",
+                    image: "/images/book2.jpg",
                     title: "FOURTH WING",
                     author: "Rebecca Yarros",
                     price: "989",
                     stock: "3 stocks left",
                   },
                   {
-                    image: "/src/images/boook3.jpg",
+                    image: "/images/boook3.jpg",
                     title: "RUTHLESS VOWS",
                     author: "Rebecca Ross",
                     price: "999",
                     stock: "5 stocks left",
                   },
                   {
-                    image: "/src/images/boook4.jpg",
+                    image: "/images/boook4.jpg",
                     title: "IRON FLAME",
                     author: "Rebecca Yarros",
                     price: "764",
                     stock: "2 stocks left",
                   },
                   {
-                    image: "/src/images/book5.jpg",
+                    image: "/images/book5.jpg",
                     title: "THE ONLY ONE LEFT",
                     author: "Riley Sager",
                     price: "543",
@@ -189,7 +189,7 @@ export const Home = ({ isAuthenticated }) => {
                   <p className="font-edu font-medium text-base italic">Buy all trendy books.</p>
                 </div>
                 <div className="md:w-1/2 flex justify-center items-center mt-6 md:mt-0">
-                  <img src="/src/images/exch1.png" alt="Books Exchange" className="object-cover" />
+                  <img src="/images/exch1.png" alt="Books Exchange" className="object-cover" />
                 </div>
               </div>
             </div>

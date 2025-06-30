@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import BookCard from "../components/BookCard"; // ✅ Ensure the path is correct
-import book2 from "../images/book2.jpg";
 
 export const CategoryPage = () => {
   const { categoryName } = useParams();
@@ -73,7 +72,7 @@ export const CategoryPage = () => {
     id: b._id || index,
     title: b.bookname || "Untitled",
     author: b.author || "Unknown",
-    image: b.bookImage || book2,
+    image: b.bookImage,
     rating: b.rating || 0,
     price: b.price || 0,
     originalPrice: b.originalPrice || null,

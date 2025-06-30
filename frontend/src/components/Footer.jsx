@@ -7,7 +7,7 @@ export const Footer = () => {
         
         {/* Logo and Book Cart */}
         <div className="flex flex-col items-center space-y-2 mb-6">
-          <img src="/src/images/bookcart.png" alt="Logo" className="w-16 h-16" />
+          <img src="/images/bookcart.png" alt="Logo" className="w-16 h-16" />
           <span className="font-adobe font-bold text-5xl">Book Cart</span>
         </div>
 

@@ -41,7 +41,7 @@ const Signin = ({setIsAuthenticated}) => {
     <div className="min-h-screen flex flex-col md:flex-row bg-[#f5f5f5]">
       <div className="md:w-1/2 w-full bg-[#e0e0e0] flex items-center justify-center p-4">
         <img
-          src="/src/images/lady.png"
+          src="/images/lady.png"
           alt="Signup Visual"
           className="max-w-full h-auto"
         />

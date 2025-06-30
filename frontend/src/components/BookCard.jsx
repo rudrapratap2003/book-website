@@ -1,10 +1,17 @@
-// components/BookCard.jsx
 import { useState } from "react";
-import { FaStar, FaRegStar, FaHeart, FaRegHeart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import {
+  FaStar,
+  FaRegStar,
+  FaHeart,
+  FaRegHeart,
+} from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 
 const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
   const [showModal, setShowModal] = useState(false);
+  const [toastMsg, setToastMsg] = useState(null);
+  const navigate = useNavigate();
 
   const discount = book.originalPrice
     ? Math.round(
@@ -12,12 +19,30 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
       )
     : 0;
 
+  const handleWishlistClick = () => {
+    const newStatus = !isWishlisted;
+    onWishlistToggle(book.id);
+
+    // Show appropriate toast message
+    if (newStatus) {
+      setToastMsg("Your item has been added to wishlist");
+    } else {
+      setToastMsg("Item removed from wishlist");
+    }
+
+    // Auto hide after 2s
+    setTimeout(() => {
+      setToastMsg(null);
+    }, 2000);
+  };
+
   return (
     <>
+      {/* Book Card */}
       <div className="relative p-4 rounded-lg border border-gray-200 shadow-md bg-white w-60">
         <button
           className="absolute top-2 right-2 text-xl"
-          onClick={() => onWishlistToggle(book.id)}
+          onClick={handleWishlistClick}
         >
           {isWishlisted ? (
             <FaHeart className="text-red-700" />
@@ -60,9 +85,12 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
           )}
         </div>
 
-        <div className="font-parastoo text-red-600 font-bold text-xl">₹{book.price}</div>
+        <div className="font-parastoo text-red-600 font-bold text-xl">
+          ₹{book.price}
+        </div>
       </div>
 
+      {/* Quick View Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-[600px] max-w-full relative flex gap-4">
@@ -81,8 +109,10 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
             </div>
             <div className="w-2/3 space-y-2">
               <div className="flex justify-between items-start">
-                <h2 className="font-parastoo text-2xl font-bold">{book.title}</h2>
-                <button onClick={() => onWishlistToggle(book.id)}>
+                <h2 className="font-parastoo text-2xl font-bold">
+                  {book.title}
+                </h2>
+                <button onClick={handleWishlistClick}>
                   {isWishlisted ? (
                     <FaHeart className="text-red-700 text-xl" />
                   ) : (
@@ -90,7 +120,9 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
                   )}
                 </button>
               </div>
-              <p className="font-parastoo text-lg text-gray-600">By: {book.author}</p>
+              <p className="font-parastoo text-lg text-gray-600">
+                By: {book.author}
+              </p>
               <div className="flex">
                 {Array.from({ length: 5 }, (_, index) =>
                   index < book.rating ? (
@@ -107,7 +139,9 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
                 </span>
               </div>
 
-              <p className="font-parastoo text-gray-700 text-base">{book.description}</p>
+              <p className="font-parastoo text-gray-700 text-base">
+                {book.description}
+              </p>
 
               <div className="flex gap-2 mt-4">
                 <button
@@ -125,13 +159,26 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
                       ? "bg-red-500 text-white border-red-500"
                       : "border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
                   }`}
-                  onClick={() => onWishlistToggle(book.id)}
+                  onClick={handleWishlistClick}
                 >
                   {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
                 </button>
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Bottom Toast Popup */}
+      {toastMsg && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white border border-green-500 px-4 py-2 rounded shadow-md flex items-center gap-4 z-[999]">
+          <span className="font-parastoo text-sm text-gray-800">{toastMsg}</span>
+          <button
+            onClick={() => navigate("/myprofile/wishlist")}
+            className="text-yellow-700 text-sm font-gothic hover:underline"
+          >
+            Do Changes
+          </button>
         </div>
       )}
     </>

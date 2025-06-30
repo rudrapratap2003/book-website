@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import BookCard from "../components/BookCard"; // ✅ Adjust the path as needed
-import book2 from "../images/book2.jpg";
+
 
 const WishlistPage = () => {
   const [wishlistBooks, setWishlistBooks] = useState([]);
@@ -52,7 +52,7 @@ const WishlistPage = () => {
     id: book._id || index,
     title: book.bookname || "Untitled",
     author: book.author || "Unknown",
-    image: book.bookImage || book2,
+    image: book.bookImage, 
     rating: book.rating || 0,
     price: book.price || 0,
     originalPrice: book.originalPrice || null,

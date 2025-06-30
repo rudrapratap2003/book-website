@@ -9,9 +9,9 @@ const RefreshHandler = ({ setIsAuthenticated }) => {
   useEffect(() => {
     axios
       .get("/api/v1/me", { withCredentials: true })
-      .then(() => {
-        // --- user IS logged-in ---
-        setIsAuthenticated(true);
+      .then((res) => {
+        const user = res.data
+        setIsAuthenticated(user);
 
         // already authenticated; redirect away from auth pages
         if (location.pathname === "/login" || location.pathname === "/signup") {

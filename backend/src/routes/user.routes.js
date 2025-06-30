@@ -5,7 +5,11 @@ import {
     registerUser,
     toggleWishlist,
     wishlistofUser,
-    getMyProfile
+    getMyProfile,
+    updateAccountDetails,
+    addAddress,
+    getAddresses,
+    changeCurrentPassword
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router()
@@ -16,5 +20,10 @@ router.route("/logout").post(verifyJWT, logoutUser)
 router.route("/toggle-wishlist").post(verifyJWT, toggleWishlist)
 router.route("/wishlist").get(verifyJWT, wishlistofUser)
 router.route("/myprofile").get(verifyJWT, getMyProfile)
-export default router
+router.route("/update").put(verifyJWT, updateAccountDetails)
+router.route("/add-address").post(verifyJWT, addAddress)
+router.route("/get-addresses").get(verifyJWT, getAddresses)
+router.route("/changepassword").post(verifyJWT, changeCurrentPassword)
+
+export default router;
 

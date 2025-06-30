@@ -20,7 +20,7 @@ const generateAccessAndRefreshTokens = async(userId) => {
 }
 
 const registerUser = asyncHandler(async (req,res) => {
-    const {fullName, email, username, password, phoneNo} = req.body
+    const {fullName, email, username, password, phoneNo, avatar} = req.body
     if([fullName, email, username, password, phoneNo].some((field) => field ?.trim() ==="")) {
         throw new ApiError(400, "All fields are required")
     }
@@ -35,6 +35,7 @@ const registerUser = asyncHandler(async (req,res) => {
         phoneNo,
         email,
         password,
+        avatar,
         username: username.toLowerCase()
     })
     const createdUser = await User.findById(user._id).select(
@@ -85,12 +86,77 @@ const loginUser = asyncHandler(async (req,res) => {
         )
     )
 })
-const getMe = asyncHandler(async (req, res) => {
-  if (!req.user) {
-    throw new ApiError(401,"Unauthorized request")
+const updateAccountDetails = asyncHandler(async (req, res) => {
+  const { fullName, email, phoneNo } = req.body;
+
+  if (!fullName || !email || !phoneNo) {
+    throw new ApiError(400, "All fields are required.");
   }
-  return res.json(req.user);
+
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        fullName,
+        email,
+        phoneNo
+      }
+    },
+    { new: true }
+  ).select("-password");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Account details updated successfully."));
+});
+
+const addAddress = asyncHandler(async (req, res) => {
+  const { name, phone, pincode, locality, address, city, state, landmark, altPhone } = req.body;
+
+  if (!name || !phone || !pincode || !locality || !address || !city || !state) {
+    throw new ApiError(400, "Please fill all required fields.");
+  }
+
+  const user = await User.findById(req.user._id);
+  if (!user) throw new ApiError(404, "User not found");
+
+  const newAddress = { name, phone, pincode, locality, address, city, state, landmark, altPhone };
+  user.addresses.push(newAddress);
+  await user.save();
+
+  res.status(200).json(new ApiResponse(200, user.addresses, "Address added successfully"));
+});
+
+const getAddresses = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select("addresses");
+  if (!user) throw new ApiError(404, "User not found");
+
+  res.status(200).json(new ApiResponse(200, user.addresses));
+});
+
+const changeCurrentPassword = asyncHandler(async(req, res) => {
+    const {oldPassword, newPassword} = req.body
+
+    const user = await User.findById(req.user?._id)
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
+
+    if(!isPasswordCorrect){
+        throw new ApiError(400, "Invalid old password.")
+    }
+
+    user.password = newPassword
+    await user.save({validateBeforeSave: false})
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password changed successfully."))
 })
+
+const getMe = asyncHandler(async (req, res) => {
+  // req.user was set by auth.middleware.js
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+  res.json(req.user);          // or pick the fields you need
+});
 
 const getMyProfile = asyncHandler(async (req, res) => {
   if (!req.user || !req.user._id) {
@@ -216,12 +282,16 @@ const wishlistofUser = asyncHandler(async (req,res) => {
 })
 
 export {
-  registerUser,
-  loginUser,
-  logoutUser,
-  refreshAccessToken,
-  toggleWishlist,
-  wishlistofUser,
-  getMe,
-  getMyProfile
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
+    toggleWishlist,
+    wishlistofUser,
+    getMe,
+    getMyProfile,
+    updateAccountDetails,
+    addAddress,
+    getAddresses,
+    changeCurrentPassword
 }
