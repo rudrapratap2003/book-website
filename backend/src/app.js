@@ -6,7 +6,7 @@ import { errorHandler } from "./middlewares/eeorHandler.middleware.js"
 const app = express()
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: "https://book-cart-two.vercel.app",
     credentials: true,
 }))
 
