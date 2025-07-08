@@ -81,6 +81,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
     }
   };
 
+  console.log(user?.avatar)
  
   return (
     <div className="font-sans">

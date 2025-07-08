@@ -153,10 +153,11 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
 })
 
 const getMe = asyncHandler(async (req, res) => {
-  // req.user was set by auth.middleware.js
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-  res.json(req.user);          // or pick the fields you need
-});
+  if (!req.user) {
+    throw new ApiError(401,"Unauthorized request")
+  }
+  return res.json(req.user);
+})
 
 const getMyProfile = asyncHandler(async (req, res) => {
   if (!req.user || !req.user._id) {

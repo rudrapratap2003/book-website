@@ -1,4 +1,4 @@
-import React, { useState /* + useContext if you use AuthContext */ } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -12,10 +12,6 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-
-/*  UNCOMMENT these two lines if you keep the user in context
-import { AuthContext } from "../context/AuthContext";
-*/
 
 export function Menubar({ onLogout, user }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -90,10 +86,12 @@ export function Menubar({ onLogout, user }) {
             navigate("/myprofile");
           }}
         >
-          <Avatar /> Profile
+          <Avatar src={avatarUrl || undefined} sx={{ width: 32, height: 32 }}>
+            {!avatarUrl && initial}
+          </Avatar>
+          Profile
         </MenuItem>
 
-        {/* ADMIN DASHBOARD ENTRY — render only for admins */}
         {role === "admin" && (
           <MenuItem
             onClick={() => {
@@ -116,12 +114,14 @@ export function Menubar({ onLogout, user }) {
           </ListItemIcon>
           Add another account
         </MenuItem>
+
         <MenuItem>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           Settings
         </MenuItem>
+
         <MenuItem
           onClick={() => {
             handleClose();
