@@ -81,6 +81,11 @@ const SoldItems = () => {
                     {book.status}
                   </span>
                 </p>
+                {book.status === "rejected" && book.rejectionReason && (
+                  <p className="font-parastoo text-sm text-red-600 mt-1">
+                    Reason: {book.rejectionReason}
+                  </p>
+                )}
               </div>
             </div>
           ))}
