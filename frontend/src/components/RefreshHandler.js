@@ -8,7 +8,7 @@ const RefreshHandler = ({ setIsAuthenticated }) => {
 
   useEffect(() => {
     axios
-      .get("/api/v1/me", { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/me`, { withCredentials: true })
       .then((res) => {
         const user = res.data
         setIsAuthenticated(user);
