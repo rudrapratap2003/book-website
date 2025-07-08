@@ -43,7 +43,7 @@ const Sell = () => {
     form.append("bookImage", formData.bookImage);
 
     try {
-      const response = await axios.post("/api/v1/books/sell-book", form, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/sell-book`, form, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",

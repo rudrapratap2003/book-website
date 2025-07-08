@@ -27,7 +27,7 @@ const SettingsPage = () => {
 
   const fetchUserDetails = async () => {
     try {
-      const res = await axios.get('/api/v1/users/myprofile', {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/myprofile`, {
         withCredentials: true,
       });
       const { fullName, email, phoneNo } = res.data.data;
@@ -46,7 +46,7 @@ const SettingsPage = () => {
   const updateField = async (field) => {
     try {
       await axios.put(
-        '/api/v1/users/update',
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/update`,
         { fullName, email, phoneNo: phone },
         { withCredentials: true }
       );
@@ -65,7 +65,7 @@ const SettingsPage = () => {
 
     try {
       await axios.post(
-        '/api/v1/users/changepassword',
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/changepassword`,
         { oldPassword, newPassword },
         { withCredentials: true }
       );

@@ -24,14 +24,14 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
 
   useEffect(() => {
     if (!isAuthenticated) return setUser(null);
-    axios.get("/api/v1/users/myprofile", { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/myprofile`, { withCredentials: true })
       .then(res => setUser(res.data.data))
       .catch(err => console.error("Fetch user failed:", err));
   }, [isAuthenticated]);
 
   const handleLogout = async () => {
     try {
-      await axios.post("/api/v1/users/logout", {}, { withCredentials: true });
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/logout`, {}, { withCredentials: true });
       Cookies.remove("token");
       setIsAuthenticated(false);
       navigate("/");
@@ -45,7 +45,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
     setQuery(val);
     if (val.trim() === "") return setSuggestions([]);
     try {
-      const res = await axios.get(`/api/v1/books/search?query=${val}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/search?query=${val}`);
       setSuggestions(res.data);
     } catch (err) {
       console.error("Search failed:", err);
