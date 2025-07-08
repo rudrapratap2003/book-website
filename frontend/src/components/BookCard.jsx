@@ -40,18 +40,19 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
     <>
       {/* Book Card */}
       <div className="relative p-4 rounded-lg border border-gray-200 shadow-md bg-white w-60">
-        <button
-          className="absolute top-2 right-2 text-xl"
-          onClick={handleWishlistClick}
-        >
-          {isWishlisted ? (
-            <FaHeart className="text-red-700" />
-          ) : (
-            <FaRegHeart className="text-gray-400 hover:text-red-500" />
-          )}
-        </button>
-
         <div className="relative">
+          {/* Wishlist icon on image */}
+          <button
+            className="absolute top-2 right-2 text-xl z-10"
+            onClick={handleWishlistClick}
+          >
+            {isWishlisted ? (
+              <FaHeart className="text-red-700" />
+            ) : (
+              <FaRegHeart className="text-gray-400 hover:text-red-500" />
+            )}
+          </button>
+
           <img
             src={book.image}
             alt={book.title}
@@ -85,8 +86,17 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
           )}
         </div>
 
-        <div className="font-parastoo text-red-600 font-bold text-xl">
-          ₹{book.price}
+        {/* Price + Buy Now */}
+        <div className="flex justify-between items-center mt-2">
+          <span className="font-parastoo text-red-600 font-bold text-xl">
+            ₹{book.price}
+          </span>
+          <button
+            className="font-gothic text-sm bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition"
+            onClick={() => navigate(`/checkout/${book.id}`)}
+          >
+            Buy Now
+          </button>
         </div>
       </div>
 

@@ -73,7 +73,7 @@ export const Home = ({ isAuthenticated }) => {
               Books Trending Now
             </h2>
             <div className="bg-white p-4 rounded-3xl shadow-md">
-              <div className="font-parastoo text-lg grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="font-parastoo text-lg grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {[
                   {
                     image: "/images/book1.jpg",

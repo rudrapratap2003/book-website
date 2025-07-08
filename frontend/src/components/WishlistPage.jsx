@@ -63,7 +63,7 @@ const WishlistPage = () => {
     <div className="p-6">
       <h1 className="font-gothic text-3xl font-bold mb-6">Your Wishlist</h1>
       {books.length === 0 ? (
-        <p className="text-gray-500">Your wishlist is empty.</p>
+        <p className="font-parastoo text-lg text-gray-500">Your wishlist is empty.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {books.map((book) => (
