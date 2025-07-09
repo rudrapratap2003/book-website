@@ -8,7 +8,7 @@ const SoldItems = () => {
   useEffect(() => {
     const fetchSoldBooks = async () => {
       try {
-        const response = await axios.get("/api/v1/books/sold-by-user", {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/sold-by-user`, {
           withCredentials: true,
         });
         setSoldBooks(response.data.data);

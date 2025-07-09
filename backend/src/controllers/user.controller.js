@@ -70,7 +70,8 @@ const loginUser = asyncHandler(async (req,res) => {
     )
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: "None"
     }
     return res
     .status(200)
@@ -86,7 +87,6 @@ const loginUser = asyncHandler(async (req,res) => {
         )
     )
 })
-
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullName, email, phoneNo } = req.body;
 
@@ -110,9 +110,6 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "Account details updated successfully."));
 });
-
-
-// controllers/user.controller.js
 
 const addAddress = asyncHandler(async (req, res) => {
   const { name, phone, pincode, locality, address, city, state, landmark, altPhone } = req.body;
@@ -163,7 +160,6 @@ const getMe = asyncHandler(async (req, res) => {
   return res.json(req.user);
 })
 
-
 const getMyProfile = asyncHandler(async (req, res) => {
   if (!req.user || !req.user._id) {
     throw new ApiError(401, "Unauthorized");
@@ -193,7 +189,8 @@ const logoutUser = asyncHandler(async (req,res) => {
     )
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: "None"
     }
 
     return res

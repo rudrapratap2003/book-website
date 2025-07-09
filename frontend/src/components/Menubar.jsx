@@ -13,13 +13,17 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
-export function Menubar({ onLogout, initial, role, avatar }) {
+export function Menubar({ onLogout, user }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
+
+  const initial = user?.fullName?.[0]?.toUpperCase() || "?";
+  const avatarUrl = user?.avatar; // Assume this is a full image URL or base64 string
+  const role = user?.role;
 
   return (
     <>
@@ -32,12 +36,13 @@ export function Menubar({ onLogout, initial, role, avatar }) {
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
         >
-          <Avatar sx={{ width: 40, height: 40 }} src={avatar || undefined}>
-            {!avatar && initial}
-          </Avatar>
+          {avatarUrl ? (
+            <Avatar src={avatarUrl} sx={{ width: 40, height: 40 }} />
+          ) : (
+            <Avatar sx={{ width: 40, height: 40 }}>{initial}</Avatar>
+          )}
         </IconButton>
       </Box>
-
       <Menu
         id="account-menu"
         anchorEl={anchorEl}
@@ -81,8 +86,8 @@ export function Menubar({ onLogout, initial, role, avatar }) {
             navigate("/myprofile");
           }}
         >
-          <Avatar src={avatar || undefined} sx={{ width: 32, height: 32 }}>
-            {!avatar && initial}
+          <Avatar src={avatarUrl || undefined} sx={{ width: 32, height: 32 }}>
+            {!avatarUrl && initial}
           </Avatar>
           Profile
         </MenuItem>
@@ -130,7 +135,9 @@ export function Menubar({ onLogout, initial, role, avatar }) {
 
 Menubar.propTypes = {
   onLogout: PropTypes.func.isRequired,
-  initial: PropTypes.string,
-  role: PropTypes.string,
-  avatar: PropTypes.string,
+  user: PropTypes.shape({
+    fullName: PropTypes.string,
+    avatar: PropTypes.string,
+    role: PropTypes.string,
+  }),
 };

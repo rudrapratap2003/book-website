@@ -8,10 +8,10 @@ const RefreshHandler = ({ setIsAuthenticated }) => {
 
   useEffect(() => {
     axios
-      .get("/api/v1/me", { withCredentials: true })
-      .then(() => {
-        // --- user IS logged-in ---
-        setIsAuthenticated(true);
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/me`, { withCredentials: true })
+      .then((res) => {
+        const user = res.data
+        setIsAuthenticated(user);
 
         // already authenticated; redirect away from auth pages
         if (location.pathname === "/login" || location.pathname === "/signup") {

@@ -14,7 +14,7 @@ export const CategoryPage = () => {
   const handleAddToCart = async (bookId) => {
     try {
       await axios.post(
-        "/api/v1/cart/add",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/cart/add`,
         {
           bookId,
           quantity: 1,
@@ -31,7 +31,7 @@ export const CategoryPage = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const res = await axios.get(`/api/v1/books/category/${categoryName}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/category/${categoryName}`);
         setFetchedBooks(res.data);
       } catch (err) {
         console.error("Failed to fetch books:", err);
@@ -40,8 +40,8 @@ export const CategoryPage = () => {
 
     const fetchWishlist = async () => {
       try {
-        const res = await axios.get("/api/v1/users/wishlist", {
-          headers: { Authorization: `Bearer ${token}` },
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
+          withCredentials: true
         });
         setWishlist(res.data.data.map((book) => book._id));
       } catch (err) {
@@ -56,7 +56,7 @@ export const CategoryPage = () => {
   const handleWishlistToggle = async (bookId) => {
     try {
       const res = await axios.post(
-        "/api/v1/users/toggle-wishlist",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/toggle-wishlist`,
         { bookId },
         { withCredentials: true }
       );

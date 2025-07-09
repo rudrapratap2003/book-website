@@ -19,8 +19,6 @@ router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT, logoutUser)
 router.route("/toggle-wishlist").post(verifyJWT, toggleWishlist)
 router.route("/wishlist").get(verifyJWT, wishlistofUser)
-
-
 router.route("/myprofile").get(verifyJWT, getMyProfile)
 
 router.route("/update").put(verifyJWT, updateAccountDetails)
@@ -29,5 +27,4 @@ router.route("/get-addresses").get(verifyJWT, getAddresses)
 router.route("/changepassword").post(verifyJWT, changeCurrentPassword)
 
 export default router;
-
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Loader from "./Loader";
 import axios from "axios";
 
 const AdminDashboard = () => {
@@ -9,7 +10,7 @@ const AdminDashboard = () => {
 
   const fetchPendingBooks = async () => {
     try {
-      const res = await axios.get("/api/v1/admin/pending", {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/admin/pending`, {
         withCredentials: true,
       });
       setPendingBooks(res.data);
@@ -22,7 +23,7 @@ const AdminDashboard = () => {
 
   const handleApprove = async (bookId) => {
     try {
-      await axios.put("/api/v1/admin/approve", {bookId}, { withCredentials: true });
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/v1/admin/approve`, {bookId}, { withCredentials: true });
       setPendingBooks((prev) => prev.filter((book) => book._id !== bookId));
     } catch (error) {
       console.error("Approve failed", error);
@@ -34,7 +35,7 @@ const AdminDashboard = () => {
 
     try {
       await axios.put(
-        "/api/v1/admin/reject",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/admin/reject`,
         { bookId, message: rejectionMessage },
         { withCredentials: true }
       );
@@ -50,7 +51,7 @@ const AdminDashboard = () => {
     fetchPendingBooks();
   }, []);
 
-  if (loading) return <div className="text-center mt-10">Loading pending books...</div>;
+  if (loading) return <Loader />;
 
   return (
     <div className="p-6">

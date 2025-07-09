@@ -6,7 +6,7 @@ import { errorHandler } from "./middlewares/eeorHandler.middleware.js"
 const app = express()
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: "https://book-cart-rho.vercel.app",
     credentials: true,
 }))
 
@@ -21,12 +21,14 @@ import bookRouter from './routes/book.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import cartRouter from './routes/cart.routes.js'
 import adminRouter from "./routes/admin.routes.js"
+import ratingRouter from "./routes/rating.routes.js"
 //routes declaration
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/cart", cartRouter)
 app.use("/api/v1/books", bookRouter)
 app.use("/api/v1", authRoutes)
 app.use("/api/v1/admin", adminRouter)
+app.use("/api/v1/rating", ratingRouter)
 
 app.use(errorHandler)
 
