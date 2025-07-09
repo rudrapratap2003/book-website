@@ -22,9 +22,7 @@ const MyProfile = () => {
     const fetchUser = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/myprofile`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          withCredentials: true
         });
         setUser(res.data.data); // since you use ApiResponse wrapper
         setEditUser(res.data.data);

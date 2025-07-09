@@ -41,7 +41,7 @@ export const CategoryPage = () => {
     const fetchWishlist = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
-          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true
         });
         setWishlist(res.data.data.map((book) => book._id));
       } catch (err) {
