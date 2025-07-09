@@ -160,9 +160,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
           {isAuthenticated ? (
             <Menubar
               onLogout={handleLogout}
-              avatar={user?.avatar}
-              initial={user?.fullName?.[0]?.toUpperCase()}
-              role={user?.role}
+              user={user}
             />
           ) : (
             <button
