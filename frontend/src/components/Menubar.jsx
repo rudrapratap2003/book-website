@@ -103,14 +103,9 @@ export function Menubar({ onLogout, initial, role, avatar }) {
 
         <Divider />
 
-        <MenuItem>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
 
-        <MenuItem>
+
+        <MenuItem onClick={()=>{navigate("/settings")}}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>

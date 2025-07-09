@@ -43,17 +43,7 @@ const MyProfile = () => {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
-      {/* Sidebar */}
-      <div className="w-full md:w-1/4 p-6 bg-gray-50 border-r space-y-6">
-        <h2 className="font-gothic text-lg font-semibold text-center">Hello, {user.fullName.split(" ")[0]}!</h2>
-        <div>
-          <h3 className="font-gothic font-bold text-gray-600 flex items-center">
-            <FaUser className=" text-green-500 mr-2" /> Account Settings
-          </h3>
-          <button onClick={() => {navigate("/settings")}} className="font-parastoo ml-6 text-lg">Personal Info</button><br />
-          <button onClick={() => {navigate("/address")}} className="ml-6 text-lg font-parastoo">Manage Address</button>
-        </div>
-      </div>
+     
 
       {/* Profile Display */}
       <div className="w-full md:w-3/4 p-6">
