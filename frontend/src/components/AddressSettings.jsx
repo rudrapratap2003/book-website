@@ -1,7 +1,18 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaUser, FaCreditCard, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+
+const indianStates = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
+  "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+  "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+  "Uttar Pradesh", "Uttarakhand", "West Bengal",
+  "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+];
 
 const AddressSettings = () => {
   const navigate = useNavigate();
@@ -17,6 +28,16 @@ const AddressSettings = () => {
     state: '',
     landmark: '',
     altPhone: '',
+  });
+
+  const [errors, setErrors] = useState({
+    phone: '',
+    altPhone: '',
+    pincode: '',
+    name: '',
+    locality: '',
+    address: '',
+    city: ''
   });
 
   useEffect(() => {
@@ -35,15 +56,76 @@ const AddressSettings = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Reset error on change
+    setErrors((prev) => ({ ...prev, [name]: '' }));
+
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const validateInputs = () => {
+    let isValid = true;
+    let newErrors = {
+      phone: '',
+      altPhone: '',
+      pincode: '',
+      name: '',
+      locality: '',
+      address: '',
+      city: ''
+    };
+
+    const phoneRegex = /^[6-9]\d{9}$/;
+    const pincodeRegex = /^\d{6}$/;
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+      isValid = false;
+    }
+
+    if (!formData.locality.trim()) {
+      newErrors.locality = 'Locality is required';
+      isValid = false;
+    }
+
+    if (!formData.address.trim()) {
+      newErrors.address = 'Address is required';
+      isValid = false;
+    }
+
+    if (!formData.city.trim()) {
+      newErrors.city = 'City is required';
+      isValid = false;
+    }
+
+    if (!phoneRegex.test(formData.phone)) {
+      newErrors.phone = 'Enter a valid 10-digit phone number starting with 6-9';
+      isValid = false;
+    }
+
+    if (formData.altPhone && !phoneRegex.test(formData.altPhone)) {
+      newErrors.altPhone = 'Enter a valid 10-digit alternate phone number';
+      isValid = false;
+    }
+
+    if (!pincodeRegex.test(formData.pincode)) {
+      newErrors.pincode = 'Enter a valid 6-digit pincode';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSave = async () => {
+    if (!validateInputs()) return;
+
     try {
       await axios.post("/api/v1/users/add-address", formData, {
         withCredentials: true
       });
-      await fetchAddresses(); // refresh the list
+      await fetchAddresses();
       setFormData({
         name: '',
         phone: '',
@@ -73,6 +155,15 @@ const AddressSettings = () => {
       landmark: '',
       altPhone: '',
     });
+    setErrors({
+      phone: '',
+      altPhone: '',
+      pincode: '',
+      name: '',
+      locality: '',
+      address: '',
+      city: ''
+    });
     setShowForm(false);
   };
 
@@ -88,8 +179,6 @@ const AddressSettings = () => {
           <button onClick={() => navigate("/settings")} className="font-parastoo ml-6 text-lg">Personal Info</button><br />
           <button onClick={() => navigate("/address")} className="ml-6 text-lg font-parastoo font-bold">Manage Address</button>
         </div>
-        <div>
-        </div>
       </div>
 
       {/* Right Content */}
@@ -100,11 +189,11 @@ const AddressSettings = () => {
         {addresses.map((addr, index) => (
           <div key={index} className="font-parastoo border p-4 mb-4 rounded-md bg-gray-50">
             <p className="font-medium">{addr.name}</p>
-            <p>{addr.phone}</p>
+            <p>+91 {addr.phone}</p>
             <p>{addr.address}, {addr.locality}, {addr.city} - {addr.pincode}</p>
             <p>{addr.state}</p>
             {addr.landmark && <p>Landmark: {addr.landmark}</p>}
-            {addr.altPhone && <p>Alternate Phone: {addr.altPhone}</p>}
+            {addr.altPhone && <p>Alternate Phone: +91 {addr.altPhone}</p>}
           </div>
         ))}
 
@@ -121,22 +210,72 @@ const AddressSettings = () => {
         {showForm && (
           <div className="bg-green-50 p-6 rounded-md">
             <div className="font-parastoo grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} className="border p-2 rounded" />
-              <input type="text" name="phone" placeholder="10-digit mobile number" value={formData.phone} onChange={handleChange} className="border p-2 rounded" />
-              <input type="text" name="pincode" placeholder="Pincode" value={formData.pincode} onChange={handleChange} className="border p-2 rounded" />
-              <input type="text" name="locality" placeholder="Locality" value={formData.locality} onChange={handleChange} className="border p-2 rounded" />
-              <textarea name="address" placeholder="Address (Area and Street)" value={formData.address} onChange={handleChange} className="border p-2 rounded md:col-span-2" />
-              <input type="text" name="city" placeholder="City/District/Town" value={formData.city} onChange={handleChange} className="border p-2 rounded" />
+              <div>
+                <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} className="border p-2 rounded w-full" />
+                {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  name="phone"
+                  placeholder="10-digit mobile number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="border p-2 rounded w-full"
+                />
+                {errors.phone && <p className="text-red-600 text-sm">{errors.phone}</p>}
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  name="pincode"
+                  placeholder="Pincode"
+                  value={formData.pincode}
+                  onChange={handleChange}
+                  className="border p-2 rounded w-full"
+                />
+                {errors.pincode && <p className="text-red-600 text-sm">{errors.pincode}</p>}
+              </div>
+
+              <div>
+                <input type="text" name="locality" placeholder="Locality" value={formData.locality} onChange={handleChange} className="border p-2 rounded w-full" />
+                {errors.locality && <p className="text-red-600 text-sm">{errors.locality}</p>}
+              </div>
+
+              <div className="md:col-span-2">
+                <textarea name="address" placeholder="Address (Area and Street)" value={formData.address} onChange={handleChange} className="border p-2 rounded w-full" />
+                {errors.address && <p className="text-red-600 text-sm">{errors.address}</p>}
+              </div>
+
+              <div>
+                <input type="text" name="city" placeholder="City/District/Town" value={formData.city} onChange={handleChange} className="border p-2 rounded w-full" />
+                {errors.city && <p className="text-red-600 text-sm">{errors.city}</p>}
+              </div>
+
               <select name="state" value={formData.state} onChange={handleChange} className="border p-2 rounded">
                 <option value="">--Select State--</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Karnataka">Karnataka</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="West Bengal">West Bengal</option>
+                {indianStates.map((state, idx) => (
+                  <option key={idx} value={state}>{state}</option>
+                ))}
               </select>
+
               <input type="text" name="landmark" placeholder="Landmark (Optional)" value={formData.landmark} onChange={handleChange} className="border p-2 rounded" />
-              <input type="text" name="altPhone" placeholder="Alternate Phone (Optional)" value={formData.altPhone} onChange={handleChange} className="border p-2 rounded" />
+
+              <div>
+                <input
+                  type="text"
+                  name="altPhone"
+                  placeholder="Alternate Phone (Optional)"
+                  value={formData.altPhone}
+                  onChange={handleChange}
+                  className="border p-2 rounded w-full"
+                />
+                {errors.altPhone && <p className="text-red-600 text-sm">{errors.altPhone}</p>}
+              </div>
             </div>
+
             <div className="flex gap-4 mt-6">
               <button onClick={handleSave} className="font-gothic bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">SAVE</button>
               <button onClick={handleCancel} className="font-gothic text-green-600 px-6 py-2 rounded hover:underline">CANCEL</button>

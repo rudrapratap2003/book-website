@@ -17,6 +17,16 @@ export const Home = ({ isAuthenticated }) => {
     { id: 3, name: "Romantic", image: "/images/romm.png" },
     { id: 4, name: "Cooking", image: "/images/cook.png" },
   ];
+
+  const handleCategoryClick = (name) => {
+    const formattedName = name.toLowerCase().replace(/\s+/g, "-");
+    navigate(`/category/${formattedName}`);
+  };
+
+   const handleSeeMore = () => {
+    navigate("/books");
+  };
+
   if (loading) return <Loader />;
   return (
     <>
@@ -76,7 +86,8 @@ export const Home = ({ isAuthenticated }) => {
               {categories.map((category, index) => (
                 <div
                   key={category.id}
-                  className="flex items-center p-4 rounded-lg shadow-md transition-transform transform hover:scale-105"
+                  onClick={() => handleCategoryClick(category.name)}
+                  className="cursor-pointer flex items-center p-4 rounded-lg shadow-md transition-transform transform hover:scale-105"
                   style={{
                     background: `linear-gradient(to left, ${
                       index === 0
@@ -105,6 +116,14 @@ export const Home = ({ isAuthenticated }) => {
                   <h3 className="font-parastoo text-2xl font-semibold text-gray-800">{category.name}</h3>
                 </div>
               ))}
+               <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end mt-4">
+          <button
+            onClick={handleSeeMore}
+            className="font-gothic font-semibold text-black underline text-lg hover:text-gray-700 transition-colors"
+          >
+            See More →
+          </button>
+        </div>
             </div>
           </div>
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { sellBook, buyBook, fetchBookByCategory, getBooksSoldByMe, searchBooks } from "../controllers/book.controller.js";
+import { sellBook, buyBook, fetchBookByCategory, getBooksSoldByMe, searchBooks, getAllApprovedBooks } from "../controllers/book.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 const router = Router()
@@ -15,6 +15,7 @@ router.route('/:bookId').post(verifyJWT, buyBook)
 router.route("/category/:category").get(verifyJWT, fetchBookByCategory);
 router.route("/sold-by-user").get(verifyJWT, getBooksSoldByMe)
 router.route("/search").get(searchBooks)
+router.route("/all").get(getAllApprovedBooks);
 
 
 export default router

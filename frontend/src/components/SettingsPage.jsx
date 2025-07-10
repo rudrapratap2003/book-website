@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { FaUser, FaCreditCard, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,23 +23,32 @@ const SettingsPage = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [step, setStep] = useState(1);
+
+  const [errorMessage, setErrorMessage] = useState('');
+  const [matchError, setMatchError] = useState('');
+
   const toastShown = useRef(false);
 
-  const fetchUserDetails = async () => {
-    try {
-      const res = await axios.get('/api/v1/users/myprofile', {
-        withCredentials: true,
-      });
-      const { fullName, email, phoneNo } = res.data.data;
-      setFullName(fullName);
-      setEmail(email);
-      setPhone(phoneNo);
-    } catch (error) {
-      console.error("Error fetching user profile", error);
-    }
-  };
+  // Delete account state
+  const [showDeletePrompt, setShowDeletePrompt] = useState(false);
+  const [confirmDeleteStep, setConfirmDeleteStep] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const res = await axios.get('/api/v1/users/myprofile', {
+          withCredentials: true,
+        });
+        const { fullName, email, phoneNo } = res.data.data;
+        setFullName(fullName);
+        setEmail(email);
+        setPhone(phoneNo);
+      } catch (error) {
+        console.error("Error fetching user profile", error);
+      }
+    };
     fetchUserDetails();
   }, []);
 
@@ -57,9 +66,25 @@ const SettingsPage = () => {
     }
   };
 
+  const verifyOldPassword = async () => {
+    if (!oldPassword) {
+      setErrorMessage("Please enter your current password.");
+      return;
+    }
+
+    try {
+      await axios.post('/api/v1/users/changepassword', { oldPassword, newPassword: oldPassword }, { withCredentials: true });
+
+      setStep(2);
+      setErrorMessage('');
+    } catch (err) {
+      setErrorMessage("Old password is incorrect.");
+    }
+  };
+
   const handleChangePassword = async () => {
     if (newPassword !== confirmNewPassword) {
-      alert("New passwords do not match");
+      setMatchError("New passwords do not match.");
       return;
     }
 
@@ -75,6 +100,7 @@ const SettingsPage = () => {
       setConfirmNewPassword('');
       setShowPasswordPrompt(false);
       setStep(1);
+      setMatchError('');
 
       if (!toastShown.current) {
         toast.success("Password changed successfully!", {
@@ -87,13 +113,31 @@ const SettingsPage = () => {
         }, 2000);
       }
     } catch (err) {
-      alert("Old password is incorrect or update failed.");
-      console.error(err);
+      setMatchError("Password update failed. Please try again.");
     }
   };
 
   const handleEdit = (field) => setEditStates({ ...editStates, [field]: true });
   const handleCancel = (field) => setEditStates({ ...editStates, [field]: false });
+
+  const handleDeleteAccount = async () => {
+    try {
+      await axios.post(
+        '/api/v1/users/delete-account',
+        { password: deletePassword },
+        { withCredentials: true }
+      );
+      toast.success("Account deleted successfully. Redirecting...", {
+        position: "bottom-center",
+        autoClose: 2000,
+      });
+      setTimeout(() => {
+        navigate('/signup');
+      }, 2000);
+    } catch (err) {
+      setDeleteError("Incorrect password. Please try again.");
+    }
+  };
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
@@ -107,11 +151,9 @@ const SettingsPage = () => {
           <button onClick={() => navigate("/settings")} className="font-parastoo font-bold ml-6 text-lg">Personal Info</button><br />
           <button onClick={() => navigate("/address")} className="ml-6 text-lg font-parastoo">Manage Address</button>
         </div>
-        <div>
-          </div>
       </div>
 
-      {/* Right Content */}
+      {/* Main Content */}
       <div className="flex-1 p-6">
         <h1 className="font-gothic text-2xl font-bold mb-4">Account Settings</h1>
         <h2 className="font-gothic text-xl font-semibold mb-6 text-green-600">Profile Information</h2>
@@ -182,7 +224,7 @@ const SettingsPage = () => {
           />
         </div>
 
-        {/* Change Password */}
+        {/* Change Password Section */}
         <div className="mt-8">
           {!showPasswordPrompt ? (
             <button
@@ -201,20 +243,18 @@ const SettingsPage = () => {
                 <>
                   <input
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="Enter your old password"
                     value={oldPassword}
                     onChange={(e) => setOldPassword(e.target.value)}
                     className="w-full p-3 border rounded border-green-500 font-parastoo"
                   />
                   <button
-                    onClick={() => {
-                      if (!oldPassword) return alert("Please enter your old password.");
-                      setStep(2);
-                    }}
+                    onClick={verifyOldPassword}
                     className="bg-green-600 text-white px-4 py-2 rounded font-gothic"
                   >
                     Confirm
                   </button>
+                  {errorMessage && <p className="text-red-600 text-sm">{errorMessage}</p>}
                 </>
               )}
 
@@ -240,7 +280,60 @@ const SettingsPage = () => {
                   >
                     Save
                   </button>
+                  {matchError && <p className="text-red-600 text-sm">{matchError}</p>}
                 </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Delete Account Section */}
+        <div className="mt-10">
+          {!showDeletePrompt ? (
+            <button
+              onClick={() => setShowDeletePrompt(true)}
+              className="text-red-600 font-gothic text-lg"
+            >
+              Delete your account
+            </button>
+          ) : (
+            <div className="space-y-4 border border-red-300 bg-red-50 p-4 rounded-md mt-4">
+              <p className="text-red-700 font-parastoo text-md">
+                ⚠️ If you delete your account, all your data will be lost permanently.
+              </p>
+
+              {!confirmDeleteStep ? (
+                <div className="space-x-4">
+                  <button
+                    onClick={() => setConfirmDeleteStep(true)}
+                    className="bg-red-600 text-white px-4 py-2 rounded font-gothic"
+                  >
+                    Yes, I’m sure
+                  </button>
+                  <button
+                    onClick={() => setShowDeletePrompt(false)}
+                    className="text-red-600 font-parastoo hover:underline"
+                  >
+                    No, cancel
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    className="w-full p-3 border rounded border-red-500 font-parastoo"
+                  />
+                  <button
+                    onClick={handleDeleteAccount}
+                    className="bg-red-600 text-white px-4 py-2 rounded font-gothic mt-2"
+                  >
+                    Delete Account
+                  </button>
+                  {deleteError && <p className="text-red-600 text-sm">{deleteError}</p>}
+                </div>
               )}
             </div>
           )}

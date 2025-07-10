@@ -6,7 +6,6 @@ import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { CategoryPage } from "./components/CategoryPage";
 import Sell from "./components/Sell";
-import Buy from "./components/Buy";
 import SignUp from "./components/SignUp";
 import Signin from "./components/Signin";
 import RefreshHandler from "./components/RefreshHandler";
@@ -20,6 +19,7 @@ import SettingsPage from "./components/SettingsPage";
 import AddressSettings from "./components/AddressSettings";
 import AdminDashboard from "./components/AdminDashboard";
 import RouteTitle from "./components/RouteTitle";
+import Books from "./components/Books";
 
 const books = [
   { 
@@ -97,10 +97,10 @@ function App() {
             !isAuthenticated ? <SignUp setIsAuthenticated={setIsAuthenticated}/> : <Navigate to="/" replace />
           }
         />
-        <Route path="/books" element={<PrivateRoute element={<Home/>}/>}/>
+       
         <Route path="/category/:categoryName" element={<PrivateRoute element={<CategoryPage />}/>}/>
         <Route path="/sell" element={<PrivateRoute element={<Sell />}/>}/>
-        <Route path="/buy" element={<PrivateRoute element={<Buy />}/>}/>
+        <Route path="/books" element={<PrivateRoute element={<Books />}/>}/>
         <Route path="/myprofile" element={<PrivateRoute element={<MyProfile />}/>}/>
 
         <Route path="/sold-items" element={<PrivateRoute element={<SoldItems />}/>}/>

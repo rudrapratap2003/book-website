@@ -81,6 +81,19 @@ const fetchBookByCategory = asyncHandler(async (req, res) => {
   }
 });
 
+const getAllApprovedBooks = asyncHandler(async (req, res) => {
+  try {
+    const approvedBooks = await Book.find({ status: "approved" });
+    return res
+      .status(200)
+      .json(new ApiResponse(200, approvedBooks, "All approved books"));
+  } catch (error) {
+    console.error("Error fetching all approved books:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 
  const getBooksSoldByMe = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
@@ -119,5 +132,6 @@ export {
     buyBook,
     fetchBookByCategory,
     getBooksSoldByMe,
-    searchBooks
+    searchBooks,
+    getAllApprovedBooks
 }

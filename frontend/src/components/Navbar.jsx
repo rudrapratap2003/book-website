@@ -15,13 +15,6 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
   const [suggestions, setSuggestions] = useState([]);
   const [user, setUser] = useState(null);
 
-  const categories = [
-    "Art & Photography", "Biographies & Memoirs", "Dictionaries & Language", "Literature & Literary Studies",
-    "English Language Teaching", "Fiction", "References & Encyclopedias", "History & Humanities",
-    "Society & Social Sciences", "Business & Economics", "Law", "Medicine",
-    "Science & Mathematics", "Environment & Geography", "Technology & Engineering",
-  ];
-
   useEffect(() => {
     if (!isAuthenticated) return setUser(null);
     axios.get("/api/v1/users/myprofile", { withCredentials: true })
@@ -73,25 +66,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
         {/* Center: Desktop Menu */}
         <div className="hidden md:flex gap-6 items-center font-gothic">
           <Link to="/">HOME</Link>
-          <div className="relative">
-            <button onClick={() => setBooksOpen(!booksOpen)}>BOOKS ▼</button>
-            {booksOpen && (
-              <div className="absolute top-10 left-0 bg-white shadow border rounded w-64 z-50">
-                <ul>
-                  {categories.map((cat) => (
-                    <li key={cat} className="px-4 py-2 hover:bg-gray-100">
-                      <Link
-                        to={`/category/${cat.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`}
-                        onClick={() => setBooksOpen(false)}
-                      >
-                        {cat}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+          <Link to="/books">BOOKS</Link>  
           <Link to="/sell">SELL</Link>
         </div>
 

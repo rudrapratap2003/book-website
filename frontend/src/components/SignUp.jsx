@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 
 const SignUp = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
@@ -15,6 +17,8 @@ const SignUp = ({ setIsAuthenticated }) => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const avatars = [
     "/images/avatar1.jpg",
@@ -67,22 +71,82 @@ const SignUp = ({ setIsAuthenticated }) => {
 
           <form className="space-y-4" onSubmit={handleRegister}>
             {['fullName', 'phoneNo', 'email', 'username', 'password'].map((field, i) => (
-              <div key={i}>
-                <label className="font-parastoo block text-gray-700 mb-1 text-lg" htmlFor={field}>
-                  {field === 'phoneNo' ? 'Phone Number' : field.charAt(0).toUpperCase() + field.slice(1)}
-                </label>
-                <input
-                  id={field}
-                  name={field}
-                  type={field === 'email' ? 'email' : field === 'password' ? 'password' : 'text'}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  required
-                  className="font-parastoo w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4CAF50]"
-                  placeholder={`Enter your ${field === 'phoneNo' ? 'phone number' : field}`}
-                />
-              </div>
-            ))}
+  <div key={i} className="mb-4">
+    <label className="font-parastoo block text-gray-700 mb-1 text-lg" htmlFor={field}>
+      {field === 'phoneNo' ? 'Phone Number' : field.charAt(0).toUpperCase() + field.slice(1)}
+    </label>
+
+    {field === 'phoneNo' ? (
+      <div className="flex items-center gap-2">
+        <span className="flex items-center px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
+          +91
+        </span>
+        <input
+          id={field}
+          name={field}
+          type="tel"
+          value={formData[field]}
+          onChange={handleChange}
+          required
+          maxLength="10"
+          pattern="[6-9][0-9]{9}"
+          className="font-parastoo w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4CAF50]"
+          placeholder="Enter your phone number"
+        />
+      </div>
+    ) : field === 'password' ? (
+      <div className="relative">
+        <input
+          id={field}
+          name={field}
+          type={showPassword ? 'text' : 'password'}
+          value={formData[field]}
+          onChange={handleChange}
+          required
+          className="font-parastoo w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4CAF50]"
+          placeholder="Enter your password"
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+        >
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </button>
+      </div>
+    ) : (
+      <input
+        id={field}
+        name={field}
+        type={field === 'email' ? 'email' : 'text'}
+        value={formData[field]}
+        onChange={handleChange}
+        required
+        className="font-parastoo w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4CAF50]"
+        placeholder={`Enter your ${field}`}
+      />
+    )}
+
+    {/* Phone Number Errors */}
+    {field === 'phoneNo' && formData.phoneNo && (
+      <>
+        {!/^\d{10}$/.test(formData.phoneNo) && (
+          <p className="text-red-500 text-sm mt-1">Phone number must be exactly 10 digits.</p>
+        )}
+        {!/^[6-9]/.test(formData.phoneNo) && formData.phoneNo.length === 10 && (
+          <p className="text-red-500 text-sm mt-1">Phone number must start with digits 6–9.</p>
+        )}
+      </>
+    )}
+
+    {/* Email Error */}
+    {field === 'email' && formData.email && !/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(formData.email) && (
+      <p className="text-red-500 text-sm mt-1">Please enter a valid email address.</p>
+    )}
+  </div>
+))}
+
+
 
             {/* Avatar Selection Button */}
             <div>

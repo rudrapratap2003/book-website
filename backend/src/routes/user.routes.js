@@ -9,7 +9,8 @@ import {
     updateAccountDetails,
     addAddress,
     getAddresses,
-    changeCurrentPassword
+    changeCurrentPassword,
+    deleteAccount
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router()
@@ -27,6 +28,7 @@ router.route("/update").put(verifyJWT, updateAccountDetails)
 router.route("/add-address").post(verifyJWT, addAddress)
 router.route("/get-addresses").get(verifyJWT, getAddresses)
 router.route("/changepassword").post(verifyJWT, changeCurrentPassword)
+router.route("/delete-account").post(verifyJWT,deleteAccount)
 
 export default router;
 
