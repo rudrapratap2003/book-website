@@ -75,6 +75,7 @@ const fetchAllBooks = asyncHandler(async (req, res) => {
   }
 });
 
+
  const getBooksSoldByMe = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
@@ -112,5 +113,5 @@ export {
     buyBook,
     fetchAllBooks,
     getBooksSoldByMe,
-    searchBooks
+    searchBooks,
 }

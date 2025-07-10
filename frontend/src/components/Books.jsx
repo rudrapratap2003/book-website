@@ -32,7 +32,7 @@ const categories = [
   { label: "Romantic", icon: "/images/romance.jpg", path: "romantic" },
 ];
 
-const Buy = () => {
+const Books = () => {
   const { pathname } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [startIndex, setStartIndex] = useState(0);
@@ -172,4 +172,4 @@ const Buy = () => {
   );
 };
 
-export default Buy;
+export default Books;
