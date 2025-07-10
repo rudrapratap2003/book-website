@@ -11,6 +11,7 @@ import {
     getAddresses,
     changeCurrentPassword
 } from "../controllers/user.controller.js";
+import {getMyOrders, placeOrder} from "../controllers/order.controller.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router()
 
@@ -26,5 +27,6 @@ router.route("/add-address").post(verifyJWT, addAddress)
 router.route("/get-addresses").get(verifyJWT, getAddresses)
 router.route("/changepassword").post(verifyJWT, changeCurrentPassword)
 
+router.route("/order-place").post(verifyJWT, placeOrder)
+router.route("/my-orders").get(verifyJWT, getMyOrders)
 export default router;
-

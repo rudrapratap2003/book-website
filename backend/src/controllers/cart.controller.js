@@ -5,22 +5,28 @@ import {Book} from "../models/book.model.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const getCart = asyncHandler(async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id).populate("cart.book");
+  const user = await User.findById(req.user._id).populate("cart.book");
 
-    res.status(200).json(
-        new ApiResponse(200, {
-      cartItems: user.cart.map((item) => ({
-        _id: item._id,
-        book: item.book,
-        quantity: item.quantity
-      }))
-    },"user cart fetched successfully")
-    );
-  } catch (err) {
-    throw new ApiError(500,"Failed to fetch cart items")
-  }
-})
+  if (!user) throw new ApiError(404, "User not found");
+
+  const cartItems = user.cart.map((item) => ({
+    _id: item._id,
+    book: {
+      _id: item.book._id,
+      bookname: item.book.bookname,
+      author: item.book.author,
+      price: item.book.price,
+      image: item.book.bookImage,
+      count: item.book.count,
+    },
+    quantity: item.quantity,
+  }));
+
+  res.status(200).json(
+    new ApiResponse(200, { cartItems }, "User cart fetched successfully")
+  );
+});
+
 
 const addToCart = async (req, res) => {
   const { bookId, quantity } = req.body;
@@ -88,7 +94,7 @@ const removeCartItems = (async (req, res) => {
 })
 
 export {
-    getCart,
-    addToCart,
-    removeCartItems
+  getCart,
+  addToCart,
+  removeCartItems
 }

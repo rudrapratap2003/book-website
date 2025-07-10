@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaStar,
@@ -7,33 +7,90 @@ import {
   FaRegHeart,
 } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import axios from "axios";
 
-const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
+const BookCard = ({ book }) => {
   const [showModal, setShowModal] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
+  const [isWishlisted, setIsWishlisted] = useState(false);
   const navigate = useNavigate();
 
-  const discount = book.originalPrice
-    ? Math.round(
-        ((book.originalPrice - book.price) / book.originalPrice) * 100
-      )
-    : 0;
+  // Check if book is already wishlisted on mount
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
+          withCredentials: true,
+        });
+        const wishlistIds = res.data.data.map((b) => b._id);
+        setIsWishlisted(wishlistIds.includes(book.id));
+      } catch (err) {
+        console.error("Failed to fetch wishlist:", err);
+      }
+    };
+    fetchWishlist();
+  }, [book.id]);
 
-  const handleWishlistClick = () => {
-    const newStatus = !isWishlisted;
-    onWishlistToggle(book.id);
-
-    // Show appropriate toast message
-    if (newStatus) {
-      setToastMsg("Your item has been added to wishlist");
-    } else {
-      setToastMsg("Item removed from wishlist");
+  const handleWishlistClick = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/toggle-wishlist`,
+        { bookId: book.id },
+        { withCredentials: true }
+      );
+      const updatedWishlist = res.data.data.map((b) => b._id);
+      setIsWishlisted(updatedWishlist.includes(book.id));
+      setToastMsg(
+        updatedWishlist.includes(book.id)
+          ? "Your item has been added to wishlist"
+          : "Item removed from wishlist"
+      );
+    } catch (err) {
+      console.error("Error toggling wishlist:", err);
+      setToastMsg("Something went wrong with wishlist");
     }
+    setTimeout(() => setToastMsg(null), 2000);
+  };
 
-    // Auto hide after 2s
-    setTimeout(() => {
-      setToastMsg(null);
-    }, 2000);
+  const handleAddToCart = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/cart/add`,
+        { bookId: book.id, quantity: 1 },
+        { withCredentials: true }
+      );
+      setToastMsg("Book added to cart");
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+      setToastMsg("Failed to add to cart");
+    }
+    setTimeout(() => setToastMsg(null), 2000);
+  };
+
+  const handleBuyNow = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/order-place`,
+        {
+          bookId: book.id,
+          quantity: 1,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      setToastMsg("Order placed successfully!");
+      setTimeout(() => {
+        setToastMsg(null);
+        navigate("/myprofile/orders");
+      }, 1500);
+    } catch (error) {
+      console.error("Error placing order:", error);
+      setToastMsg("Failed to place order. Please try again.");
+      setTimeout(() => {
+        setToastMsg(null);
+      }, 2000);
+    }
   };
 
   return (
@@ -41,7 +98,7 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
       {/* Book Card */}
       <div className="relative p-4 rounded-lg border border-gray-200 shadow-md bg-white w-60">
         <div className="relative">
-          {/* Wishlist icon on image */}
+          {/* Wishlist icon */}
           <button
             className="absolute top-2 right-2 text-xl z-10"
             onClick={handleWishlistClick}
@@ -63,13 +120,27 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
             }}
           />
 
-          <button
-            className="font-gothic absolute bottom-0 left-0 w-full bg-white text-orange-500 border border-orange-500 font-medium py-1 opacity-90 hover:opacity-100 transition-all"
-            onClick={() => setShowModal(true)}
-          >
-            QUICK VIEW
-          </button>
+          {/* Out of stock overlay */}
+          {book.count === 0 && (
+            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-lg">
+              <span className="text-white font-bold text-lg">Out of Stock</span>
+            </div>
+          )}
+
+          {/* Quick View Button */}
+          <div className="absolute bottom-0 left-0 w-full bg-white opacity-90 hover:opacity-100 transition-all">
+            <button
+              className="font-gothic w-full text-orange-500 border border-orange-500 font-medium py-1"
+              onClick={() => setShowModal(true)}
+            >
+              QUICK VIEW
+            </button>
+          </div>
         </div>
+
+        <p className="text-center text-sm text-gray-700 font-parastoo mt-1">
+          {book.count > 0 ? `${book.count} books left` : "Out of Stock"}
+        </p>
 
         <div className="font-parastoo text-xl font-semibold mt-2 text-gray-800">
           {book.title}
@@ -92,8 +163,13 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
             ₹{book.price}
           </span>
           <button
-            className="font-gothic text-sm bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition"
-            onClick={() => navigate(`/checkout/${book.id}`)}
+            disabled={book.count === 0}
+            className={`font-gothic text-sm px-3 py-1 rounded transition ${
+              book.count === 0
+                ? "bg-gray-400 text-white cursor-not-allowed"
+                : "bg-orange-500 text-white hover:bg-orange-600"
+            }`}
+            onClick={handleBuyNow}
           >
             Buy Now
           </button>
@@ -119,9 +195,7 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
             </div>
             <div className="w-2/3 space-y-2">
               <div className="flex justify-between items-start">
-                <h2 className="font-parastoo text-2xl font-bold">
-                  {book.title}
-                </h2>
+                <h2 className="font-parastoo text-2xl font-bold">{book.title}</h2>
                 <button onClick={handleWishlistClick}>
                   {isWishlisted ? (
                     <FaHeart className="text-red-700 text-xl" />
@@ -133,6 +207,7 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
               <p className="font-parastoo text-lg text-gray-600">
                 By: {book.author}
               </p>
+
               <div className="flex">
                 {Array.from({ length: 5 }, (_, index) =>
                   index < book.rating ? (
@@ -155,9 +230,14 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
 
               <div className="flex gap-2 mt-4">
                 <button
-                  className="font-gothic bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+                  disabled={book.count === 0}
+                  className={`font-gothic px-4 py-2 rounded transition ${
+                    book.count === 0
+                      ? "bg-gray-400 text-white cursor-not-allowed"
+                      : "bg-red-500 text-white hover:bg-red-600"
+                  }`}
                   onClick={() => {
-                    onAddToCart(book.id);
+                    handleAddToCart();
                     setShowModal(false);
                   }}
                 >
@@ -179,15 +259,15 @@ const BookCard = ({ book, isWishlisted, onWishlistToggle, onAddToCart }) => {
         </div>
       )}
 
-      {/* Bottom Toast Popup */}
+      {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white border border-green-500 px-4 py-2 rounded shadow-md flex items-center gap-4 z-[999]">
           <span className="font-parastoo text-sm text-gray-800">{toastMsg}</span>
           <button
-            onClick={() => navigate("/myprofile/wishlist")}
+            onClick={() => navigate("/myprofile/orders")}
             className="text-yellow-700 text-sm font-gothic hover:underline"
           >
-            Do Changes
+            View Orders
           </button>
         </div>
       )}

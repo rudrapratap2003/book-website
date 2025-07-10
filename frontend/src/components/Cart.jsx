@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -16,7 +16,6 @@ const CartPage = () => {
           selected: false,
         }));
         setCartItems(itemsWithSelection);
-        console.log("Fetched cart items →", res.data.data.cartItems);
       } catch (error) {
         console.error("Error fetching cart items:", error);
       } finally {
@@ -71,6 +70,41 @@ const CartPage = () => {
     }
   };
 
+const handlePlaceOrder = async () => {
+  const selectedItems = cartItems.filter((item) => item.selected);
+
+  if (selectedItems.length === 0) {
+    alert("Please select at least one item to place an order.");
+    return;
+  }
+
+  const orderPayload = {
+    items: selectedItems.map((item) => ({
+      bookId: item.book._id,
+      quantity: item.quantity,
+    })),
+  };
+
+  try {
+    // ✅ Place order — backend will handle cart cleanup
+    await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/order-place`,
+      orderPayload,
+      { withCredentials: true }
+    );
+
+    // ✅ Update frontend state by removing selected items
+    setCartItems((prev) => prev.filter((item) => !item.selected));
+
+    alert("Order placed successfully!");
+  } catch (error) {
+    console.error("Error placing order:", error);
+    alert("Failed to place order. Try again.");
+  }
+};
+
+
+
   const selectedItems = cartItems.filter((item) => item.selected);
   const totalAmount = selectedItems.reduce(
     (total, item) => total + item.book.price * item.quantity,
@@ -84,9 +118,13 @@ const CartPage = () => {
         <h2 className="font-gothic text-4xl font-bold mb-4">My Cart</h2>
 
         {loading ? (
-          <p className="font-parastoo text-lg text-gray-600">Loading your cart...</p>
+          <p className="font-parastoo text-lg text-gray-600">
+            Loading your cart...
+          </p>
         ) : cartItems.length === 0 ? (
-          <p className="font-parastoo text-lg text-gray-600">Your cart is empty now.</p>
+          <p className="font-parastoo text-lg text-gray-600">
+            Your cart is empty now.
+          </p>
         ) : (
           <>
             <div className="flex items-center justify-between mb-4">
@@ -95,19 +133,20 @@ const CartPage = () => {
                   type="checkbox"
                   checked={
                     selectedItems.length > 0 &&
-                    selectedItems.length === cartItems.length
+                    selectedItems.length === cartItems.filter(item => item.book.count > 0).length
                   }
                   onChange={(e) =>
                     setCartItems((prev) =>
                       prev.map((item) => ({
                         ...item,
-                        selected: e.target.checked,
+                        selected: item.book.count > 0 ? e.target.checked : false,
                       }))
                     )
                   }
                 />
                 <span className="font-gothic text-base font-semibold">
-                  {selectedItems.length}/{cartItems.length} ITEMS SELECTED
+                  {selectedItems.length}/
+                  {cartItems.filter((item) => item.book.count > 0).length} ITEMS SELECTED
                 </span>
               </div>
               <button
@@ -121,10 +160,11 @@ const CartPage = () => {
             {cartItems.map((item) => (
               <div
                 key={item._id}
-                className="flex gap-4 border p-3 rounded-lg mb-4 items-start"
+                className="flex gap-4 border p-3 rounded-lg mb-4 items-start bg-white"
               >
                 <input
                   type="checkbox"
+                  disabled={item.book.count === 0}
                   checked={item.selected || false}
                   onChange={() => handleSelect(item._id)}
                   className="mt-2"
@@ -139,29 +179,40 @@ const CartPage = () => {
                 )}
 
                 <div className="flex-1">
-                  <p className="font-parastoo text-xl font-semibold">{item.book.bookname}</p>
+                  <p className="font-parastoo text-xl font-semibold">
+                    {item.book.bookname}
+                  </p>
                   <p className="font-parastoo text-lg text-gray-500">
                     By: {item.book.author}
                   </p>
 
-                  <div className="font-parastoo flex gap-4 items-center mt-2 text-base">
-                    <label>
-                      Qty:
-                      <select
-                        value={item.quantity}
-                        onChange={(e) =>
-                          handleAddToCart(item.book._id, e.target.value)
-                        }
-                        className="ml-2 border px-2 py-1 rounded"
-                      >
-                        {[1, 2, 3, 4, 5].map((num) => (
-                          <option key={num} value={num}>
-                            {num}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
+                  {item.book.count > 0 ? (
+                    <div className="font-parastoo flex gap-4 items-center mt-2 text-base">
+                      <label>
+                        Qty:
+                        <select
+                          value={item.quantity}
+                          onChange={(e) =>
+                            handleAddToCart(item.book._id, e.target.value)
+                          }
+                          className="ml-2 border px-2 py-1 rounded"
+                        >
+                          {Array.from(
+                            { length: item.book.count },
+                            (_, i) => i + 1
+                          ).map((num) => (
+                            <option key={num} value={num}>
+                              {num}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+                  ) : (
+                    <p className="font-parastoo mt-2 text-red-600 font-semibold">
+                      Out of Stock
+                    </p>
+                  )}
 
                   <p className="font-parastoo text-lg mt-2 font-semibold">
                     ₹{item.book.price} × {item.quantity}
@@ -182,7 +233,10 @@ const CartPage = () => {
 
           <div className="space-y-2">
             {selectedItems.map((item) => (
-              <div key={item._id} className="font-parastoo text-lg flex justify-between">
+              <div
+                key={item._id}
+                className="font-parastoo text-lg flex justify-between"
+              >
                 <span>
                   {item.book.bookname}{" "}
                   {item.quantity > 1 && `× ${item.quantity}`}
@@ -199,7 +253,15 @@ const CartPage = () => {
             <span>₹{totalAmount}</span>
           </div>
 
-          <button className="font-gothic w-full bg-red-500 text-white py-2 rounded mt-4 hover:bg-red-600">
+          <button
+            onClick={handlePlaceOrder}
+            disabled={selectedItems.length === 0}
+            className={`font-gothic w-full py-2 rounded mt-4 ${
+              selectedItems.length === 0
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-red-500 text-white hover:bg-red-600"
+            }`}
+          >
             PLACE ORDER
           </button>
         </div>

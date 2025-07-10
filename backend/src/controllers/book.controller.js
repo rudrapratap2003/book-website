@@ -65,22 +65,15 @@ const buyBook = asyncHandler(async (req,res) => {
     }
 })
 
-const fetchBookByCategory = asyncHandler(async (req, res) => {
+const fetchAllBooks = asyncHandler(async (req, res) => {
   try {
-    const category = req.params.category.toLowerCase();
-
-    const books = await Book.find({
-      category,
-      status: "approved", // Only show books that are approved
-    });
-
+    const books = await Book.find({ status: "approved" });
     res.status(200).json(books);
   } catch (error) {
-    console.error("Error fetching category books:", error);
+    console.error("Error fetching all books:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
  const getBooksSoldByMe = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
@@ -117,7 +110,7 @@ const searchBooks = asyncHandler(async (req, res) => {
 export {
     sellBook,
     buyBook,
-    fetchBookByCategory,
+    fetchAllBooks,
     getBooksSoldByMe,
     searchBooks
 }
