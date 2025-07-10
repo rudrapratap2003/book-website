@@ -20,7 +20,6 @@ import AddressSettings from "./components/AddressSettings";
 import AdminDashboard from "./components/AdminDashboard";
 import RouteTitle from "./components/RouteTitle";
 import Books from "./components/Books";
-
 const books = [
   { 
     id: 1, 
@@ -75,9 +74,10 @@ const books = [
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const PrivateRoute = ({element}) => {
+  const PrivateRoute = ({element, allowedRoles}) => {
     if(isAuthenticated == null) return null;
-    return isAuthenticated ? element : <Navigate to="/"/>;
+    if (allowedRoles && !allowedRoles.includes(isAuthenticated.role)) return <Navigate to="/" replace />;
+    return element;
   }
   return (
     <Router>  
@@ -102,16 +102,14 @@ function App() {
         <Route path="/sell" element={<PrivateRoute element={<Sell />}/>}/>
         <Route path="/books" element={<PrivateRoute element={<Books />}/>}/>
         <Route path="/myprofile" element={<PrivateRoute element={<MyProfile />}/>}/>
-
         <Route path="/sold-items" element={<PrivateRoute element={<SoldItems />}/>}/>
         <Route path="/myprofile/cart" element={<PrivateRoute element={<Cart />}/>}/>
         <Route path="/orders" element={<PrivateRoute element={<MyOrders />}/>}/>
         <Route path="/myprofile/wishlist" element={<PrivateRoute element={<WishlistPage />}/>}/>
         <Route path="/search/:query" element={<PrivateRoute element={<Search />}/>}/>
         <Route path="/settings" element={<PrivateRoute element={<SettingsPage />}/>}/>
+        <Route path="/admin/dashboard" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={["admin"]}/>} />
         <Route path="/address" element={<PrivateRoute element={<AddressSettings />}/>}/>
-        <Route path="/admin/dashboard" element={<PrivateRoute element={<AdminDashboard />}/>}/>
-        
       </Routes>
       <Footer />
     </Router>

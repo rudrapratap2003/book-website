@@ -26,9 +26,8 @@ const Signin = ({ setIsAuthenticated }) => {
     const payload = formData;
 
     try {
-      const response = await axios.post('/api/v1/users/login', payload, {
-        withCredentials: true
-      });
+
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/login`,payload, {withCredentials: true});
       setMessage(response.data.message);
       setError('');
       setIsAuthenticated(true);

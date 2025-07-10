@@ -40,7 +40,7 @@ const SignUp = ({ setIsAuthenticated }) => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/v1/users/register', formData, { withCredentials: true });
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/register`, formData, { withCredentials: true });
       setMessage(response.data.message);
       setError('');
       setIsAuthenticated(true);

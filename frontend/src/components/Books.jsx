@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import BookCard from "./BookCard"; // adjust path if needed
+import BookCard from "../components/BookCard"; // Adjust path if needed
 
 const categories = [
   { label: "Best Seller", icon: "/images/best-seller.png", path: "best-seller" },
@@ -49,8 +49,8 @@ const Books = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const res = await axios.get("/api/v1/books/all");
-        setBook(res.data.data);
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/get-books`, { withCredentials: true });
+        setBook(res.data);
       } catch (err) {
         console.error("Error fetching books:", err);
       }
@@ -73,7 +73,7 @@ const Books = () => {
   const handleAddToCart = async (bookId) => {
     try {
       await axios.post(
-        "/api/v1/cart/add",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/cart/add`,
         {
           bookId,
           quantity: 1,
@@ -87,10 +87,10 @@ const Books = () => {
     }
   };
 
-   const handleWishlistToggle = async (bookId) => {
+  const handleWishlistToggle = async (bookId) => {
     try {
       const res = await axios.post(
-        "/api/v1/users/toggle-wishlist",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/toggle-wishlist`,
         { bookId },
         { withCredentials: true }
       );
@@ -156,16 +156,16 @@ const Books = () => {
           <p className="text-gray-500 text-sm text-center">No books available.</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-10 px-1 sm:px-2">
-          {books.map((book) => (
-            <BookCard
-              key={book.id}
-              book={book}
-              isWishlisted={wishlist.includes(book.id)}
-              onWishlistToggle={handleWishlistToggle}
-              onAddToCart={handleAddToCart}
-            />
-          ))}
-        </div>
+            {books.map((book) => (
+              <BookCard
+                key={book.id}
+                book={book}
+                isWishlisted={wishlist.includes(book.id)}
+                onWishlistToggle={handleWishlistToggle}
+                onAddToCart={handleAddToCart}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>

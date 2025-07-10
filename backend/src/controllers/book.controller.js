@@ -65,34 +65,15 @@ const buyBook = asyncHandler(async (req,res) => {
     }
 })
 
-const fetchBookByCategory = asyncHandler(async (req, res) => {
+const fetchAllBooks = asyncHandler(async (req, res) => {
   try {
-    const category = req.params.category.toLowerCase();
-
-    const books = await Book.find({
-      category,
-      status: "approved", // Only show books that are approved
-    });
-
+    const books = await Book.find({ status: "approved" });
     res.status(200).json(books);
   } catch (error) {
-    console.error("Error fetching category books:", error);
+    console.error("Error fetching all books:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
-
-const getAllApprovedBooks = asyncHandler(async (req, res) => {
-  try {
-    const approvedBooks = await Book.find({ status: "approved" });
-    return res
-      .status(200)
-      .json(new ApiResponse(200, approvedBooks, "All approved books"));
-  } catch (error) {
-    console.error("Error fetching all approved books:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
 
 
  const getBooksSoldByMe = asyncHandler(async (req, res) => {
@@ -130,8 +111,7 @@ const searchBooks = asyncHandler(async (req, res) => {
 export {
     sellBook,
     buyBook,
-    fetchBookByCategory,
+    fetchAllBooks,
     getBooksSoldByMe,
     searchBooks,
-    getAllApprovedBooks
 }

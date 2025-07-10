@@ -7,25 +7,26 @@ const MyOrders = () => {
   const [loading, setLoading] = useState(true);
   const [returningOrderId, setReturningOrderId] = useState(null);
   const [selectedReturns, setSelectedReturns] = useState({});
-  const token = localStorage.getItem("token");
+
+  const fetchOrders = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/my-orders`,
+        { withCredentials: true }
+      );
+      setOrders(res.data.data.orders);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await axios.get("/api/v1/orders/my", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setOrders(res.data.orders);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrders();
-  }, [token]);
+  }, []);
 
-  const statusIcon = (status) => {
+    const statusIcon = (status) => {
     switch (status) {
       case "processing":
         return <FaHourglassHalf className="text-yellow-500" />;
@@ -52,7 +53,7 @@ const MyOrders = () => {
     }));
   };
 
-  return (
+return (
     <div className="p-4 max-w-4xl mx-auto">
       <h2 className="text-4xl font-bold mb-4">All Orders</h2>
 

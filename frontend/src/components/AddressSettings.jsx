@@ -46,7 +46,7 @@ const AddressSettings = () => {
 
   const fetchAddresses = async () => {
     try {
-      const res = await axios.get('/api/v1/users/get-addresses', {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/get-addresses`, {
         withCredentials: true
       });
       setAddresses(res.data.data);
@@ -122,7 +122,7 @@ const AddressSettings = () => {
     if (!validateInputs()) return;
 
     try {
-      await axios.post("/api/v1/users/add-address", formData, {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/add-address`, formData, {
         withCredentials: true
       });
       await fetchAddresses();

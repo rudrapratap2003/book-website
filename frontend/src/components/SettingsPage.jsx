@@ -29,33 +29,30 @@ const SettingsPage = () => {
 
   const toastShown = useRef(false);
 
+
   // Delete account state
   const [showDeletePrompt, setShowDeletePrompt] = useState(false);
   const [confirmDeleteStep, setConfirmDeleteStep] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
-
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const res = await axios.get('/api/v1/users/myprofile', {
-          withCredentials: true,
-        });
-        const { fullName, email, phoneNo } = res.data.data;
-        setFullName(fullName);
-        setEmail(email);
-        setPhone(phoneNo);
-      } catch (error) {
-        console.error("Error fetching user profile", error);
-      }
-    };
-    fetchUserDetails();
-  }, []);
-
+  const fetchUserDetails = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/myprofile`, {
+        withCredentials: true,
+      });
+      const { fullName, email, phoneNo } = res.data.data;
+      setFullName(fullName);
+      setEmail(email);
+      setPhone(phoneNo);
+    } catch (error) {
+      console.error("Error fetching user profile", error);
+    }
+  };
+  
   const updateField = async (field) => {
     try {
       await axios.put(
-        '/api/v1/users/update',
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/update`,
         { fullName, email, phoneNo: phone },
         { withCredentials: true }
       );
@@ -73,7 +70,7 @@ const SettingsPage = () => {
     }
 
     try {
-      await axios.post('/api/v1/users/changepassword', { oldPassword, newPassword: oldPassword }, { withCredentials: true });
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/changepassword`, { oldPassword, newPassword: oldPassword }, { withCredentials: true });
 
       setStep(2);
       setErrorMessage('');
@@ -90,7 +87,7 @@ const SettingsPage = () => {
 
     try {
       await axios.post(
-        '/api/v1/users/changepassword',
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/changepassword`,
         { oldPassword, newPassword },
         { withCredentials: true }
       );
@@ -123,7 +120,7 @@ const SettingsPage = () => {
   const handleDeleteAccount = async () => {
     try {
       await axios.post(
-        '/api/v1/users/delete-account',
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/delete-account`,
         { password: deletePassword },
         { withCredentials: true }
       );

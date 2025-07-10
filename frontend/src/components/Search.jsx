@@ -15,7 +15,7 @@ const SearchResults = () => {
 
     const fetchBooks = async () => {
       try {
-        const res = await axios.get(`/api/v1/books/search?query=${query}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/search?query=${query}`);
         setBooks(res.data);
       } catch (err) {
         console.error("Error fetching books:", err);
@@ -24,8 +24,8 @@ const SearchResults = () => {
 
     const fetchWishlist = async () => {
       try {
-        const res = await axios.get("/api/v1/users/wishlist", {
-          headers: { Authorization: `Bearer ${token}` },
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
+          withCredentials: true
         });
         setWishlist(res.data.data.map((book) => book._id));
       } catch (err) {
@@ -40,7 +40,7 @@ const SearchResults = () => {
   const handleWishlistToggle = async (bookId) => {
     try {
       const res = await axios.post(
-        "/api/v1/users/toggle-wishlist",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/toggle-wishlist`,
         { bookId },
         { withCredentials: true }
       );

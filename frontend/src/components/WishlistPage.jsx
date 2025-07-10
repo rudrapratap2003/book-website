@@ -9,7 +9,7 @@ const WishlistPage = () => {
   useEffect(() => {
     const fetchWishlistBooks = async () => {
       try {
-        const res = await axios.get("/api/v1/users/wishlist", {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
           withCredentials: true,
         });
         setWishlistBooks(res.data.data);
@@ -24,7 +24,7 @@ const WishlistPage = () => {
   const handleToggleWishlist = async (bookId) => {
     try {
       const res = await axios.post(
-        "/api/v1/users/toggle-wishlist",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/toggle-wishlist`,
         { bookId },
         { withCredentials: true }
       );
@@ -38,7 +38,7 @@ const WishlistPage = () => {
   const handleAddToCart = async (bookId) => {
     try {
       await axios.post(
-        "/api/v1/users/cart/add",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/cart/add`,
         { bookId, quantity: 1 },
         { withCredentials: true }
       );
