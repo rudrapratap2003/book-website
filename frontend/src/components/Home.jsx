@@ -68,78 +68,7 @@ export const Home = ({ isAuthenticated }) => {
 
       {isAuthenticated && (
         <>
-          <div id="best-sales" className="p-6 sm:p-8 bg-orange-50">
-            <h2 className="font-gothic text-3xl font-bold mb-6 text-center text-gray-800">
-              Books Trending Now
-            </h2>
-            <div className="bg-white p-4 rounded-3xl shadow-md">
-              <div className="font-parastoo text-lg grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                {[
-                  {
-                    image: "/images/book1.jpg",
-                    title: "IT STARTS WITH US",
-                    author: "Colleen Hoover",
-                    price: "849",
-                    stock: "4 stocks left",
-                  },
-                  {
-                    image: "/images/book2.jpg",
-                    title: "FOURTH WING",
-                    author: "Rebecca Yarros",
-                    price: "989",
-                    stock: "3 stocks left",
-                  },
-                  {
-                    image: "/images/boook3.jpg",
-                    title: "RUTHLESS VOWS",
-                    author: "Rebecca Ross",
-                    price: "999",
-                    stock: "5 stocks left",
-                  },
-                  {
-                    image: "/images/boook4.jpg",
-                    title: "IRON FLAME",
-                    author: "Rebecca Yarros",
-                    price: "764",
-                    stock: "2 stocks left",
-                  },
-                  {
-                    image: "/images/book5.jpg",
-                    title: "THE ONLY ONE LEFT",
-                    author: "Riley Sager",
-                    price: "543",
-                    stock: "1 stock left",
-                  },
-                ].map((book, index) => (
-                  <div
-                    key={index}
-                    className="group relative transform transition-transform duration-300 hover:scale-105"
-                  >
-                    <div className="absolute inset-0 bg-orange-300 opacity-0 group-hover:opacity-100 transition-all duration-300 z-0"></div>
-                    <div className="relative z-10 p-4">
-                      <div className="w-full h-64 border-[10px] border-gray-300 rounded-md overflow-hidden">
-                        <img
-                          src={book.image}
-                          alt={book.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <p className="font-bold text-center mt-2 group-hover:text-white">{book.title}</p>
-                      <p className="text-center text-gray-700 mb-2 group-hover:text-white">{book.author}</p>
-                      <div className="flex items-center justify-between mt-2">
-                        <button className="py-2 px-4 rounded-sm text-sm bg-orange-400 text-white transition-colors duration-300 group-hover:bg-white group-hover:text-orange-500">
-                          Buy Now
-                        </button>
-                        <p className="text-gray-700 font-semibold group-hover:text-white">₹ {book.price}</p>
-                      </div>
-                      <p className="text-gray-700 text-sm mt-2 text-center group-hover:text-white">{book.stock}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
+         
           {/* SHOP BY CATEGORY */}
           <div id="categories" className="p-8 bg-orange-50">
             <h2 className="font-gothic text-3xl font-bold mb-6 text-center">Shop By Category</h2>
