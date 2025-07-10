@@ -284,6 +284,23 @@ const wishlistofUser = asyncHandler(async (req,res) => {
     }
 })
 
+const deleteAccount = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+
+  const user = await User.findById(req.user?._id).select("+password");
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const isCorrect = await user.isPasswordCorrect(password);
+  if (!isCorrect) {
+    throw new ApiError(401, "Incorrect password");
+  }
+
+  await User.findByIdAndDelete(req.user._id);
+  res.status(200).json(new ApiResponse(200, {}, "Account deleted successfully"));
+});
+
 export {
     registerUser,
     loginUser,
@@ -296,5 +313,6 @@ export {
     updateAccountDetails,
     addAddress,
     getAddresses,
-    changeCurrentPassword
+    changeCurrentPassword,
+    deleteAccount
 }

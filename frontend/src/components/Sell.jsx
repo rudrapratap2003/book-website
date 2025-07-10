@@ -169,15 +169,31 @@ const Sell = () => {
                   <option value="" disabled>
                     Select category
                   </option>
-                  <option value="Young & Teen Fiction">
-                    Young & Teen Fiction
-                  </option>
                   <option value="Romantic">Romantic</option>
                   <option value="Cooking">Cooking</option>
                   <option value="Mystery">Mystery</option>
                   <option value="Fiction">Fiction</option>
                   <option value="Biography">Biography</option>
                   <option value="Children">Children</option>
+                  <option value="Comics">Comics</option>
+                  <option value="Tarot">Tarot</option>
+                  <option value="Literature">Literature</option>
+                  <option value="Encyclopedia">Encyclopedia</option>
+                  <option value="History">History</option>
+                  <option value="Social Science">Social Science</option>
+                  <option value="Business">Business</option>
+                   <option value="Law">Law</option>
+                  <option value="Medicine">Medicine</option>
+                  <option value="Science">Science</option>
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="Environment">Environment</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Family">Family</option>
+                  <option value="Cooking">Cooking</option>
+                  <option value="Mystery">Mystery</option>
+                  <option value="Horror">Horror</option>
+                  <option value="Romantic">Romantic</option>
                 </select>
               </div>
 
