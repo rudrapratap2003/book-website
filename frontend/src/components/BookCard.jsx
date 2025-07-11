@@ -263,12 +263,6 @@ const BookCard = ({ book }) => {
       {toastMsg && (
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white border border-green-500 px-4 py-2 rounded shadow-md flex items-center gap-4 z-[999]">
           <span className="font-parastoo text-sm text-gray-800">{toastMsg}</span>
-          <button
-            onClick={() => navigate("/myprofile/orders")}
-            className="text-yellow-700 text-sm font-gothic hover:underline"
-          >
-            View Orders
-          </button>
         </div>
       )}
     </>

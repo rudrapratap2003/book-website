@@ -5,3 +5,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@keyframes tick {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-tick {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: tick 0.4s ease forwards;
+}
+
+@keyframes ping-fast {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(1.15);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-ping-fast {
+  animation: ping-fast 0.8s ease-out;
+}

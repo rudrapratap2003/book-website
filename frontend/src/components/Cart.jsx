@@ -4,6 +4,7 @@ import axios from "axios";
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -70,40 +71,35 @@ const CartPage = () => {
     }
   };
 
-const handlePlaceOrder = async () => {
-  const selectedItems = cartItems.filter((item) => item.selected);
+  const handlePlaceOrder = async () => {
+    const selectedItems = cartItems.filter((item) => item.selected);
 
-  if (selectedItems.length === 0) {
-    alert("Please select at least one item to place an order.");
-    return;
-  }
+    if (selectedItems.length === 0) {
+      alert("Please select at least one item to place an order.");
+      return;
+    }
 
-  const orderPayload = {
-    items: selectedItems.map((item) => ({
-      bookId: item.book._id,
-      quantity: item.quantity,
-    })),
+    const orderPayload = {
+      items: selectedItems.map((item) => ({
+        bookId: item.book._id,
+        quantity: item.quantity,
+      })),
+    };
+
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/order-place`,
+        orderPayload,
+        { withCredentials: true }
+      );
+
+      setCartItems((prev) => prev.filter((item) => !item.selected));
+      setShowSuccessPopup(true);
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Failed to place order. Try again.");
+    }
   };
-
-  try {
-    // ✅ Place order — backend will handle cart cleanup
-    await axios.post(
-      `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/order-place`,
-      orderPayload,
-      { withCredentials: true }
-    );
-
-    // ✅ Update frontend state by removing selected items
-    setCartItems((prev) => prev.filter((item) => !item.selected));
-
-    alert("Order placed successfully!");
-  } catch (error) {
-    console.error("Error placing order:", error);
-    alert("Failed to place order. Try again.");
-  }
-};
-
-
 
   const selectedItems = cartItems.filter((item) => item.selected);
   const totalAmount = selectedItems.reduce(
@@ -112,7 +108,38 @@ const handlePlaceOrder = async () => {
   );
 
   return (
-    <div className="p-4 md:flex gap-6 flex-col md:flex-row">
+    <div className="p-4 md:flex gap-6 flex-col md:flex-row relative">
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border border-green-500 px-6 py-4 rounded-md shadow-md z-50 w-[320px]">
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col items-center w-full">
+              {/* Animated Tick */}
+              <div className="w-12 h-12 rounded-full border-4 border-green-500 flex items-center justify-center animate-ping-fast">
+                <svg
+                  className="w-6 h-6 text-green-700 animate-tick"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p className="mt-4 font-gothic  text-center text-lg font-semibold">
+                Order placed successfully!
+              </p>
+            </div>
+            <button
+              onClick={() => setShowSuccessPopup(false)}
+              className="text-gray-600 hover:text-gray-800 text-xl font-bold ml-2"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Left Section */}
       <div className="md:w-2/3 w-full">
         <h2 className="font-gothic text-4xl font-bold mb-4">My Cart</h2>
