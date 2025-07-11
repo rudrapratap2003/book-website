@@ -9,9 +9,6 @@ const ratingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
-    comment: {
-        type: String
-    },
     rating: {
         type: Number,
         required: true,

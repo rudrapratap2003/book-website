@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import BookCard from "../components/BookCard"; // Adjust path if needed
+import BookCard from "../components/BookCard";
 
 const categories = [
   { label: "Best Seller", icon: "/images/best-seller.png", path: "best-seller" },
@@ -35,11 +35,10 @@ const categories = [
 const Books = () => {
   const { pathname } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [startIndex, setStartIndex] = useState(0);
   const [book, setBook] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-
-  const categoriesPerPage = 5;
+  const [averageRatings, setAverageRatings] = useState({});
+  const scrollContainerRef = useRef(null);
 
   useEffect(() => {
     const path = pathname.split("/category/")[1];
@@ -49,38 +48,63 @@ const Books = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/get-books`, { withCredentials: true });
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/books/get-books`,
+          { withCredentials: true }
+        );
         setBook(res.data);
       } catch (err) {
         console.error("Error fetching books:", err);
       }
     };
+
+    const fetchWishlist = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
+          withCredentials: true,
+        });
+        setWishlist(res.data.data.map((book) => book._id));
+      } catch (err) {
+        console.error("Error fetching wishlist:", err);
+      }
+    };
+
+    const fetchAverageRatings = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/rating`, {
+          withCredentials: true,
+        });
+        const ratings = {};
+        res.data.data.forEach((r) => {
+          ratings[r.bookId] = r.averageRating;
+        });
+        setAverageRatings(ratings);
+      } catch (err) {
+        console.error("Error fetching average ratings:", err);
+      }
+    };
+
     fetchBooks();
+    fetchWishlist();
+    fetchAverageRatings();
   }, []);
 
   const handleCategoryScroll = (direction) => {
-    if (direction === "left") {
-      setStartIndex((prev) => Math.max(prev - categoriesPerPage, 0));
-    } else if (direction === "right") {
-      setStartIndex((prev) =>
-        Math.min(prev + categoriesPerPage, categories.length - categoriesPerPage)
-      );
-    }
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const scrollAmount = 300;
+    container.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
   };
-
-  const visibleCategories = categories.slice(startIndex, startIndex + categoriesPerPage);
 
   const handleAddToCart = async (bookId) => {
     try {
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/v1/cart/add`,
-        {
-          bookId,
-          quantity: 1,
-        },
-        {
-          withCredentials: true,
-        }
+        { bookId, quantity: 1 },
+        { withCredentials: true }
       );
     } catch (err) {
       console.error("Error adding to cart:", err);
@@ -107,7 +131,7 @@ const Books = () => {
     title: b.bookname || "Untitled",
     author: b.author || "Unknown",
     image: b.bookImage,
-    rating: b.rating || 0,
+    rating: averageRatings[b._id] || 0, // ✅ Inject average rating here
     price: b.price || 0,
     originalPrice: b.originalPrice || null,
     description: b.description || "",
@@ -118,7 +142,7 @@ const Books = () => {
       <div className="font-gothic text-3xl font-bold mb-6 text-center">Shop By Category</div>
 
       {/* Category Scroller */}
-      <div className="relative w-full max-w-6xl mb-10 flex items-center justify-center">
+      <div className="relative w-full max-w-7xl mb-10 flex items-center justify-center">
         <button
           onClick={() => handleCategoryScroll("left")}
           className="absolute left-0 z-10 bg-white text-gray-400 hover:text-black rounded-full p-1 shadow-md"
@@ -126,8 +150,11 @@ const Books = () => {
           <span className="text-3xl">&lsaquo;</span>
         </button>
 
-        <div className="flex gap-6 px-12 py-2 overflow-x-auto scrollbar-hide">
-          {visibleCategories.map((cat) => (
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-6 px-12 py-2 overflow-x-auto scrollbar-hide scroll-smooth"
+        >
+          {categories.map((cat) => (
             <Link
               key={cat.label}
               to={`/category/${cat.path}`}
@@ -149,22 +176,39 @@ const Books = () => {
       </div>
 
       {/* Book Cards */}
-      <div className="w-full px-4 sm:px-6 lg:px-10">
+      <div className="w-full max-w-7xl px-2 sm:px-4">
         <h2 className="font-gothic text-2xl font-bold mb-4 capitalize">Books</h2>
 
         {books.length === 0 ? (
           <p className="text-gray-500 text-sm text-center">No books available.</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-10 px-1 sm:px-2">
-            {books.map((book) => (
-              <BookCard
-                key={book.id}
-                book={book}
-                isWishlisted={wishlist.includes(book.id)}
-                onWishlistToggle={handleWishlistToggle}
-                onAddToCart={handleAddToCart}
-              />
-            ))}
+          <div className="w-full flex justify-center">
+            <div
+              className="
+                grid 
+                gap-4 
+                sm:gap-6 
+                md:gap-8 
+                xl:gap-10 
+                justify-center
+                grid-cols-1
+                sm:grid-cols-2
+                md:grid-cols-3
+                lg:grid-cols-4
+                xl:grid-cols-5
+              "
+            >
+              {books.map((book) => (
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  rating={book.rating}
+                  isWishlisted={wishlist.includes(book.id)}
+                  onWishlistToggle={handleWishlistToggle}
+                  onAddToCart={handleAddToCart}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>

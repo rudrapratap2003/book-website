@@ -5,7 +5,7 @@ import { asyncHandler } from "../utils/asynchandler.js";
 import mongoose from "mongoose";
 
 const addOrUpdateRating = asyncHandler(async (req, res) => {
-  const { bookId, rating, comment } = req.body;
+  const { bookId, rating } = req.body;
   if(!bookId) {
     throw new ApiError(400,"Book ID is required")
   }
@@ -15,7 +15,6 @@ const addOrUpdateRating = asyncHandler(async (req, res) => {
 
   if (existing) {
     existing.rating = rating;
-    existing.comment = comment;
     await existing.save();
     return res.status(200).json(
         new ApiResponse(200,existing,"Rating updated")
@@ -25,8 +24,7 @@ const addOrUpdateRating = asyncHandler(async (req, res) => {
   const newRating = await Rating.create({
     book: bookId,
     user: userId,
-    rating,
-    comment
+    rating
   });
 
   res.status(201).json(
@@ -34,68 +32,44 @@ const addOrUpdateRating = asyncHandler(async (req, res) => {
   );
 })
 
-const getBookRatings = asyncHandler(async (req, res) => {
-  const { bookId } = req.params;
-  const objectBookId = new mongoose.Types.ObjectId(bookId);
+const getUserRatings = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
 
+  const userRatings = await Rating.find({ user: userId }).select("book rating");
+
+  res.status(200).json(
+    new ApiResponse(200, userRatings, "User ratings fetched successfully")
+  );
+});
+
+const getBookRatings = asyncHandler(async (req, res) => {
   const result = await Rating.aggregate([
     {
-      $match: {
-        book: objectBookId
-      }
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "user",
-        foreignField: "_id",
-        as: "ratedBy",
-        pipeline: [
-          {
-            $project: {
-              username: 1
-            }
-          }
-        ]
-      }
-    },
-    {
-      $unwind: "$ratedBy"
-    },
-    {
       $group: {
-        _id: null,
+        _id: "$book",
         averageRating: { $avg: "$rating" },
         totalRatings: { $sum: 1 },
-        usernames: { $addToSet: "$ratedBy.username" }
       }
     },
     {
       $project: {
+        bookId: "$_id",
         _id: 0,
-        averageRating: {
-          $floor: { $add: ["$averageRating", 0.5] } // rounding to nearest int
-        },
+        averageRating: { $floor: { $add: ["$averageRating", 0.5] } },
         totalRatings: 1,
-        usernames: 1
       }
     }
   ]);
 
-  // if no ratings found
-  if (!result || result.length === 0) {
-    return res.status(200).json(
-      new ApiResponse(200, { averageRating: 0, totalRatings: 0, usernames: [] }, "No ratings yet")
-    );
-  }
-
-  return res.status(200).json(
-    new ApiResponse(200, result[0], `Ratings for book ID - ${bookId} fetched successfully`)
+  res.status(200).json(
+    new ApiResponse(200, result, "All book ratings fetched successfully")
   );
 });
 
 
+
 export {
     addOrUpdateRating,
+    getUserRatings,
     getBookRatings
 }
