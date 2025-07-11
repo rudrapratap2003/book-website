@@ -9,6 +9,7 @@ import {
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
+  const [userRatings, setUserRatings] = useState({});
   const [loading, setLoading] = useState(true);
   const [returningOrderId, setReturningOrderId] = useState(null);
   const [selectedReturns, setSelectedReturns] = useState({});
@@ -16,13 +17,24 @@ const MyOrders = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/my-orders`,
-        { withCredentials: true }
-      );
-      setOrders(res.data.data.orders);
+      const [orderRes, ratingRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/my-orders`, {
+          withCredentials: true,
+        }),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/rating/my-rating`, {
+          withCredentials: true,
+        }),
+      ]);
+
+      setOrders(orderRes.data.data.orders);
+
+      const userRatingMap = {};
+      ratingRes.data.data.forEach((r) => {
+        userRatingMap[r.book] = r.rating; // r.book is the bookId
+      });
+      setUserRatings(userRatingMap);
     } catch (err) {
-      console.error("Error fetching orders:", err);
+      console.error("Error fetching orders or ratings:", err);
     } finally {
       setLoading(false);
     }
@@ -58,12 +70,21 @@ const MyOrders = () => {
       [bookId]: !prev[bookId],
     }));
   };
+  const handleStarClick = async (bookId, ratingValue) => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/rating/add`,
+        { bookId, rating: ratingValue },
+        { withCredentials: true }
+      );
 
-  const handleStarClick = (orderId, bookId, ratingValue) => {
-    setRatings((prev) => ({
-      ...prev,
-      [`${orderId}-${bookId}`]: ratingValue,
-    }));
+      setUserRatings((prev) => ({
+        ...prev,
+        [bookId]: ratingValue,
+      }));
+    } catch (err) {
+      console.error("Error submitting rating:", err);
+    }
   };
 
   return (
@@ -77,22 +98,17 @@ const MyOrders = () => {
       ) : (
         <div className="space-y-6 bg-gray-100 p-6">
           {orders.map((order) => (
-            <div
-              key={order._id}
-              className="border rounded-lg p-9 bg-white shadow-sm"
-            >
+            <div key={order._id} className="border rounded-lg p-9 bg-white shadow-sm">
               <div className="flex items-center gap-2 mb-4">
                 {statusIcon(order.status)}
                 <p className="font-semibold capitalize">{order.status}</p>
               </div>
-
-              {order.books.map((bookItem) => {
-                const ratingKey = `${order._id}-${bookItem._id}`;
-                const ratingValue = ratings[ratingKey] || 0;
+              {order.books.map((bookItem, idx) => {
+                const ratingValue = userRatings[bookItem.book._id] || 0;
 
                 return (
                   <div
-                    key={bookItem._id}
+                    key={`${order._id}-${bookItem.book._id}-${idx}`}
                     className="flex justify-between items-start mb-4 p-3 bg-gray-100 rounded"
                   >
                     <div className="flex gap-4 items-start">
@@ -106,20 +122,15 @@ const MyOrders = () => {
                           />
                         )}
                       <img
-                        src={bookItem.book.image}
+
+                        src={bookItem.book.bookImage}
                         alt={bookItem.book.title}
                         className="w-20 h-28 object-cover rounded"
                       />
                       <div>
-                        <p className="font-semibold">
-                          {bookItem.book.title}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          By: {bookItem.book.author}
-                        </p>
-                        <p className="text-sm mt-1">
-                          Quantity: {bookItem.quantity}
-                        </p>
+                        <p className="font-semibold">{bookItem.book.title}</p>
+                        <p className="text-sm text-gray-500">By: {bookItem.book.author}</p>
+                        <p className="text-sm mt-1">Quantity: {bookItem.quantity}</p>
                       </div>
                     </div>
 
@@ -130,9 +141,7 @@ const MyOrders = () => {
                           {[...Array(5)].map((_, i) => (
                             <span
                               key={i}
-                              onClick={() =>
-                                handleStarClick(order._id, bookItem._id, i + 1)
-                              }
+                              onClick={() => handleStarClick(bookItem.book._id, i + 1)}
                               className={`text-xl cursor-pointer ${
                                 i < ratingValue ? "text-yellow-500" : "text-gray-400"
                               }`}
@@ -155,7 +164,6 @@ const MyOrders = () => {
                   >
                     Return
                   </button>
-
                   <p className="text-sm text-gray-500 mt-1">
                     Return available till:{" "}
                     {new Date(order.returnTill).toLocaleDateString()}

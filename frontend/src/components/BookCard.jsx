@@ -9,8 +9,8 @@ import {
 import { IoClose } from "react-icons/io5";
 import axios from "axios";
 
-const BookCard = ({ book }) => {
-  const [showModal, setShowModal] = useState(false);
+const BookCard = ({ book, rating = 0 }) => {
+    const [showModal, setShowModal] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const navigate = useNavigate();
@@ -120,14 +120,12 @@ const BookCard = ({ book }) => {
             }}
           />
 
-          {/* Out of stock overlay */}
           {book.count === 0 && (
             <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-lg">
               <span className="text-white font-bold text-lg">Out of Stock</span>
             </div>
           )}
 
-          {/* Quick View Button */}
           <div className="absolute bottom-0 left-0 w-full bg-white opacity-90 hover:opacity-100 transition-all">
             <button
               className="font-gothic w-full text-orange-500 border border-orange-500 font-medium py-1"
@@ -149,7 +147,7 @@ const BookCard = ({ book }) => {
 
         <div className="flex justify-center my-1">
           {Array.from({ length: 5 }, (_, index) =>
-            index < book.rating ? (
+            index < Math.round(rating) ? (
               <FaStar key={index} className="text-yellow-500" />
             ) : (
               <FaRegStar key={index} className="text-gray-400" />
@@ -157,7 +155,6 @@ const BookCard = ({ book }) => {
           )}
         </div>
 
-        {/* Price + Buy Now */}
         <div className="flex justify-between items-center mt-2">
           <span className="font-parastoo text-red-600 font-bold text-xl">
             ₹{book.price}
@@ -204,13 +201,11 @@ const BookCard = ({ book }) => {
                   )}
                 </button>
               </div>
-              <p className="font-parastoo text-lg text-gray-600">
-                By: {book.author}
-              </p>
+              <p className="font-parastoo text-lg text-gray-600">By: {book.author}</p>
 
               <div className="flex">
                 {Array.from({ length: 5 }, (_, index) =>
-                  index < book.rating ? (
+                  index < Math.round(rating) ? (
                     <FaStar key={index} className="text-yellow-500" />
                   ) : (
                     <FaRegStar key={index} className="text-gray-400" />
@@ -224,9 +219,7 @@ const BookCard = ({ book }) => {
                 </span>
               </div>
 
-              <p className="font-parastoo text-gray-700 text-base">
-                {book.description}
-              </p>
+              <p className="font-parastoo text-gray-700 text-base">{book.description}</p>
 
               <div className="flex gap-2 mt-4">
                 <button
@@ -269,4 +262,4 @@ const BookCard = ({ book }) => {
   );
 };
 
-export default BookCard;
+export default BookCard

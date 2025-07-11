@@ -67,7 +67,7 @@ const MyProfile = () => {
           {/* First Row */}
           <div className="flex gap-4">
             <button
-              onClick={() => navigate("/orders")}
+              onClick={() => navigate("/myprofile/orders")}
               className="bg-white border rounded-xl p-4 flex-1 flex flex-col items-center hover:shadow"
             >
               <FaBoxOpen className="text-green-500 text-xl" />

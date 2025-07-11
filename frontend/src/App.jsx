@@ -104,7 +104,7 @@ function App() {
         <Route path="/myprofile" element={<PrivateRoute element={<MyProfile />}/>}/>
         <Route path="/sold-items" element={<PrivateRoute element={<SoldItems />}/>}/>
         <Route path="/myprofile/cart" element={<PrivateRoute element={<Cart />}/>}/>
-        <Route path="/orders" element={<PrivateRoute element={<MyOrders />}/>}/>
+        <Route path="/myprofile/orders" element={<PrivateRoute element={<MyOrders />}/>}/>
         <Route path="/myprofile/wishlist" element={<PrivateRoute element={<WishlistPage />}/>}/>
         <Route path="/search/:query" element={<PrivateRoute element={<Search />}/>}/>
         <Route path="/settings" element={<PrivateRoute element={<SettingsPage />}/>}/>

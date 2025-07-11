@@ -7,6 +7,7 @@ export const CategoryPage = () => {
   const { categoryName } = useParams();
   const [allBooks, setAllBooks] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [averageRatings, setAverageRatings] = useState({});
   const token = localStorage.getItem("token");
 
   const normalizedCategory = categoryName?.toLowerCase().replace(/\s+/g, "-");
@@ -42,32 +43,49 @@ export const CategoryPage = () => {
     }
   };
 
+  const fetchBooks = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/get-books`, {
+        withCredentials: true
+      });
+      setAllBooks(res.data); // Assuming response shape: [books]
+    } catch (err) {
+      console.error("Failed to fetch books:", err);
+    }
+  };
+
+  const fetchWishlist = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
+        withCredentials: true,
+      });
+      setWishlist(res.data.data.map((book) => book._id));
+    } catch (err) {
+      console.error("Failed to fetch wishlist:", err);
+    }
+  };
+
+  const fetchAverageRatings = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/rating`, {
+        withCredentials: true,
+      });
+      const ratings = {};
+      res.data.data.forEach((r) => {
+        ratings[r.bookId] = r.averageRating;
+      });
+      setAverageRatings(ratings);
+    } catch (err) {
+      console.error("Failed to fetch average ratings:", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/get-books`);
-        setAllBooks(res.data); // Assuming response shape: { data: [...] }
-      } catch (err) {
-        console.error("Failed to fetch books:", err);
-      }
-    };
-
-    const fetchWishlist = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
-          withCredentials: true,
-        });
-        setWishlist(res.data.data.map((book) => book._id));
-      } catch (err) {
-        console.error("Failed to fetch wishlist:", err);
-      }
-    };
-
     fetchBooks();
     fetchWishlist();
+    fetchAverageRatings();
   }, [categoryName, token]);
 
-  // Filter books by category
   const filteredBooks = allBooks
     .filter((book) => {
       const bookCategory = book.category?.toLowerCase().replace(/\s+/g, "-");
@@ -79,7 +97,7 @@ export const CategoryPage = () => {
       title: b.bookname || "Untitled",
       author: b.author || "Unknown",
       image: b.bookImage,
-      rating: b.rating || 0,
+      rating: averageRatings[b._id] || 0, // ✅ Injecting average rating here
       price: b.price || 0,
       originalPrice: b.originalPrice || null,
       description: b.description || "",
