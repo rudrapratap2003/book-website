@@ -41,11 +41,17 @@ const MyProfile = () => {
       <div className="w-full max-w-4xl">
         {/* Profile Header */}
         <div className="flex items-center space-x-4 mb-4">
-          <img
-            src={`/images/${avatarName}.jpg`}
-            alt="Avatar"
-            className="w-10 h-10 rounded-full"
-          />
+          {user.avatar ? (
+            <img
+              src={`/images/${avatarName}.jpg`}
+              alt="Avatar"
+              className="w-10 h-10 rounded-full"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-lg font-bold text-white">
+              {user.fullName?.charAt(0).toUpperCase()}
+            </div>
+          )}
           <h2 className="font-gothic text-2xl font-semibold">{user.fullName}</h2>
         </div>
 
