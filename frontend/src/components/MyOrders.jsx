@@ -1,11 +1,39 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  FaCheckCircle,
-  FaShippingFast,
-  FaHourglassHalf,
-  FaTimesCircle,
-} from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
+
+/* ─── Progress helper ─────────────────────────── */
+const ProgressBar = ({ status }) => {
+  const stages = ["placed", "shipped", "delivered"];
+  return (
+    <div className="flex items-center gap-3 mb-4">
+      {stages.map((stage, idx) => {
+        const reached = stages.indexOf(status) >= idx;
+        return (
+          <div key={stage} className="flex items-center gap-2">
+            <div
+              className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                reached ? "bg-green-500 text-white" : "bg-gray-300 text-gray-600"
+              }`}
+            >
+              {reached && <FaCheckCircle size={14} />}
+            </div>
+            <span className={`text-sm ${reached ? "font-semibold" : "text-gray-500"}`}>
+              {stage}
+            </span>
+            {idx < stages.length - 1 && (
+              <div
+                className={`w-10 h-0.5 ${
+                  stages.indexOf(status) > idx ? "bg-green-500" : "bg-gray-300"
+                }`}
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -14,6 +42,7 @@ const MyOrders = () => {
   const [returningOrderId, setReturningOrderId] = useState(null);
   const [selectedReturns, setSelectedReturns] = useState({});
 
+  /* ─── Fetch orders + ratings ─────────────────── */
   const fetchOrders = async () => {
     try {
       const [orderRes, ratingRes] = await Promise.all([
@@ -27,11 +56,9 @@ const MyOrders = () => {
 
       setOrders(orderRes.data.data.orders);
 
-      const userRatingMap = {};
-      ratingRes.data.data.forEach((r) => {
-        userRatingMap[r.book] = r.rating; // r.book is the bookId
-      });
-      setUserRatings(userRatingMap);
+      const ratingMap = {};
+      ratingRes.data.data.forEach(r => (ratingMap[r.book] = r.rating));
+      setUserRatings(ratingMap);
     } catch (err) {
       console.error("Error fetching orders or ratings:", err);
     } finally {
@@ -39,54 +66,35 @@ const MyOrders = () => {
     }
   };
 
+  /* initial load + 3‑second polling for live updates */
   useEffect(() => {
     fetchOrders();
+    const id = setInterval(fetchOrders, 3_000);
+    return () => clearInterval(id);
   }, []);
 
-  const statusIcon = (status) => {
-    switch (status) {
-      case "processing":
-        return <FaHourglassHalf className="text-yellow-500" />;
-      case "shipped":
-        return <FaShippingFast className="text-blue-500" />;
-      case "delivered":
-        return <FaCheckCircle className="text-green-600" />;
-      case "failed":
-        return <FaTimesCircle className="text-red-500" />;
-      default:
-        return null;
-    }
-  };
-
-  const handleReturnClick = (orderId) => {
-    setReturningOrderId(returningOrderId === orderId ? null : orderId);
+  const handleReturnClick = orderId => {
+    setReturningOrderId(prev => (prev === orderId ? null : orderId));
     setSelectedReturns({});
   };
 
-  const handleCheckboxChange = (bookId) => {
-    setSelectedReturns((prev) => ({
-      ...prev,
-      [bookId]: !prev[bookId],
-    }));
-  };
+  const handleCheckboxChange = bookId =>
+    setSelectedReturns(prev => ({ ...prev, [bookId]: !prev[bookId] }));
 
-  const handleStarClick = async (bookId, ratingValue) => {
+  const handleStarClick = async (bookId, rating) => {
     try {
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/v1/rating/add`,
-        { bookId, rating: ratingValue },
+        { bookId, rating },
         { withCredentials: true }
       );
-
-      setUserRatings((prev) => ({
-        ...prev,
-        [bookId]: ratingValue,
-      }));
+      setUserRatings(prev => ({ ...prev, [bookId]: rating }));
     } catch (err) {
       console.error("Error submitting rating:", err);
     }
   };
 
+  /* ─── JSX ─────────────────────────────────────── */
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <h2 className="text-4xl font-bold mb-4">All Orders</h2>
@@ -97,40 +105,40 @@ const MyOrders = () => {
         <p className="text-gray-600">No orders till now.</p>
       ) : (
         <div className="space-y-6 bg-gray-100 p-6">
-          {orders.map((order) => (
+          {orders.map(order => (
             <div key={order._id} className="border rounded-lg p-9 bg-white shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                {statusIcon(order.status)}
-                <p className="font-semibold capitalize">{order.status}</p>
-              </div>
+              {/* progress bar */}
+              <ProgressBar status={order.status} />
 
-              {order.books.map((bookItem, idx) => {
-                const ratingValue = userRatings[bookItem.book._id] || 0;
+              {order.items.map((item, idx) => {
+                const { book, quantity } = item;
+                const ratingValue = userRatings[book._id] || 0;
 
                 return (
                   <div
-                    key={`${order._id}-${bookItem.book._id}-${idx}`}
+                    key={`${order._id}-${book._id}-${idx}`}
                     className="flex justify-between items-start mb-4 p-3 bg-gray-100 rounded"
                   >
                     <div className="flex gap-4 items-start">
-                      {returningOrderId === order._id &&
-                        order.books.length > 1 && (
-                          <input
-                            type="checkbox"
-                            className="mt-2"
-                            checked={selectedReturns[bookItem._id] || false}
-                            onChange={() => handleCheckboxChange(bookItem._id)}
-                          />
-                        )}
+                      {returningOrderId === order._id && order.items.length > 1 && (
+                        <input
+                          type="checkbox"
+                          className="mt-2"
+                          checked={selectedReturns[book._id] || false}
+                          onChange={() => handleCheckboxChange(book._id)}
+                        />
+                      )}
+
                       <img
-                        src={bookItem.book.bookImage}
-                        alt={bookItem.book.title}
+                        src={book.bookImage}
+                        alt={book.title}
                         className="w-20 h-28 object-cover rounded"
                       />
+
                       <div>
-                        <p className="font-semibold">{bookItem.book.title}</p>
-                        <p className="text-sm text-gray-500">By: {bookItem.book.author}</p>
-                        <p className="text-sm mt-1">Quantity: {bookItem.quantity}</p>
+                        <p className="font-semibold">{book.title}</p>
+                        <p className="text-sm text-gray-500">By: {book.author}</p>
+                        <p className="text-sm mt-1">Quantity: {quantity}</p>
                       </div>
                     </div>
 
@@ -141,7 +149,7 @@ const MyOrders = () => {
                           {[...Array(5)].map((_, i) => (
                             <span
                               key={i}
-                              onClick={() => handleStarClick(bookItem.book._id, i + 1)}
+                              onClick={() => handleStarClick(book._id, i + 1)}
                               className={`text-xl cursor-pointer ${
                                 i < ratingValue ? "text-yellow-500" : "text-gray-400"
                               }`}
