@@ -68,14 +68,7 @@ const userSchema = new Schema({
             book: { type: Schema.Types.ObjectId, ref: "Book" },
             quantity: { type: Number, default: 1 }
         }
-    ],
-    order: [
-        {
-            book: { type: Schema.Types.ObjectId, ref: "Book" },
-            quantity: { type: Number, default: 1 }
-        }
     ]
-
 },{timestamps: true})
 
 userSchema.pre("save", async function (next) {
