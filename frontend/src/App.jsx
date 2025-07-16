@@ -20,6 +20,7 @@ import AddressSettings from "./components/AddressSettings";
 import AdminDashboard from "./components/AdminDashboard";
 import RouteTitle from "./components/RouteTitle";
 import Books from "./components/Books";
+import AddressPage from "./components/AddressPage";
 const books = [
   { 
     id: 1, 
@@ -110,6 +111,7 @@ function App() {
         <Route path="/settings" element={<PrivateRoute element={<SettingsPage />}/>}/>
         <Route path="/admin/dashboard" element={<PrivateRoute element={<AdminDashboard />} allowedRoles={["admin"]}/>} />
         <Route path="/address" element={<PrivateRoute element={<AddressSettings />}/>}/>
+        <Route path="/buy/address" element={<PrivateRoute element={<AddressPage />}/>}/>
       </Routes>
       <Footer />
     </Router>

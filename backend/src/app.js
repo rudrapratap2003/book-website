@@ -23,6 +23,7 @@ import authRoutes from './routes/auth.routes.js'
 import cartRouter from './routes/cart.routes.js'
 import adminRouter from "./routes/admin.routes.js"
 import ratingRouter from "./routes/rating.routes.js"
+import paymentRouter from "./routes/payment.routes.js"
 //routes declaration
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/cart", cartRouter)
@@ -30,6 +31,7 @@ app.use("/api/v1/books", bookRouter)
 app.use("/api/v1", authRoutes)
 app.use("/api/v1/admin", adminRouter)
 app.use("/api/v1/rating", ratingRouter)
+app.use("/api/v1/payment", paymentRouter)
 
 app.use(errorHandler)
 
