@@ -68,30 +68,11 @@ const BookCard = ({ book, rating = 0 }) => {
   };
 
   const handleBuyNow = async () => {
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/order-place`,
-        {
-          bookId: book.id,
-          quantity: 1,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      setToastMsg("Order placed successfully!");
-      setTimeout(() => {
-        setToastMsg(null);
-        navigate("/myprofile/orders");
-      }, 1500);
-    } catch (error) {
-      console.error("Error placing order:", error);
-      setToastMsg("Failed to place order. Please try again.");
-      setTimeout(() => {
-        setToastMsg(null);
-      }, 2000);
-    }
+    sessionStorage.removeItem("lastOrderedBook");
+    sessionStorage.setItem("buyBook", JSON.stringify(book)); // ✅ store full book
+    navigate(`/buy/address?book=${book.id}`, { state: { allow: true, book } });
   };
+
 
   return (
     <>
