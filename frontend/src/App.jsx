@@ -21,7 +21,8 @@ import AdminDashboard from "./components/AdminDashboard";
 import RouteTitle from "./components/RouteTitle";
 import Books from "./components/Books";
 import AddressPage from "./components/AddressPage";
-import OrderDetail from "./components/orderDetails";
+import OrderDetail from "./components/OrderDetails";
+import OrderDetails from "./components/OrderDetails";
 const books = [
   { 
     id: 1, 
@@ -107,7 +108,7 @@ function App() {
         <Route path="/sold-items" element={<PrivateRoute element={<SoldItems />}/>}/>
         <Route path="/myprofile/cart" element={<PrivateRoute element={<Cart />}/>}/>
         <Route path="/myprofile/orders" element={<PrivateRoute element={<MyOrders />}/>}/>
-        <Route path="/myprofile/orders/:id" element={<PrivateRoute element={<OrderDetail />}/>}/>
+        <Route path="/myprofile/orders/:id" element={<PrivateRoute element={<OrderDetails />}/>}/>
         <Route path="/myprofile/wishlist" element={<PrivateRoute element={<WishlistPage />}/>}/>
         <Route path="/search/:query" element={<PrivateRoute element={<Search />}/>}/>
         <Route path="/settings" element={<PrivateRoute element={<SettingsPage />}/>}/>
