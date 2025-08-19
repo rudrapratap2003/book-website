@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axiosInstance.js';
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
@@ -46,7 +46,7 @@ const AddressSettings = () => {
 
   const fetchAddresses = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/get-addresses`, {
+      const res = await api.get("/api/v1/users/get-addresses", {
         withCredentials: true
       });
       setAddresses(res.data.data);
@@ -57,8 +57,6 @@ const AddressSettings = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Reset error on change
     setErrors((prev) => ({ ...prev, [name]: '' }));
 
     setFormData({ ...formData, [name]: value });
@@ -122,7 +120,7 @@ const AddressSettings = () => {
     if (!validateInputs()) return;
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/add-address`, formData, {
+      await api.post(`/api/v1/users/add-address`, formData, {
         withCredentials: true
       });
       await fetchAddresses();

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-import Loader from "../components/Loader"; // 🔁 Update path if needed
+import Loader from "../components/Loader";
+import api from "../api/axiosInstance.js";
 
 const Sell = () => {
   const navigate = useNavigate();
@@ -43,8 +43,7 @@ const Sell = () => {
     form.append("bookImage", formData.bookImage);
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/sell-book`, form, {
-        withCredentials: true,
+      const response = await api.post(`/api/v1/books/sell-book`, form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

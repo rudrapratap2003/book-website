@@ -47,15 +47,23 @@ const getBookRatings = asyncHandler(async (req, res) => {
     {
       $group: {
         _id: "$book",
-        averageRating: { $avg: "$rating" },
-        totalRatings: { $sum: 1 },
+        averageRating: { 
+          $avg: "$rating" 
+        },
+        totalRatings: { 
+          $sum: 1 
+        },
       }
     },
     {
       $project: {
         bookId: "$_id",
         _id: 0,
-        averageRating: { $floor: { $add: ["$averageRating", 0.5] } },
+        averageRating: { 
+          $floor: { 
+            $add: ["$averageRating", 0.5] 
+          } 
+        },
         totalRatings: 1,
       }
     }
@@ -65,8 +73,6 @@ const getBookRatings = asyncHandler(async (req, res) => {
     new ApiResponse(200, result, "All book ratings fetched successfully")
   );
 });
-
-
 
 export {
     addOrUpdateRating,

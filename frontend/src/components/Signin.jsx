@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import api from '../api/axiosInstance.js';
 
 const Signin = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ const Signin = ({ setIsAuthenticated }) => {
 
     try {
 
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/login`,payload, {withCredentials: true});
+      const response = await api.post(`/api/v1/users/login`,payload, {withCredentials: true});
       setMessage(response.data.message);
       setError('');
       setIsAuthenticated(true);

@@ -9,26 +9,27 @@ const getCart = asyncHandler(async (req, res) => {
 
   if (!user) throw new ApiError(404, "User not found");
 
-  const cartItems = user.cart.map((item) => ({
-    _id: item._id,
-    book: {
-      _id: item.book._id,
-      bookname: item.book.bookname,
-      author: item.book.author,
-      price: item.book.price,
-      image: item.book.bookImage,
-      count: item.book.count,
-    },
-    quantity: item.quantity,
-  }));
+  const cartItems = user.cart
+    .filter(item => item.book) // avoid null books
+    .map(item => ({
+      _id: item._id,
+      book: {
+        _id: item.book._id,
+        bookname: item.book.bookname,
+        author: item.book.author,
+        price: item.book.price,
+        image: item.book.bookImage,
+        count: item.book.count,
+      },
+      quantity: item.quantity,
+    }));
 
   res.status(200).json(
     new ApiResponse(200, { cartItems }, "User cart fetched successfully")
   );
 });
 
-
-const addToCart = async (req, res) => {
+const addToCart = asyncHandler(async (req, res) => {
   const { bookId, quantity } = req.body;
 
   if (!bookId || !quantity) {
@@ -72,10 +73,9 @@ const addToCart = async (req, res) => {
     console.error("AddToCart Error:", err);
     throw new ApiError(500,"Failed to add to cart")
   }
-};
+});
 
-
-const removeCartItems = (async (req, res) => {
+const removeCartItems = asyncHandler(async (req, res) => {
   const { ids } = req.body; // Array of book IDs to remove
 
   try {

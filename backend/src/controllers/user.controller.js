@@ -87,6 +87,7 @@ const loginUser = asyncHandler(async (req,res) => {
         )
     )
 })
+
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullName, email, phoneNo } = req.body;
 
@@ -173,7 +174,6 @@ const getMyProfile = asyncHandler(async (req, res) => {
 
   res.status(200).json(new ApiResponse(200, user, "User profile fetched successfully"));
 });
-
 
 const logoutUser = asyncHandler(async (req,res) => {
     await User.findByIdAndUpdate(

@@ -1,26 +1,28 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { IoClose } from "react-icons/io5";
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true,
-});
+import api from "../api/axiosInstance.js";
 
 export default function AddressPage() {
   const navigate = useNavigate();
   const location = useLocation();
-const storedBook = sessionStorage.getItem("buyBook");
-const bookData = location.state?.book || (storedBook ? JSON.parse(storedBook) : null);
 
-  const bookId = new URLSearchParams(location.search).get("book");
+  // Buy Now book
+  const storedBook = sessionStorage.getItem("buyBook");
+  const bookData = location.state?.book || (storedBook ? JSON.parse(storedBook) : null);
+
+  // Check if coming from cart
+  const fromCart = new URLSearchParams(location.search).get("fromCart") === "true";
+
   const [addresses, setAddresses] = useState([]);
   const [selectedAddrId, setSelectedAddrId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showSheet, setShowSheet] = useState(false);
   const [bookPrice, setBookPrice] = useState(bookData?.price || null);
-  
+
+  const [cartBooks, setCartBooks] = useState(fromCart ? location.state?.books || [] : []);
+
+  // Load Razorpay script
   function loadRazorpay() {
     return new Promise((res) => {
       if (window.Razorpay) return res(true);
@@ -32,20 +34,26 @@ const bookData = location.state?.book || (storedBook ? JSON.parse(storedBook) : 
     });
   }
 
+  // Redirect guard for Buy Now
   useEffect(() => {
     const last = sessionStorage.getItem("lastOrderedBook");
-    if (!bookId || (bookId === last && !location.state?.allow)) {
-      navigate("/books", { replace: true });   // or wherever you want to send them
-    }
-  }, [bookId, location.state, navigate]);
 
+    if (!fromCart) {
+      const bookId = new URLSearchParams(location.search).get("book");
+      if (!bookId || (bookId === last && !location.state?.allow)) {
+        navigate("/books", { replace: true });
+      }
+    }
+  }, [fromCart, location.state, navigate]);
+
+  // Fetch addresses
   useEffect(() => {
     (async () => {
       try {
-        const res = await api.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/get-addresses`);
+        const res = await api.get("/api/v1/users/get-addresses");
         const arr = res.data.data;
         setAddresses(arr);
-        if (arr.length) setSelectedAddrId(arr[0]._id);   // default
+        if (arr.length) setSelectedAddrId(arr[0]._id);
       } catch (err) {
         console.error(err);
       } finally {
@@ -57,54 +65,84 @@ const bookData = location.state?.book || (storedBook ? JSON.parse(storedBook) : 
   const current = addresses.find((a) => a._id === selectedAddrId);
 
   const payNow = async () => {
-    console.log(bookPrice);
-    
-  if (!bookPrice) return alert("Book price not loaded");
+    if (!current) return alert("Please select an address");
 
-  const ok = await loadRazorpay();
-  if (!ok) return alert("Unable to load Razorpay SDK");
+    const ok = await loadRazorpay();
+    if (!ok) return alert("Unable to load Razorpay SDK");
 
-  const res = await api.post("/api/v1/payment/checkout", {
-    money: bookPrice * 100  // convert ₹ to paise
-  });
+    let totalAmount = 0;
+    let orderPayload = {};
 
-  const { orderId, amount, currency, key } = res.data.data;
-  
-  const rzp = new window.Razorpay({
-    key,
-    order_id: orderId,
-    amount,
-    currency,
-    name: "Book Store",
-    description: "Book purchase",
-    handler: async (resp) => {
-      try {
-        await api.post("/api/v1/payment/verifyPayment", resp);
-        await api.post("/api/v1/users/order-place", {
-          bookId,
-          quantity: 1,
-          addressId: selectedAddrId,
-          razorpayOrderId: resp.razorpay_order_id,
-          razorpayPaymentId: resp.razorpay_payment_id,
-        });
+    if (fromCart) {
+      if (!cartBooks.length) return alert("No cart items found");
+      totalAmount = cartBooks.reduce((sum, b) => {
+        const price = Number(b.book?.price || b.price || 0);
+        const qty = Number(b.quantity || 1);
+        return sum + price * qty;
+      }, 0);
 
-        sessionStorage.setItem("lastOrderedBook", bookId);
-        navigate("/myprofile/orders", { replace: true });
-      } catch {
-        alert("Payment verification failed on server");
-      }
-    },
-    prefill: {
-      name: current?.name || "Customer",
-      contact: current?.phone || "",
-    },
-    theme: { color: "#fc6b03" },
-  });
+      orderPayload = {
+        items: cartBooks.map((b) => ({
+          bookId: b.book._id,
+          quantity: b.quantity,
+        })),
+      };
+    } else {
+      if (!bookPrice) return alert("Book price not loaded");
+      totalAmount = Number(bookPrice) || 0;
 
-  rzp.open();
-};
+      orderPayload = {
+        bookId: bookData._id,
+        quantity: 1,
+      };
+    }
 
+    if (totalAmount <= 0) return alert("Invalid total amount");
 
+    const amountInPaise = totalAmount * 100;
+
+    try {
+      const res = await api.post("/api/v1/payment/checkout", {
+        money: amountInPaise,
+      });
+
+      const { orderId, amount, currency, key } = res.data.data;
+
+      const rzp = new window.Razorpay({
+        key,
+        order_id: orderId,
+        amount,
+        currency,
+        name: "Book Store",
+        description: fromCart ? "Cart purchase" : "Book purchase",
+        handler: async (resp) => {
+          try {
+            // 1️⃣ Verify payment
+            await api.post("/api/v1/payment/verifyPayment", resp);
+
+            // 2️⃣ Place order on backend
+            await api.post("/api/v1/users/order-place", orderPayload);
+
+            // 3️⃣ Navigate to orders page
+            navigate("/myprofile/orders", { replace: true });
+          } catch (err) {
+            console.error(err);
+            alert("Payment verification or order placement failed");
+          }
+        },
+        prefill: {
+          name: current?.name || "Customer",
+          contact: current?.phone || "",
+        },
+        theme: { color: "#fc6b03" },
+      });
+
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Payment initiation failed");
+    }
+  };
 
   if (loading) return <p className="p-8">Loading…</p>;
 
@@ -117,7 +155,7 @@ const bookData = location.state?.book || (storedBook ? JSON.parse(storedBook) : 
           <p>{current.city}, {current.state} {current.pincode}</p>
           <p className="text-gray-600 text-sm">Phone: {current.phone}</p>
           <p className="text-sm text-yellow-700 bg-yellow-100 p-2 rounded">
-            ⚠️ <strong>Test Mode:</strong> To simulate a successful payment, choose <strong>UPI</strong> and enter <code>success@razorpay</code> as your UPI ID.
+            ⚠ <strong>Test Mode:</strong> To simulate payment, use <strong>UPI</strong> with <code>success@razorpay</code>.
           </p>
 
           <button
@@ -153,7 +191,7 @@ const bookData = location.state?.book || (storedBook ? JSON.parse(storedBook) : 
           }}
           onAdd={() => {
             setShowSheet(false);
-            navigate("/address");
+            navigate("/account/addresses/new");
           }}
           onClose={() => setShowSheet(false)}
         />
@@ -162,24 +200,26 @@ const bookData = location.state?.book || (storedBook ? JSON.parse(storedBook) : 
   );
 }
 
-/* ───────── slide‑in sheet with radio bullets ───────────────────────── */
+/* ───────── Slide-in Address Sheet ───────── */
 function AddressSheet({ addresses, selectedId, onSelect, onAdd, onClose }) {
   const [open, setOpen] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setOpen(true), 10); return () => clearTimeout(t); }, []);
+  useEffect(() => {
+    const t = setTimeout(() => setOpen(true), 10);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex">
       <div className="fixed inset-0 bg-black/30 z-[75]" onClick={onClose} />
-
-      <div className={`fixed top-0 right-0 z-[80] h-screen w-4/5 max-w-[320px] bg-white shadow-xl
-                       transform transition-transform duration-300 ease-in-out
-                       ${open ? "translate-x-0" : "translate-x-full"}`}>
+      <div
+        className={`fixed top-0 right-0 z-[80] h-screen w-4/5 max-w-[320px] bg-white shadow-xl
+                    transform transition-transform duration-300 ease-in-out
+                    ${open ? "translate-x-0" : "translate-x-full"}`}
+      >
         <button className="absolute top-3 right-3" onClick={onClose}>
           <IoClose size={24} />
         </button>
-
         <h3 className="text-lg font-semibold p-4 border-b">Select Address</h3>
-
         <form className="p-4 space-y-4 overflow-y-auto h-[calc(100%-150px)]">
           {addresses.map((addr) => (
             <label
@@ -187,19 +227,14 @@ function AddressSheet({ addresses, selectedId, onSelect, onAdd, onClose }) {
               className={`flex items-start gap-3 border p-3 rounded cursor-pointer hover:shadow
                           ${addr._id === selectedId ? "ring-2 ring-orange-600" : ""}`}
             >
-              {/* radio bullet */}
               <input
                 type="radio"
                 name="address"
                 value={addr._id}
                 checked={addr._id === selectedId}
-                onChange={() => {
-                  onSelect(addr._id);   // update selection & close sheet
-                }}
+                onChange={() => onSelect(addr._id)}
                 className="mt-1 accent-orange-600 w-4 h-4"
               />
-
-              {/* address text */}
               <div>
                 <p className="font-medium">{addr.name}</p>
                 <p className="text-sm">{addr.address}, {addr.locality}</p>
@@ -209,10 +244,12 @@ function AddressSheet({ addresses, selectedId, onSelect, onAdd, onClose }) {
             </label>
           ))}
         </form>
-
         <button
           className="w-full bg-indigo-600 text-white py-3 rounded-b"
-          onClick={() => { onClose(); onAdd(); }}
+          onClick={() => {
+            onClose();
+            onAdd();
+          }}
         >
           + Add Address
         </button>
@@ -220,5 +257,3 @@ function AddressSheet({ addresses, selectedId, onSelect, onAdd, onClose }) {
     </div>
   );
 }
-
-

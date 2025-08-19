@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance.js";
 
 const SoldItems = () => {
   const [soldBooks, setSoldBooks] = useState([]);
@@ -8,9 +8,7 @@ const SoldItems = () => {
   useEffect(() => {
     const fetchSoldBooks = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/sold-by-user`, {
-          withCredentials: true,
-        });
+        const response = await api.get(`/api/v1/books/sold-by-user`);
         setSoldBooks(response.data.data);
       } catch (error) {
         console.error("Error fetching sold books", error);

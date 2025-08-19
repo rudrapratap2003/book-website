@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance.js";
+import Loader from "./Loader.jsx";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/cart`, {
-          withCredentials: true,
-        });
+        const res = await api.get(`/api/v1/cart`);
         const itemsWithSelection = res.data.data.cartItems.map((item) => ({
           ...item,
           selected: false,
         }));
         setCartItems(itemsWithSelection);
       } catch (error) {
+        console.error(error.response?.status, error.response?.data);
         console.error("Error fetching cart items:", error);
       } finally {
         setLoading(false);
@@ -37,10 +38,9 @@ const CartPage = () => {
 
   const handleAddToCart = async (bookId, quantity) => {
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/cart/add`,
-        { bookId, quantity: parseInt(quantity) },
-        { withCredentials: true }
+      await api.post(
+        `/api/v1/cart/add`,
+        { bookId, quantity: parseInt(quantity) }
       );
 
       setCartItems((prev) =>
@@ -60,10 +60,9 @@ const CartPage = () => {
       .filter((item) => item.selected)
       .map((item) => item._id);
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/cart/remove`,
-        { ids: selectedIds },
-        { withCredentials: true }
+      await api.post(
+        `/api/v1/cart/remove`,
+        { ids: selectedIds }
       );
       setCartItems((prev) => prev.filter((item) => !item.selected));
     } catch (error) {
@@ -71,7 +70,8 @@ const CartPage = () => {
     }
   };
 
-  const handlePlaceOrder = async () => {
+const handlePlaceOrder = (e) => {
+    e.preventDefault()
     const selectedItems = cartItems.filter((item) => item.selected);
 
     if (selectedItems.length === 0) {
@@ -79,26 +79,12 @@ const CartPage = () => {
       return;
     }
 
-    const orderPayload = {
-      items: selectedItems.map((item) => ({
-        bookId: item.book._id,
-        quantity: item.quantity,
-      })),
-    };
+    // Store cart items in sessionStorage for the address page
+    sessionStorage.removeItem("buyBook");
+    sessionStorage.setItem("buyBooks", JSON.stringify(selectedItems));
 
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/order-place`,
-        orderPayload,
-        { withCredentials: true }
-      );
-
-      setCartItems((prev) => prev.filter((item) => !item.selected));
-      setShowSuccessPopup(true);
-    } catch (error) {
-      console.error("Error placing order:", error);
-      alert("Failed to place order. Try again.");
-    }
+    // Navigate to address page (cart checkout flow)
+    navigate(`/buy/address?fromCart=true`, { state: { allow: true, books: selectedItems, totalAmount: totalAmount} });
   };
 
   const selectedItems = cartItems.filter((item) => item.selected);
@@ -108,46 +94,13 @@ const CartPage = () => {
   );
 
   return (
-    <div className="p-4 md:flex gap-6 flex-col md:flex-row relative">
-      {/* Success Popup */}
-      {showSuccessPopup && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border border-green-500 px-6 py-4 rounded-md shadow-md z-50 w-[320px]">
-          <div className="flex justify-between items-start">
-            <div className="flex flex-col items-center w-full">
-              {/* Animated Tick */}
-              <div className="w-12 h-12 rounded-full border-4 border-green-500 flex items-center justify-center animate-ping-fast">
-                <svg
-                  className="w-6 h-6 text-green-700 animate-tick"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <p className="mt-4 font-gothic  text-center text-lg font-semibold">
-                Order placed successfully!
-              </p>
-            </div>
-            <button
-              onClick={() => setShowSuccessPopup(false)}
-              className="text-gray-600 hover:text-gray-800 text-xl font-bold ml-2"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
-
+    <div className="p-4 md:flex gap-6 flex-col md:flex-row">
       {/* Left Section */}
       <div className="md:w-2/3 w-full">
         <h2 className="font-gothic text-4xl font-bold mb-4">My Cart</h2>
 
         {loading ? (
-          <p className="font-parastoo text-lg text-gray-600">
-            Loading your cart...
-          </p>
+          <Loader/>
         ) : cartItems.length === 0 ? (
           <p className="font-parastoo text-lg text-gray-600">
             Your cart is empty now.
@@ -281,6 +234,7 @@ const CartPage = () => {
           </div>
 
           <button
+            type="button"
             onClick={handlePlaceOrder}
             disabled={selectedItems.length === 0}
             className={`font-gothic w-full py-2 rounded mt-4 ${

@@ -27,15 +27,24 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: "placed",
     },
-
+    totalAmount: {
+      type: Number,
+      required: true,
+      default:0
+    },
     placedAt: {
       type: Date,
       default: Date.now,
     },
-
+    shippedAt: { type: Date },
+    deliveredAt: { type: Date },
     returnTill: {
       type: Date,
     },
+
+    returnInitiatedAt: { type: Date },
+    productReceivedAt: { type: Date },
+    refundCompletedAt: { type: Date },
   }, { timestamps: true });
 
 export const Order = mongoose.model("Order", orderSchema);

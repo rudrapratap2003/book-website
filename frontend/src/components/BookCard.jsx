@@ -7,10 +7,10 @@ import {
   FaRegHeart,
 } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-import axios from "axios";
+import api from "../api/axiosInstance";
 
 const BookCard = ({ book, rating = 0 }) => {
-    const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const navigate = useNavigate();
@@ -19,9 +19,7 @@ const BookCard = ({ book, rating = 0 }) => {
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
-          withCredentials: true,
-        });
+        const res = await api.get(`/api/v1/users/wishlist`);
         const wishlistIds = res.data.data.map((b) => b._id);
         setIsWishlisted(wishlistIds.includes(book.id));
       } catch (err) {
@@ -33,10 +31,9 @@ const BookCard = ({ book, rating = 0 }) => {
 
   const handleWishlistClick = async () => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/toggle-wishlist`,
-        { bookId: book.id },
-        { withCredentials: true }
+      const res = await api.post(
+        `/api/v1/users/toggle-wishlist`,
+        { bookId: book.id }
       );
       const updatedWishlist = res.data.data.map((b) => b._id);
       setIsWishlisted(updatedWishlist.includes(book.id));
@@ -54,10 +51,9 @@ const BookCard = ({ book, rating = 0 }) => {
 
   const handleAddToCart = async () => {
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/cart/add`,
-        { bookId: book.id, quantity: 1 },
-        { withCredentials: true }
+      await api.post(
+        `/api/v1/cart/add`,
+        { bookId: book.id, quantity: 1 }
       );
       setToastMsg("Book added to cart");
     } catch (err) {
@@ -237,6 +233,12 @@ const BookCard = ({ book, rating = 0 }) => {
       {toastMsg && (
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white border border-green-500 px-4 py-2 rounded shadow-md flex items-center gap-4 z-[999]">
           <span className="font-parastoo text-sm text-gray-800">{toastMsg}</span>
+          <button
+            onClick={() => navigate("/myprofile/orders")}
+            className="text-yellow-700 text-sm font-gothic hover:underline"
+          >
+            View Orders
+          </button>
         </div>
       )}
     </>

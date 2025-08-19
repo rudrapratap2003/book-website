@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
-import axios from "axios";
+import api from "../api/axiosInstance.js";
 
 const AdminDashboard = () => {
   const [pendingBooks, setPendingBooks] = useState([]);
@@ -10,7 +10,7 @@ const AdminDashboard = () => {
 
   const fetchPendingBooks = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/admin/pending`, {
+      const res = await api.get(`/api/v1/admin/pending`, {
         withCredentials: true,
       });
       setPendingBooks(res.data);
@@ -23,7 +23,7 @@ const AdminDashboard = () => {
 
   const handleApprove = async (bookId) => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/v1/admin/approve`, {bookId}, { withCredentials: true });
+      await api.put(`/api/v1/admin/approve`, {bookId}, { withCredentials: true });
       setPendingBooks((prev) => prev.filter((book) => book._id !== bookId));
     } catch (error) {
       console.error("Approve failed", error);
@@ -34,8 +34,8 @@ const AdminDashboard = () => {
     if (!rejectionMessage.trim()) return alert("Please enter a rejection message.");
 
     try {
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/admin/reject`,
+      await api.put(
+        `/api/v1/admin/reject`,
         { bookId, message: rejectionMessage },
         { withCredentials: true }
       );

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import BookCard from "../components/BookCard"; // ✅ Adjust the path as needed
-
+import BookCard from "../components/BookCard";
+import api from "../api/axiosInstance.js";
 
 const WishlistPage = () => {
   const [wishlistBooks, setWishlistBooks] = useState([]);
@@ -9,9 +8,7 @@ const WishlistPage = () => {
   useEffect(() => {
     const fetchWishlistBooks = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
-          withCredentials: true,
-        });
+        const res = await api.get(`/api/v1/users/wishlist`);
         setWishlistBooks(res.data.data);
       } catch (err) {
         console.error("Error fetching wishlist:", err);
@@ -23,10 +20,9 @@ const WishlistPage = () => {
 
   const handleToggleWishlist = async (bookId) => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/toggle-wishlist`,
-        { bookId },
-        { withCredentials: true }
+      const res = await api.post(
+        `/api/v1/users/toggle-wishlist`,
+        { bookId }
       );
       const updatedWishlist = res.data.data;
       setWishlistBooks(updatedWishlist);
@@ -37,10 +33,9 @@ const WishlistPage = () => {
 
   const handleAddToCart = async (bookId) => {
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/cart/add`,
-        { bookId, quantity: 1 },
-        { withCredentials: true }
+      await api.post(
+        `/api/v1/users/cart/add`,
+        { bookId, quantity: 1 }
       );
     } catch (err) {
       console.error("Error adding to cart:", err);

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
   FaUser, FaEnvelope, FaPhone, FaBoxOpen,
   FaCheckCircle, FaHeart, FaShoppingCart
 } from "react-icons/fa";
+import api from "../api/axiosInstance.js";
 
 const MyProfile = () => {
   const navigate = useNavigate();
@@ -20,9 +20,7 @@ const MyProfile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/myprofile`, {
-          withCredentials: true
-        });
+        const res = await api.get(`/api/v1/users/myprofile`);
         setUser(res.data.data);
         setEditUser(res.data.data);
         setAddresses(res.data.data.addresses || []);
@@ -41,17 +39,11 @@ const MyProfile = () => {
       <div className="w-full max-w-4xl">
         {/* Profile Header */}
         <div className="flex items-center space-x-4 mb-4">
-          {user.avatar ? (
-            <img
-              src={`/images/${avatarName}.jpg`}
-              alt="Avatar"
-              className="w-10 h-10 rounded-full"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-lg font-bold text-white">
-              {user.fullName?.charAt(0).toUpperCase()}
-            </div>
-          )}
+          <img
+            src={`/images/${avatarName}.jpg`}
+            alt="Avatar"
+            className="w-10 h-10 rounded-full"
+          />
           <h2 className="font-gothic text-2xl font-semibold">{user.fullName}</h2>
         </div>
 

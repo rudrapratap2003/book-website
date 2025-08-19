@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { HiOutlineSearch, HiOutlineX } from "react-icons/hi";
 import Cookies from "js-cookie";
-import axios from "axios";
 import { Menubar } from "./Menubar";
+import api from "../api/axiosInstance.js";
 
 export function Navbar({ isAuthenticated, setIsAuthenticated }) {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
 
   useEffect(() => {
     if (!isAuthenticated) return setUser(null);
-    axios
+    api
       .get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/myprofile`, { withCredentials: true })
       .then((res) => setUser(res.data.data))
       .catch((err) => console.error("Fetch user failed:", err));
@@ -36,7 +36,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
   /* ─────────────────────────────  HANDLERS  ─────────────────────────────── */
   const handleLogout = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/logout`, {}, { withCredentials: true });
+      await api.post(`/api/v1/users/logout`, {});
       Cookies.remove("token");
       setIsAuthenticated(false);
       navigate("/");
@@ -50,7 +50,7 @@ export function Navbar({ isAuthenticated, setIsAuthenticated }) {
     setQuery(val);
     if (val.trim() === "") return setSuggestions([]);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/search?query=${val}`);
+      const res = await api.get(`/api/v1/books/search?query=${val}`);
       setSuggestions(res.data);
     } catch (err) {
       console.error("Search failed:", err);

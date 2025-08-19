@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import BookCard from "../components/BookCard";
+import api from "../api/axiosInstance.js";
 
 export const CategoryPage = () => {
   const { categoryName } = useParams();
@@ -14,14 +14,11 @@ export const CategoryPage = () => {
 
   const handleAddToCart = async (bookId) => {
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/cart/add`,
+      await api.post(
+        `/api/v1/cart/add`,
         {
           bookId,
           quantity: 1,
-        },
-        {
-          withCredentials: true,
         }
       );
     } catch (err) {
@@ -31,10 +28,9 @@ export const CategoryPage = () => {
 
   const handleWishlistToggle = async (bookId) => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/toggle-wishlist`,
-        { bookId },
-        { withCredentials: true }
+      const res = await api.post(
+        `/api/v1/users/toggle-wishlist`,
+        { bookId }
       );
       const updatedWishlist = res.data.data;
       setWishlist(updatedWishlist.map((book) => book._id));
@@ -45,10 +41,8 @@ export const CategoryPage = () => {
 
   const fetchBooks = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/books/get-books`, {
-        withCredentials: true
-      });
-      setAllBooks(res.data); // Assuming response shape: [books]
+      const res = await api.get(`/api/v1/books/get-books`);
+      setAllBooks(res.data);
     } catch (err) {
       console.error("Failed to fetch books:", err);
     }
@@ -56,9 +50,7 @@ export const CategoryPage = () => {
 
   const fetchWishlist = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/wishlist`, {
-        withCredentials: true,
-      });
+      const res = await api.get(`/api/v1/users/wishlist`);
       setWishlist(res.data.data.map((book) => book._id));
     } catch (err) {
       console.error("Failed to fetch wishlist:", err);
@@ -67,9 +59,7 @@ export const CategoryPage = () => {
 
   const fetchAverageRatings = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/rating`, {
-        withCredentials: true,
-      });
+      const res = await api.get(`/api/v1/rating`);
       const ratings = {};
       res.data.data.forEach((r) => {
         ratings[r.bookId] = r.averageRating;

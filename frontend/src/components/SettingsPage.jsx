@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import api from '../api/axiosInstance.js';
 
 const SettingsPage = () => {
   const navigate = useNavigate();
@@ -37,9 +37,7 @@ const SettingsPage = () => {
   const [deleteError, setDeleteError] = useState('');
   const fetchUserDetails = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/myprofile`, {
-        withCredentials: true,
-      });
+      const res = await api.get(`/api/v1/users/myprofile`);
       const { fullName, email, phoneNo } = res.data.data;
       setFullName(fullName);
       setEmail(email);
@@ -51,10 +49,9 @@ const SettingsPage = () => {
   
   const updateField = async (field) => {
     try {
-      await axios.put(
+      await api.put(
         `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/update`,
-        { fullName, email, phoneNo: phone },
-        { withCredentials: true }
+        { fullName, email, phoneNo: phone }
       );
       setEditStates((prev) => ({ ...prev, [field]: false }));
       navigate("/myprofile", { replace: true });
@@ -70,8 +67,7 @@ const SettingsPage = () => {
     }
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/changepassword`, { oldPassword, newPassword: oldPassword }, { withCredentials: true });
-
+      await api.post(`/api/v1/users/changepassword`, { oldPassword, newPassword: oldPassword });
       setStep(2);
       setErrorMessage('');
     } catch (err) {
@@ -86,10 +82,9 @@ const SettingsPage = () => {
     }
 
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/changepassword`,
-        { oldPassword, newPassword },
-        { withCredentials: true }
+      await api.post(
+        `/api/v1/users/changepassword`,
+        { oldPassword, newPassword }
       );
 
       setOldPassword('');
@@ -119,10 +114,9 @@ const SettingsPage = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/users/delete-account`,
-        { password: deletePassword },
-        { withCredentials: true }
+      await api.post(
+        `/api/v1/users/delete-account`,
+        { password: deletePassword }
       );
       toast.success("Account deleted successfully. Redirecting...", {
         position: "bottom-center",
@@ -135,10 +129,6 @@ const SettingsPage = () => {
       setDeleteError("Incorrect password. Please try again.");
     }
   };
-  useEffect(() => {
-  fetchUserDetails();
-}, []);
-
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
@@ -155,197 +145,190 @@ const SettingsPage = () => {
       </div>
 
       {/* Main Content */}
-     <div className="flex-1 p-6">
-  <h1 className="font-gothic text-2xl font-bold mb-4">Account Settings</h1>
-  <h2 className="font-gothic text-xl font-semibold mb-6 text-green-600">Profile Information</h2>
+      <div className="flex-1 p-6">
+        <h1 className="font-gothic text-2xl font-bold mb-4">Account Settings</h1>
+        <h2 className="font-gothic text-xl font-semibold mb-6 text-green-600">Profile Information</h2>
 
-  {/* Full Name */}
-  <div className="mb-6">
-    <div className="flex items-center justify-between">
-      <h3 className="font-parastoo text-xl font-semibold">Full Name</h3>
-      {!editStates.fullName ? (
-        <button onClick={() => handleEdit('fullName')} className="font-parastoo text-green-600 font-medium hover:underline">Edit</button>
-      ) : (
-        <div className="space-x-2">
-          <button onClick={() => handleCancel('fullName')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
-          <button onClick={() => updateField('fullName')} className="font-gothic bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
+        {/* Full Name */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <h3 className="font-parastoo text-xl font-semibold">Full Name</h3>
+            {!editStates.fullName ? (
+              <button onClick={() => handleEdit('fullName')} className="font-parastoo text-green-600 font-medium hover:underline">Edit</button>
+            ) : (
+              <div className="space-x-2">
+                <button onClick={() => handleCancel('fullName')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
+                <button onClick={() => updateField('fullName')} className="font-gothic bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
+              </div>
+            )}
+          </div>
+          <input
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            disabled={!editStates.fullName}
+            className={`font-parastoo w-full mt-2 p-3 border rounded ${editStates.fullName ? 'border-green-500 bg-white' : 'bg-gray-100 text-gray-500'}`}
+          />
         </div>
-      )}
-    </div>
-    <input
-      type="text"
-      value={fullName}
-      onChange={(e) => setFullName(e.target.value)}
-      disabled={!editStates.fullName}
-      className={`font-parastoo w-full mt-2 p-3 border rounded ${editStates.fullName ? 'border-green-500 bg-white' : 'bg-gray-100 text-gray-500'}`}
-      placeholder="Enter your full name"
-    />
-  </div>
 
-  {/* Email */}
-  <div className="mb-6">
-    <div className="flex items-center justify-between">
-      <h3 className="font-parastoo text-xl font-semibold">Email Address</h3>
-      {!editStates.email ? (
-        <button onClick={() => handleEdit('email')} className="font-parastoo text-green-600 font-medium hover:underline">Edit</button>
-      ) : (
-        <div className="space-x-2">
-          <button onClick={() => handleCancel('email')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
-          <button onClick={() => updateField('email')} className="bg-green-600 font-gothic text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
+        {/* Email */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <h3 className="font-parastoo text-xl font-semibold">Email Address</h3>
+            {!editStates.email ? (
+              <button onClick={() => handleEdit('email')} className="font-parastoo text-green-600 font-medium hover:underline">Edit</button>
+            ) : (
+              <div className="space-x-2">
+                <button onClick={() => handleCancel('email')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
+                <button onClick={() => updateField('email')} className="bg-green-600 font-gothic text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
+              </div>
+            )}
+          </div>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={!editStates.email}
+            className={`font-parastoo w-full mt-2 p-3 border rounded ${editStates.email ? 'border-green-500 bg-white' : 'bg-gray-100 text-gray-500'}`}
+          />
         </div>
-      )}
-    </div>
-    <input
-      type="email"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      disabled={!editStates.email}
-      className={`font-parastoo w-full mt-2 p-3 border rounded ${editStates.email ? 'border-green-500 bg-white' : 'bg-gray-100 text-gray-500'}`}
-      placeholder="Enter your email"
-    />
-  </div>
 
-  {/* Phone */}
-  <div className="mb-6">
-    <div className="flex items-center justify-between">
-      <h3 className="font-parastoo text-xl font-semibold">Mobile Number</h3>
-      {!editStates.phone ? (
-        <button onClick={() => handleEdit('phone')} className="font-parastoo text-green-600 font-medium hover:underline">Edit</button>
-      ) : (
-        <div className="space-x-2">
-          <button onClick={() => handleCancel('phone')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
-          <button onClick={() => updateField('phone')} className="font-gothic bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
+        {/* Phone */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <h3 className="font-parastoo text-xl font-semibold">Mobile Number</h3>
+            {!editStates.phone ? (
+              <button onClick={() => handleEdit('phone')} className="font-parastoo text-green-600 font-medium hover:underline">Edit</button>
+            ) : (
+              <div className="space-x-2">
+                <button onClick={() => handleCancel('phone')} className="font-parastoo text-green-600 hover:underline">Cancel</button>
+                <button onClick={() => updateField('phone')} className="font-gothic bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700">Save</button>
+              </div>
+            )}
+          </div>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            disabled={!editStates.phone}
+            className={`font-parastoo w-full mt-2 p-3 border rounded ${editStates.phone ? 'border-green-500 bg-white' : 'bg-gray-100 text-gray-500'}`}
+          />
         </div>
-      )}
-    </div>
-    <input
-      type="tel"
-      value={phone}
-      onChange={(e) => setPhone(e.target.value)}
-      disabled={!editStates.phone}
-      className={`font-parastoo w-full mt-2 p-3 border rounded ${editStates.phone ? 'border-green-500 bg-white' : 'bg-gray-100 text-gray-500'}`}
-      placeholder="Enter your mobile number"
-    />
-</div>
 
         {/* Change Password Section */}
-<div className="mt-8">
-  {!showPasswordPrompt ? (
-    <button
-      onClick={() => setShowPasswordPrompt(true)}
-      className="border border-green-600 bg-green-50 text-green-700 px-4 py-2 rounded font-gothic text-lg hover:bg-green-100"
-    >
-      Change your password
-    </button>
-  ) : (
-    <div className="space-y-4">
-      <p className="text-lg font-parastoo text-gray-700">
-        Are you sure you want to change your password?
-      </p>
+        <div className="mt-8">
+          {!showPasswordPrompt ? (
+            <button
+              onClick={() => setShowPasswordPrompt(true)}
+              className="text-green-600 font-gothic text-lg"
+            >
+              Change your password
+            </button>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-lg font-parastoo text-gray-700">
+                Are you sure you want to change your password?
+              </p>
 
-      {step === 1 && (
-        <>
-          <input
-            type="password"
-            placeholder="Enter your old password"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-            className="w-full p-3 border rounded border-green-500 font-parastoo"
-          />
-          <button
-            onClick={verifyOldPassword}
-            className="bg-green-600 text-white px-4 py-2 rounded font-gothic"
-          >
-            Confirm
-          </button>
-          {errorMessage && <p className="text-red-600 text-sm">{errorMessage}</p>}
-        </>
-      )}
+              {step === 1 && (
+                <>
+                  <input
+                    type="password"
+                    placeholder="Enter your old password"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    className="w-full p-3 border rounded border-green-500 font-parastoo"
+                  />
+                  <button
+                    onClick={verifyOldPassword}
+                    className="bg-green-600 text-white px-4 py-2 rounded font-gothic"
+                  >
+                    Confirm
+                  </button>
+                  {errorMessage && <p className="text-red-600 text-sm">{errorMessage}</p>}
+                </>
+              )}
 
-      {step === 2 && (
-        <>
-          <input
-            type="password"
-            placeholder="New password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full p-3 border rounded border-green-500 font-parastoo"
-          />
-          <input
-            type="password"
-            placeholder="Confirm new password"
-            value={confirmNewPassword}
-            onChange={(e) => setConfirmNewPassword(e.target.value)}
-            className="w-full p-3 border rounded border-green-500 font-parastoo"
-          />
-          <button
-            onClick={handleChangePassword}
-            className="bg-green-600 text-white px-4 py-2 rounded font-gothic"
-          >
-            Save
-          </button>
-          {matchError && <p className="text-red-600 text-sm">{matchError}</p>}
-        </>
-      )}
-    </div>
-  )}
-</div>
-
-
-       {/* Delete Account Section */}
-<div className="mt-10">
-  <p className="text-red-700 font-parastoo text-md mb-2">
-    ⚠️ Deleting your account will result in the loss of all associated data; this action is irreversible.
-  </p>
-  {!showDeletePrompt ? (
-    <button
-      onClick={() => setShowDeletePrompt(true)}
-      className="border border-red-600 bg-red-50 text-red-700 px-4 py-2 rounded font-gothic text-lg hover:bg-red-100"
-    >
-      Delete account
-    </button>
-  ) : (
-    <div className="space-y-4 border border-red-300 bg-red-50 p-4 rounded-md mt-4">
-      <p className="text-red-700 font-parastoo text-md">
-        ⚠️ If you delete your account, all your data will be lost permanently. Are you sure you want to dleete your account?
-      </p>
-
-      {!confirmDeleteStep ? (
-        <div className="space-x-4">
-          <button
-            onClick={() => setConfirmDeleteStep(true)}
-            className="bg-red-600 text-white px-4 py-2 rounded font-gothic"
-          >
-            Yes, I’m sure
-          </button>
-          <button
-            onClick={() => setShowDeletePrompt(false)}
-            className="text-red-600 font-parastoo hover:underline"
-          >
-            No, cancel
-          </button>
+              {step === 2 && (
+                <>
+                  <input
+                    type="password"
+                    placeholder="New password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full p-3 border rounded border-green-500 font-parastoo"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Confirm new password"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    className="w-full p-3 border rounded border-green-500 font-parastoo"
+                  />
+                  <button
+                    onClick={handleChangePassword}
+                    className="bg-green-600 text-white px-4 py-2 rounded font-gothic"
+                  >
+                    Save
+                  </button>
+                  {matchError && <p className="text-red-600 text-sm">{matchError}</p>}
+                </>
+              )}
+            </div>
+          )}
         </div>
-      ) : (
-        <div>
-          <input
-            type="password"
-            placeholder="Confirm your password"
-            value={deletePassword}
-            onChange={(e) => setDeletePassword(e.target.value)}
-            className="w-full p-3 border rounded border-red-500 font-parastoo"
-          />
-          <button
-            onClick={handleDeleteAccount}
-            className="bg-red-600 text-white px-4 py-2 rounded font-gothic mt-2"
-          >
-            Delete Account
-          </button>
-          {deleteError && <p className="text-red-600 text-sm">{deleteError}</p>}
+
+        {/* Delete Account Section */}
+        <div className="mt-10">
+          {!showDeletePrompt ? (
+            <button
+              onClick={() => setShowDeletePrompt(true)}
+              className="text-red-600 font-gothic text-lg"
+            >
+              Delete your account
+            </button>
+          ) : (
+            <div className="space-y-4 border border-red-300 bg-red-50 p-4 rounded-md mt-4">
+              <p className="text-red-700 font-parastoo text-md">
+                ⚠ If you delete your account, all your data will be lost permanently.
+              </p>
+
+              {!confirmDeleteStep ? (
+                <div className="space-x-4">
+                  <button
+                    onClick={() => setConfirmDeleteStep(true)}
+                    className="bg-red-600 text-white px-4 py-2 rounded font-gothic"
+                  >
+                    Yes, I’m sure
+                  </button>
+                  <button
+                    onClick={() => setShowDeletePrompt(false)}
+                    className="text-red-600 font-parastoo hover:underline"
+                  >
+                    No, cancel
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    className="w-full p-3 border rounded border-red-500 font-parastoo"
+                  />
+                  <button
+                    onClick={handleDeleteAccount}
+                    className="bg-red-600 text-white px-4 py-2 rounded font-gothic mt-2"
+                  >
+                    Delete Account
+                  </button>
+                  {deleteError && <p className="text-red-600 text-sm">{deleteError}</p>}
+                </div>
+              )}
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  )}
-</div>
       </div>
       <ToastContainer />
     </div>

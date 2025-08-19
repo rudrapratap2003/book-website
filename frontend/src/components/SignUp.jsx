@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import api from '../api/axiosInstance.js';
 
 
 const SignUp = ({ setIsAuthenticated }) => {
@@ -40,11 +40,10 @@ const SignUp = ({ setIsAuthenticated }) => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/register`, formData, { withCredentials: true });
+      const response = await api.post(`/api/v1/users/register`, formData);
       setMessage(response.data.message);
       setError('');
-      setIsAuthenticated(true);
-      navigate('/profile');
+      // setIsAuthenticated(true);
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Something went wrong";
       setError(errorMessage);
